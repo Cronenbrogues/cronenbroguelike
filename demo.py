@@ -1,10 +1,53 @@
 import random
+import re
 
 import adventurelib
+import zalgo_text
 
 from src import directions
 from src.globals import G
 from src import room
+
+
+_Z = zalgo_text.zalgo()
+
+
+_VOICES = [
+    'HEEEHEHEHEHEHE',
+    'THERE IS NO HOPE',
+    'DID YOU HEAR THAT?',
+    'I PROMISE YOU KNOWLEDGE',
+]
+
+
+def insayne(text):
+    """Renders @text to screen, modified based on player's insanity stat.
+    
+    Interpolates arcane markings and violent exhortations if player's sanity
+    is not pristine. Renders UI text less and less legible as sanity degrades.
+    """
+    if G.player.insanity < 30:
+        adventurelib.say(text)
+        return
+
+    _Z.maxAccentsPerLetter = max(0, int((G.player.insanity - 20) / 10))
+    num_breaks = int((G.player.insanity - 40) / 10)
+    breakpoints = []
+    if num_breaks > 0:
+        breaks = [0]
+        breaks.extend(sorted(random.sample(range(len(text)), num_breaks)))
+        breaks.append(len(text))
+        breakpoints.extend(zip(breaks[:-1], breaks[1:]))
+    else:
+        breakpoints.append((0, len(text)))
+
+    segments = []
+    for i, (begin, end) in enumerate(breakpoints):
+        if i > 0:
+            segments.append(random.choice(_VOICES))
+        segments.append(_Z.zalgofy(text[begin:end]))
+
+    adventurelib.say(''.join(segments))
 
 
 def _create_room():
@@ -39,7 +82,7 @@ def go(direction):
     direction = direction.lower()
     next_room = G.current_room.exit(direction)
     if next_room is None:
-        adventurelib.say(f'It is not possible to proceed {direction}.')
+        insayne(f'It is not possible to proceed {direction}.')
     else:
         G.enqueue_text(f'You proceed {direction}.')
         G.current_room = next_room
@@ -56,7 +99,25 @@ def look():
     for i, text in enumerate(G.generate_text()):
         if i > 0:
             adventurelib.say('')
-        adventurelib.say(text)
+        insayne(text)
+
+
+@adventurelib.when('stats')
+def stats():
+    statistics = ['insanity']
+    for stat in statistics:
+        insayne(f'{stat}:\t{getattr(G.player, stat)}')
+
+
+@adventurelib.when('cheat CODE')
+def cheat(code):
+    m = re.search(r'insanity (\-?\d+)', code)
+    if m is not None:
+        insanity_delta = int(m.groups()[0])
+        G.player.insanity += insanity_delta
+        adventurelib.say(
+                f'Insanity {"in" if insanity_delta >= 0 else "de"}creased '
+                f' by {insanity_delta}.')
 
 
 def _get_random_start():
@@ -69,7 +130,7 @@ def _get_random_start():
             'You know only that you have been here for interminable years, '
             'that you have died innumerable times, and that someone once told '
             'you there was a way out. You were told this an eon ago, or maybe '
-            'a day, but the stubborn hope glisters in your mind.']:
+            'a day, but the stubborn hope of escape glisters in your mind.']:
         G.enqueue_text(text)
 
 

@@ -1,12 +1,18 @@
 import collections
 
+from src import actor
+
 
 class _GameState:
 
     def __init__(self):
         self.current_room = None
-
+        self._player = actor.Actor()
         self._text_queue = collections.deque()
+
+    @property
+    def player(self):
+        return self._player
 
     def enqueue_text(self, text):
         self._text_queue.append(text)
