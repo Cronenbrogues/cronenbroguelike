@@ -57,8 +57,6 @@ def cheat(code):
     if m is not None:
         insanity_delta = int(m.groups()[0])
         G.player.modstat('insanity', insanity_delta)
-        adventurelib.say(G.player._statistics)
-        adventurelib.say(dir(G.player))
         adventurelib.say(
                 f'Insanity {"in" if insanity_delta >= 0 else "de"}creased '
                 f'by {insanity_delta}.')
