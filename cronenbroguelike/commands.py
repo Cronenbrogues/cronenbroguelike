@@ -8,8 +8,6 @@ from engine import say
 
 def enter_room(room):
     """Convenience function called at game start and when entering a room."""
-    # TODO: Find a better solution here. When the room's description changes
-    # after an event, it should be possible not to repeat it.
     for event in room.events():
         event.execute()
     look()
@@ -37,8 +35,6 @@ def go(direction):
 
 @adventurelib.when('look')
 def look():
-    # TODO: What if a room's description needs to change dynamically, e.g. on
-    # subsequent entrances?
     G.enqueue_text(G.current_room.description)
     G.enqueue_text(f'Exits are {", ".join(G.current_room.exits)}.')
 
