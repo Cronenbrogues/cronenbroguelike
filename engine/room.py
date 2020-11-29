@@ -12,6 +12,9 @@ class Room(adventurelib.Room):
         # TODO: Directions need a "canonical" description; otherwise, listing
         # exits becomes confusing due to redundant descriptions.
         self._exits = {}
+
+        # TODO: adventurelib.Bag should contain an ancillary set of aliases
+        # to obviate O(n) lookup by alias.
         self._items = adventurelib.Bag()
         self._characters = adventurelib.Bag()
         self._events = collections.deque()
