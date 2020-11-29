@@ -1,6 +1,6 @@
 import collections
 
-from src import actor
+from engine import actor
 
 
 class _GameState:

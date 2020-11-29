@@ -4,10 +4,10 @@ import re
 import adventurelib
 import zalgo_text
 
-from src import directions
-from src.event import Event
-from src.globals import G
-from src.room import Room
+from engine import directions
+from engine.event import Event
+from engine.globals import G
+from engine.room import Room
 
 
 _Z = zalgo_text.zalgo()
