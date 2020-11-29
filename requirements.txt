@@ -1,3 +1,2 @@
 adventurelib
-pkg-resources==0.0.0
--e git+git@github.com:flosincapite/zalgo.git@master#egg=zalgo_text
+git+https://github.com/flosincapite/zalgo

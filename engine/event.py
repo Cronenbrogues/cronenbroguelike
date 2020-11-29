@@ -1,5 +1,4 @@
 class Event:
-    
     def __init__(self):
         self.room = None
         self._will_execute = True

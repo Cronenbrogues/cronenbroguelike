@@ -2,7 +2,6 @@ from adventurelib import Item as _Item
 
 
 class _Statistic:
-
     def __init__(self, value):
         self._value = value
 
@@ -26,33 +25,30 @@ class _BaseStatistic(_Statistic):
 
 
 class Strength(_BaseStatistic):
-    _NAME = 'strength'
+    _NAME = "strength"
 
 
 class Stamina(_BaseStatistic):
-    _NAME = 'stamina'
+    _NAME = "stamina"
 
 
 class Will(_BaseStatistic):
-    _NAME = 'will'
+    _NAME = "will"
 
 
 class Wisdom(_BaseStatistic):
-    _NAME = 'wisdom'
+    _NAME = "wisdom"
 
 
 class Insanity(_Statistic):
     _MIN_VALUE = 0
     _MAX_VALUE = 100
-    _NAME = 'insanity'
+    _NAME = "insanity"
 
 
 class Actor:
-
     def __init__(self, actor_item, *statistics):
-        self._statistics = {
-            statistic.name: statistic for statistic in statistics
-        }
+        self._statistics = {statistic.name: statistic for statistic in statistics}
 
         # TODO: There's got to be a better way to do this.
 

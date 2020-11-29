@@ -6,7 +6,6 @@ import collections
 
 
 class Direction:
-
     def __init__(self, descriptions, opposite=None):
         self._descriptions = descriptions
         self._opposite = opposite
@@ -41,7 +40,7 @@ class Direction:
         back = cls(reverse_descriptions, opposite=out)
         out._opposite = back
         return out, back
-    
 
-north, south = Direction.make_twoway(['north'], ['south'])
-east, west = Direction.make_twoway(['east'], ['west'])
+
+north, south = Direction.make_twoway(["north"], ["south"])
+east, west = Direction.make_twoway(["east"], ["west"])
