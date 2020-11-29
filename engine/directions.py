@@ -21,10 +21,10 @@ class Direction:
 
     # TODO: This is unnecessary nonsense.
     def _hash_criteria(self):
-        return tuple(tuple(self._descriptions), self._opposite)
+        return (tuple(self._descriptions), self._opposite)
 
     def __hash__(self):
-        return hash(self._hash_criteria())
+        return hash(tuple(self._descriptions))
 
     def __eq__(self, other):
         if not isinstance(other, type(self)):

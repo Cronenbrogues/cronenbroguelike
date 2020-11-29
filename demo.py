@@ -30,7 +30,7 @@ class _MeatRoomEvent(Event):
         self._will_execute = False
 
 
-def _create_room():
+def _create_rooms(number_of_rooms):
     rooms = [
         Room('You are in a cathedral.'),
         Room(
@@ -42,16 +42,16 @@ def _create_room():
         'you realize this is the intestine of a vast behemoth.')
     meat_room.add_event(_MeatRoomEvent())
     rooms.append(meat_room)
-    return random.choice(rooms)
+    return random.sample(rooms, number_of_rooms)
 
 
-G.current_room = initial_room = _create_room()
-next_room = _create_room()
-initial_room.add_exit(
-    random.choice([
-            directions.north, directions.south, directions.east,
-            directions.west]),
-    next_room)
+G.current_room, room_2, room_3 = _create_rooms(3)
+possible_exits = [
+        directions.north, directions.south, directions.east, directions.west]
+exit_1 = random.choice(possible_exits)
+room_2.add_exit(exit_1, G.current_room)
+room_2.add_exit(
+    random.choice(list(set(possible_exits) - set([exit_1]))), room_3)
 
 
 def _get_random_start():
