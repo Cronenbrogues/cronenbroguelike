@@ -1,4 +1,5 @@
 import adventurelib
+import collections
 
 
 # TODO: Just fork adventurelib; I need to hack it up so much to get it work the
@@ -13,6 +14,7 @@ class Room(adventurelib.Room):
         self._exits = {}
         self._items = adventurelib.Bag()
         self._characters = adventurelib.Bag()
+        self._events = collections.deque()
 
     @classmethod
     def _add_exit(cls, source, destination, descriptions):
@@ -26,9 +28,24 @@ class Room(adventurelib.Room):
         if direction.opposite is not None:
             self._add_exit(destination, self, direction.opposite.descriptions)
 
+    def add_event(self, event):
+        # TODO: This is probably bad.
+        event.room = self
+        self._events.append(event)
+
     @property
     def exits(self):
         return self._exits.keys()
+
+    def events(self):
+        self._events.append(None)
+        while True:
+            next_event = self._events.popleft()
+            if next_event is None:
+                break
+            yield next_event
+            if not next_event.ephemeral:
+                self._events.append(next_event)
 
     def __call__(self, *args, **kwargs):
         print(f'I was called with {args} and {kwargs}.')

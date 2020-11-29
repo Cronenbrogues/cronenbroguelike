@@ -5,8 +5,9 @@ import adventurelib
 import zalgo_text
 
 from src import directions
+from src.event import Event
 from src.globals import G
-from src import room
+from src.room import Room
 
 
 _Z = zalgo_text.zalgo()
@@ -30,7 +31,10 @@ def insayne(text):
         adventurelib.say(text)
         return
 
+    # TODO: Too much zalgo text! Decide letter-by-letter whether to zalgofy.
     _Z.maxAccentsPerLetter = max(0, int((G.player.insanity - 20) / 10))
+
+    # TODO: Condition breakpoints on length of text!
     num_breaks = int((G.player.insanity - 40) / 10)
     breakpoints = []
     if num_breaks > 0:
@@ -50,14 +54,38 @@ def insayne(text):
     adventurelib.say(''.join(segments))
 
 
+class _MeatRoomEvent(Event):
+    
+    def execute(self):
+        insayne(
+            'You are in a dark tube. The walls and floor quiver at your touch, '
+            'and you realize this is the intestine of a vast behemoth.')
+
+        # TODO: Find a better solution for this--better to have a single say func.
+        adventurelib.say('')
+
+        # TODO: Add the log in the insanity setter instead of here.
+        G.player.insanity += 10
+        insayne('Your insanity increases by 10.')
+        adventurelib.say('')
+        self.room.description = (
+                'The walls and floor of the intestine room shudder at your '
+                'step.')
+
+
 def _create_room():
-    descriptions = [
-        'You are in a cathedral.',
-        'You are squatting in a humid, low-ceilinged room made of rusted iron.',
-        'You are in a dark tube. The walls and floor quiver at your touch, and '
-        'you realize this is the intestine of a vast behemoth.',
+    rooms = [
+        Room('You are in a cathedral.'),
+        Room(
+            'You are squatting in a humid, low-ceilinged room made of rusted '
+            'iron.'),
     ]
-    return room.Room(random.choice(descriptions))
+    meat_room = Room(
+        'You are in a dark tube. The walls and floor quiver at your touch, and '
+        'you realize this is the intestine of a vast behemoth.')
+    meat_room.add_event(_MeatRoomEvent())
+    rooms.append(meat_room)
+    return random.choice(rooms)
 
 
 G.current_room = initial_room = _create_room()
@@ -67,6 +95,14 @@ initial_room.add_exit(
             directions.north, directions.south, directions.east,
             directions.west]),
     next_room)
+
+
+def _enter_room():
+    # TODO: Find a better solution here. When the room's description changes
+    # after an event, it should be possible not to repeat it.
+    for event in G.current_room.events():
+        event.execute()
+    look()
 
 
 @adventurelib.when('exit DIRECTION')
@@ -86,7 +122,7 @@ def go(direction):
     else:
         G.enqueue_text(f'You proceed {direction}.')
         G.current_room = next_room
-        look()
+        _enter_room()
 
 
 @adventurelib.when('look')
@@ -131,12 +167,13 @@ def _get_random_start():
             'that you have died innumerable times, and that someone once told '
             'you there was a way out. You were told this an eon ago, or maybe '
             'a day, but the stubborn hope of escape glisters in your mind.']:
-        G.enqueue_text(text)
+        insayne(text)
+        adventurelib.say('')
 
 
 _get_random_start()
 
 
-look()
+_enter_room()
 adventurelib.say('')
 adventurelib.start()
