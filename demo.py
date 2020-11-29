@@ -71,6 +71,7 @@ class _MeatRoomEvent(Event):
         self.room.description = (
                 'The walls and floor of the intestine room shudder at your '
                 'step.')
+        self._will_execute = False
 
 
 def _create_room():
@@ -153,7 +154,7 @@ def cheat(code):
         G.player.insanity += insanity_delta
         adventurelib.say(
                 f'Insanity {"in" if insanity_delta >= 0 else "de"}creased '
-                f' by {insanity_delta}.')
+                f'by {insanity_delta}.')
 
 
 def _get_random_start():

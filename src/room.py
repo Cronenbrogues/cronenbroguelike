@@ -28,10 +28,14 @@ class Room(adventurelib.Room):
         if direction.opposite is not None:
             self._add_exit(destination, self, direction.opposite.descriptions)
 
+    def _maybe_append_event(self, event):
+        if event.will_execute:
+            self._events.append(event)
+
     def add_event(self, event):
         # TODO: This is probably bad.
         event.room = self
-        self._events.append(event)
+        self._maybe_append_event(event)
 
     @property
     def exits(self):
@@ -44,8 +48,7 @@ class Room(adventurelib.Room):
             if next_event is None:
                 break
             yield next_event
-            if not next_event.ephemeral:
-                self._events.append(next_event)
+            self._maybe_append_event(next_event)
 
     def __call__(self, *args, **kwargs):
         print(f'I was called with {args} and {kwargs}.')
