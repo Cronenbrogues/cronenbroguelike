@@ -10,16 +10,16 @@ _Z = zalgo_text.zalgo()
 
 
 _VOICES = [
-    'HEEEHEHEHEHEHE',
-    'THERE IS NO HOPE',
-    'DID YOU HEAR THAT?',
-    'I PROMISE YOU KNOWLEDGE',
+    "HEEEHEHEHEHEHE",
+    "THERE IS NO HOPE",
+    "DID YOU HEAR THAT?",
+    "I PROMISE YOU KNOWLEDGE",
 ]
 
 
 def insayne(text):
     """Renders @text to screen, modified based on player's insanity stat.
-    
+
     Interpolates arcane markings and violent exhortations if player's sanity
     is not pristine. Renders UI text less and less legible as sanity degrades.
     """
@@ -47,4 +47,4 @@ def insayne(text):
             segments.append(random.choice(_VOICES))
         segments.append(_Z.zalgofy(text[begin:end]))
 
-    adventurelib.say(''.join(segments))
+    adventurelib.say("".join(segments))

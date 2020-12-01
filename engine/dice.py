@@ -1,7 +1,7 @@
 import re
 
 
-_DICE_RE = re.compile(r'^(\d*)d(\d+)$')
+_DICE_RE = re.compile(r"^(\d*)d(\d+)$")
 
 
 def _roll_die(faces):
