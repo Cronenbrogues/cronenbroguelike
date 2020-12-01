@@ -21,7 +21,7 @@ class _MeatRoomEvent(Event):
         adventurelib.say("")
 
         # TODO: Add the log in the insanity setter instead of here.
-        G.player.modstat("insanity", 10)
+        G.player.mod_stat("insanity", 10)
         say.insayne("Your insanity increases by 10.")
         adventurelib.say("")
         self.room.description = (

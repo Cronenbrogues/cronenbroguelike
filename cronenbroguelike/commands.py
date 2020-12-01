@@ -46,18 +46,20 @@ def look():
 
 @adventurelib.when("stats")
 def stats():
-    statistics = ["insanity"]
-    for stat in statistics:
-        say.insayne(f"{stat}:\t{getattr(G.player, stat)}")
+    for stat_name, stat_value in G.player.all_stats():
+        say.insayne(f"{stat_name:10}: {stat_value}")
 
 
 @adventurelib.when("cheat CODE")
 def cheat(code):
-    m = re.search(r"insanity (\-?\d+)", code)
-    if m is not None:
-        insanity_delta = int(m.groups()[0])
-        G.player.modstat("insanity", insanity_delta)
-        adventurelib.say(
-            f'Insanity {"in" if insanity_delta >= 0 else "de"}creased '
-            f"by {insanity_delta}."
-        )
+    m = re.search(r"([a-zA-Z]+)\s+(\-?\d+)", code)
+    if m is None:
+        return
+
+    stat, delta = m.groups()
+    stat = stat.lower()
+    delta = int(delta)
+    G.player.mod_stat(stat, delta)
+    adventurelib.say(
+        f"{stat.title()} {'in' if delta >= 0 else 'de'}creased by {delta}."
+    )
