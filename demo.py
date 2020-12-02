@@ -19,9 +19,7 @@ class _MeatRoomEvent(Event):
             "and you realize this is the intestine of a vast behemoth."
         )
 
-        # TODO: Add the log in the insanity setter instead of here.
         G.player.insanity.modify(10)
-        say.insayne("Your insanity increases by 10.")
         self.room.description = (
             "The walls and floor of the intestine room shudder at your step."
         )
@@ -68,6 +66,7 @@ def _start_game(_):
         health=10, psyche=10, strength=10, stamina=10, will=10, wisdom=10,
         insanity=0, name="player"
     )
+    G.player.log_stats = True
     G.player.upon_death(_start_game)
 
     # Creates a small dungeon.

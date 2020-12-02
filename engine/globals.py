@@ -1,7 +1,5 @@
 import collections
 
-from engine import actor
-
 
 class _GameState:
     def __init__(self):

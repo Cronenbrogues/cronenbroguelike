@@ -1,5 +1,7 @@
 from adventurelib import Item as _Item
 
+from engine import say
+
 
 class _Statistic:
     
@@ -20,7 +22,17 @@ class _Statistic:
         self._owner = new_owner
 
     def modify(self, delta):
+        # TODO: Maybe all this nonsense with a latent value that is between
+        # _MIN and _MAX is overkill.
+        old_value = self.value
         self._value += delta
+        new_value = self.value
+        delta = new_value - old_value
+        if self.owner.log_stats:
+            say.sayne(
+                f"{self._NAME.title()} "
+                f"{'in' if delta >= 0 else 'de'}creased by {abs(delta)}."
+            )
 
     @property
     def value(self):
@@ -52,8 +64,16 @@ class _VariableStatistic(_Statistic):
             surface_value = max(self._MIN_VALUE, surface_value)
         if self._MAX_VALUE is not None:
             surface_value = min(self._MAX_VALUE, surface_value)
+        old_value = self._current_value
         self._current_value += delta
         self._current_value = min(self._current_value, self._value)
+        new_value = self._current_value
+        delta = new_value - old_value
+        if self.owner.log_stats:
+            say.sayne(
+                f"{self._NAME.title()} "
+                f"{'restored' if delta >= 0 else 'damaged'} by {abs(delta)}."
+            )
 
 
 class Health(_VariableStatistic):
@@ -122,6 +142,7 @@ class Actor:
         self._death_throes = lambda this: None
 
         self.alive = True
+        self.log_stats = False
 
     @property
     def ai(self):

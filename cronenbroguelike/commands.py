@@ -91,9 +91,6 @@ def cheat(code):
     else:
         getattr(G.player, stat).modify(delta)
         stat_str = stat.title()
-    say.sayne(
-        f"{stat_str} {'in' if delta >= 0 else 'de'}creased by {delta}."
-    )
 
 
 def _resolve_attack(attacker, defender):
@@ -140,10 +137,7 @@ def attack(actor):
         say.insayne(
                 f"In a blind fury, you hack uselessly at the {actor_name}'s "
                 "corpse.")
-        # TODO: Log in the statistic setter instead of here.
-        # TODO: Really, seriously fix the newline issue.
         G.player.insanity.modify(10)
-        say.insayne("Your insanity increases by 10.")
         return
 
     _resolve_attack(G.player, defender)
