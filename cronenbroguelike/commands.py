@@ -53,22 +53,26 @@ def look():
     G.enqueue_text(f'Exits are {", ".join(G.current_room.exits)}.')
 
     for i, text in enumerate(G.generate_text()):
-        if i > 0:
-            adventurelib.say("")
         say.insayne(text)
 
 
 @adventurelib.when("stats")
 def stats():
+    lines = []
     name_str = f'{G.player.name}'
-    say.insayne(name_str)
+    lines.append(name_str)
     # TODO: Unfuck this for zalgo.
-    say.insayne(''.join('-' for _ in name_str))
+    lines.append(''.join('-' for _ in name_str))
     for stat in G.player.all_stats():
         if hasattr(stat, 'current_value'):
-            say.insayne(f"{stat.name:10}: {stat.current_value}/{stat.value}")
+            lines.append(f"{stat.name:10}: {stat.current_value}/{stat.value}")
         else:
-            say.insayne(f"{stat.name:10}: {stat.value}")
+            lines.append(f"{stat.name:10}: {stat.value}")
+
+    for i, line in enumerate(lines):
+        add_newline = (i == 0)
+        say.insayne(line, add_newline=add_newline)
+
 
 
 @adventurelib.when("cheat CODE")
@@ -87,7 +91,7 @@ def cheat(code):
     else:
         getattr(G.player, stat).modify(delta)
         stat_str = stat.title()
-    adventurelib.say(
+    say.sayne(
         f"{stat_str} {'in' if delta >= 0 else 'de'}creased by {delta}."
     )
 
@@ -130,19 +134,16 @@ def attack(actor):
     defender = _get_opponent(actor_name)
     if defender is None:
         say.insayne(f'There is no {actor_name} here.')
-        adventurelib.say('')
         return
 
     if not defender.alive:
         say.insayne(
                 f"In a blind fury, you hack uselessly at the {actor_name}'s "
                 "corpse.")
-        adventurelib.say('')
         # TODO: Log in the statistic setter instead of here.
         # TODO: Really, seriously fix the newline issue.
         G.player.insanity.modify(10)
         say.insayne("Your insanity increases by 10.")
-        adventurelib.say('')
         return
 
     _resolve_attack(G.player, defender)

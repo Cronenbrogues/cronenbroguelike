@@ -19,13 +19,9 @@ class _MeatRoomEvent(Event):
             "and you realize this is the intestine of a vast behemoth."
         )
 
-        # TODO: Find a better solution for this--better to have a single say func.
-        adventurelib.say("")
-
         # TODO: Add the log in the insanity setter instead of here.
         G.player.insanity.modify(10)
         say.insayne("Your insanity increases by 10.")
-        adventurelib.say("")
         self.room.description = (
             "The walls and floor of the intestine room shudder at your step."
         )
@@ -63,7 +59,6 @@ def _get_random_start():
         "a day, but the stubborn hope of escape glisters in your mind.",
     ]:
         say.insayne(text)
-        adventurelib.say("")
 
 
 def _start_game(_):
@@ -113,9 +108,9 @@ def _start_game(_):
     # Starts it up.
     _get_random_start()
     commands.enter_room(G.current_room)
-    adventurelib.say("")
 
 
 _start_game(None)
 G.player.upon_death(_start_game)
+adventurelib.say('')  # Necessary for space before first prompt.
 adventurelib.start()

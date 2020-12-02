@@ -1,3 +1,4 @@
+import functools
 import random
 
 import adventurelib
@@ -17,21 +18,15 @@ _VOICES = [
 ]
 
 
-def insayne(text):
-    """Renders @text to screen, modified based on player's insanity stat.
-
-    Interpolates arcane markings and violent exhortations if player's sanity
-    is not pristine. Renders UI text less and less legible as sanity degrades.
-    """
-    if G.player.insanity.value < 30:
-        adventurelib.say(text)
-        return
+def _hear_voices(text, insanity):
+    if insanity < 30:
+        return text
 
     # TODO: Too much zalgo text! Decide letter-by-letter whether to zalgofy.
-    _Z.maxAccentsPerLetter = max(0, int((G.player.insanity.value - 20) / 10))
+    _Z.maxAccentsPerLetter = max(0, int((insanity - 20) / 10))
 
-    # TODO: Condition breakpoints on length of text!
-    num_breaks = int((G.player.insanity.value - 40) / 10)
+    # TODO: Condition number of breakpoints on length of text!
+    num_breaks = int((insanity - 40) / 10)
     breakpoints = []
     if num_breaks > 0:
         breaks = [0]
@@ -47,4 +42,21 @@ def insayne(text):
             segments.append(random.choice(_VOICES))
         segments.append(_Z.zalgofy(text[begin:end]))
 
-    adventurelib.say("".join(segments))
+    return "".join(segments)
+
+
+def insayne(text, add_newline=True, insanity=None):
+    """Renders @text to screen, modified based on player's insanity stat.
+
+    Interpolates arcane markings and violent exhortations if player's sanity
+    is not pristine. Renders UI text less and less legible as sanity degrades.
+    """
+    if add_newline:
+        adventurelib.say('')
+    if insanity is None:
+        insanity = G.player.insanity.value
+    text = _hear_voices(text, insanity)
+    adventurelib.say(text)
+
+
+sayne = functools.partial(insayne, insanity=0)
