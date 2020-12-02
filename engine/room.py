@@ -5,6 +5,7 @@ import collections
 # TODO: Just fork adventurelib; I need to hack it up so much to get it to work
 # the way I want.
 class Room(adventurelib.Room):
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -18,6 +19,20 @@ class Room(adventurelib.Room):
         self._characters = adventurelib.Bag()
         self._events = collections.deque()
 
+    def add_character(self, character):
+        self._characters.add(character)
+
+    @property
+    def characters(self):
+        return self._characters
+
+    def add_item(self, item):
+        self._items.add(item)
+
+    @property
+    def items(self):
+        return self._items
+
     @classmethod
     def _add_exit(cls, source, destination, descriptions):
         exits = source._exits
@@ -30,6 +45,10 @@ class Room(adventurelib.Room):
         if direction.opposite is not None:
             self._add_exit(destination, self, direction.opposite.descriptions)
 
+    @property
+    def exits(self):
+        return self._exits.keys()
+
     def _maybe_append_event(self, event):
         if event.will_execute:
             self._events.append(event)
@@ -39,11 +58,8 @@ class Room(adventurelib.Room):
         event.room = self
         self._maybe_append_event(event)
 
-    @property
-    def exits(self):
-        return self._exits.keys()
-
     def events(self):
+        # TODO: Rename this method.
         self._events.append(None)
         while True:
             next_event = self._events.popleft()

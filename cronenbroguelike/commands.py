@@ -2,6 +2,7 @@ import re
 
 import adventurelib
 
+from engine import dice
 from engine.globals import G
 from engine import say
 
@@ -36,6 +37,12 @@ def go(direction):
 @adventurelib.when("look")
 def look():
     G.enqueue_text(G.current_room.description)
+
+    # TODO: Bespoke descriptions for all items and characters.
+    for item in G.current_room.items:
+        G.enqueue_text(f'There is a(n) {item.name} lying on the ground.')
+    for character in G.current_room.characters:
+        G.enqueue_text(f'There is a(n) {character.name} slobbering in the corner.')
     G.enqueue_text(f'Exits are {", ".join(G.current_room.exits)}.')
 
     for i, text in enumerate(G.generate_text()):
@@ -63,3 +70,45 @@ def cheat(code):
     adventurelib.say(
         f"{stat.title()} {'in' if delta >= 0 else 'de'}creased by {delta}."
     )
+
+
+def _resolve_attack(attacker, defender):
+    # TODO: Add equipment, different damage dice, etc.
+    is_player = attacker is G.player
+    if is_player:
+        subj, obj = ['you', defender.name]
+    else:
+        subj, obj = [attacker.name, 'you']
+    miss = 'miss' if is_player else 'misses'
+    hit = 'hit' if is_player else 'hits'
+
+    strength_mod = int((attacker.strength - 10) / 2)
+    to_hit = strength_mod + dice.roll('1d20')
+    if to_hit < (10 + (defender.stamina - 10) / 2):
+        say.insayne(f'{subj.title()} {miss}.')
+
+    else:
+        damage = dice.roll('1d8') + strength_mod
+        say.insayne(f'{subj.title()} {hit} for {damage} damage!')
+
+
+def _get_opponent(actor_name):
+    return G.current_room.characters.find(actor_name)
+
+
+@adventurelib.when("attack ACTOR")
+def attack(actor):
+    actor_name = actor  # Variable names are constrained by adventurelib.
+    # TODO: Consider turn order--some kind of agility stat?
+    # TODO: Other combat actions--spells, items, fleeing, etc.
+    # TODO: Affinity/factions so monsters can choose whom to strike.
+    defender = _get_opponent(actor_name)
+    if defender is None:
+        say.insayne(f'There is no {actor_name} here.')
+        return
+
+    _resolve_attack(G.player, defender)
+    for actor in G.current_room.characters:
+        assert actor.ai is not None
+        defender = actor.ai.choose_target(G.current_room)
+        _resolve_attack(actor, defender)

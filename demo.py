@@ -3,6 +3,8 @@ import random
 import adventurelib
 
 from cronenbroguelike import commands
+from engine import actor
+from engine import ai
 from engine import directions
 from engine.event import Event
 from engine.globals import G
@@ -47,10 +49,20 @@ def _create_rooms(number_of_rooms):
 
 
 G.current_room, room_2, room_3 = _create_rooms(3)
-possible_exits = [directions.north, directions.south, directions.east, directions.west]
+possible_exits = [
+        directions.north, directions.south, directions.east, directions.west]
 exit_1 = random.choice(possible_exits)
 room_2.add_exit(exit_1, G.current_room)
-room_2.add_exit(random.choice(list(set(possible_exits) - set([exit_1]))), room_3)
+room_2.add_exit(
+    random.choice(list(set(possible_exits) - set([exit_1]))), room_3)
+
+
+_monster = actor.create_actor(
+    strength=10,
+    stamina=10,
+    will=10, wisdom=10, insanity=100, name="Fish Man",
+    ai=ai.HatesPlayer())
+random.choice([G.current_room, room_2, room_3]).add_character(_monster)
 
 
 def _get_random_start():

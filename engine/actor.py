@@ -52,10 +52,15 @@ class Actor:
         'name', 'strength', 'stamina', 'will', 'wisdom', 'insanity'
     ]
 
-    def __init__(self, actor_item, *statistics):
+    def __init__(self, actor_item, *statistics, **kwargs):
         self._actor_item = actor_item
         self._statistics = {
                 statistic.name: statistic for statistic in statistics}
+        self._ai = kwargs.pop('ai', None)
+
+    @property
+    def ai(self):
+        return self._ai
 
     # TODO: This sucks; using __getattr__ or something might help. Maybe just
     # hard-code the stats that all actors have? Dynamically add properties?
@@ -67,6 +72,7 @@ class Actor:
         raise AttributeError
 
     def __getattr__(self, stat_name):
+        # TODO: This is weird. Maybe just inherit from Item.
         try:
             return getattr(self._actor_item, stat_name)
         except AttributeError:
@@ -91,7 +97,8 @@ class Actor:
                 for stat_name in stat_order]
 
 
-def create_actor(strength, stamina, will, wisdom, insanity, name, *aliases):
+def create_actor(
+        strength, stamina, will, wisdom, insanity, name, *aliases, **kwargs):
     """Convenience function to create actors with canonical stats."""
     actor_item = _Item(name, *aliases)
     return Actor(
@@ -101,4 +108,5 @@ def create_actor(strength, stamina, will, wisdom, insanity, name, *aliases):
         Will(will),
         Wisdom(wisdom),
         Insanity(insanity),
+        **kwargs,
     )
