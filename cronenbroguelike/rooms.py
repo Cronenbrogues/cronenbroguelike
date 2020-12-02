@@ -1,3 +1,5 @@
+import copy
+
 from engine.event import Event as _Event
 from engine.globals import G
 from engine.room import Room as _Room
@@ -44,4 +46,4 @@ intestine_room.add_event(_IntestineRoomEvent())
 
 
 def all_rooms():
-    return _ALL_ROOMS[:]
+    return copy.deepcopy(_ALL_ROOMS)
