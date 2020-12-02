@@ -5,8 +5,8 @@ import collections
 # TODO: Just fork adventurelib; I need to hack it up so much to get it to work
 # the way I want.
 class Room(adventurelib.Room):
-
     def __init__(self, *args, **kwargs):
+        theme = kwargs.pop("theme", "neutral")
         super().__init__(*args, **kwargs)
 
         # TODO: Directions need a "canonical" description; otherwise, listing
@@ -18,6 +18,7 @@ class Room(adventurelib.Room):
         self._items = adventurelib.Bag()
         self._characters = adventurelib.Bag()
         self._events = collections.deque()
+        self.theme = theme
 
     def add_character(self, character):
         self._characters.add(character)

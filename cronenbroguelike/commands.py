@@ -41,15 +41,13 @@ def look():
     # TODO: Bespoke descriptions for all items and characters.
     # TODO: Fix a(n) problems throughout code base.
     for item in G.current_room.items:
-        G.enqueue_text(f'There is a(n) {item.name} lying on the ground.')
+        G.enqueue_text(f"There is a(n) {item.name} lying on the ground.")
     for character in G.current_room.characters:
         # TODO: Move these descriptions to the actor.
         if character.alive:
-            G.enqueue_text(
-                    f'There is a(n) {character.name} slobbering in the corner.')
+            G.enqueue_text(f"There is a(n) {character.name} slobbering in the corner.")
         else:
-            G.enqueue_text(
-                    f'The corpse of a(n) {character.name} molders here.')
+            G.enqueue_text(f"The corpse of a(n) {character.name} molders here.")
     G.enqueue_text(f'Exits are {", ".join(G.current_room.exits)}.')
 
     for i, text in enumerate(G.generate_text()):
@@ -59,20 +57,19 @@ def look():
 @adventurelib.when("stats")
 def stats():
     lines = []
-    name_str = f'{G.player.name}'
+    name_str = f"{G.player.name}"
     lines.append(name_str)
     # TODO: Unfuck this for zalgo.
-    lines.append(''.join('-' for _ in name_str))
+    lines.append("".join("-" for _ in name_str))
     for stat in G.player.all_stats():
-        if hasattr(stat, 'current_value'):
+        if hasattr(stat, "current_value"):
             lines.append(f"{stat.name:10}: {stat.current_value}/{stat.value}")
         else:
             lines.append(f"{stat.name:10}: {stat.value}")
 
     for i, line in enumerate(lines):
-        add_newline = (i == 0)
+        add_newline = i == 0
         say.insayne(line, add_newline=add_newline)
-
 
 
 @adventurelib.when("cheat CODE")
@@ -85,9 +82,9 @@ def cheat(code):
     stat, delta = m.groups()
     stat = stat.lower()
     delta = int(delta)
-    if stat == 'heal':
+    if stat == "heal":
         G.player.health.heal_or_harm(delta)
-        stat_str = 'health'
+        stat_str = "health"
     else:
         getattr(G.player, stat).modify(delta)
         stat_str = stat.title()
@@ -97,22 +94,22 @@ def _resolve_attack(attacker, defender):
     # TODO: Add equipment, different damage dice, etc.
     is_player = attacker is G.player
     if is_player:
-        subj, obj = ['you', defender.name]
+        subj, obj = ["you", defender.name]
     else:
-        subj, obj = [attacker.name, 'you']
-    miss = 'miss' if is_player else 'misses'
-    hit = 'hit' if is_player else 'hits'
+        subj, obj = [attacker.name, "you"]
+    miss = "miss" if is_player else "misses"
+    hit = "hit" if is_player else "hits"
 
     strength_mod = int((attacker.strength.value - 10) / 2)
-    to_hit = strength_mod + dice.roll('1d20')
+    to_hit = strength_mod + dice.roll("1d20")
     if to_hit < (10 + (defender.stamina.value - 10) / 2):
-        say.insayne(f'{subj.title()} {miss}.')
+        say.insayne(f"{subj.title()} {miss}.")
 
     else:
-        damage = dice.roll('1d8') + strength_mod
+        damage = dice.roll("1d8") + strength_mod
         # TODO: How to organize messages better? Death also creates text, so
         # there should be a way to make sure the messages are ordered.
-        say.insayne(f'{subj.title()} {hit} for {damage} damage!')
+        say.insayne(f"{subj.title()} {hit} for {damage} damage!")
         defender.health.heal_or_harm(-1 * damage)
 
 
@@ -130,13 +127,13 @@ def attack(actor):
     # TODO: Affinity/factions so monsters can choose whom to strike.
     defender = _get_opponent(actor_name)
     if defender is None:
-        say.insayne(f'There is no {actor_name} here.')
+        say.insayne(f"There is no {actor_name} here.")
         return
 
     if not defender.alive:
         say.insayne(
-                f"In a blind fury, you hack uselessly at the {actor_name}'s "
-                "corpse.")
+            f"In a blind fury, you hack uselessly at the {actor_name}'s " "corpse."
+        )
         G.player.insanity.modify(10)
         return
 

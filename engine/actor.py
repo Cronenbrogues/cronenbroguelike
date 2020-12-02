@@ -4,10 +4,10 @@ from engine import say
 
 
 class _Statistic:
-    
+
     _MIN_VALUE = None
     _MAX_VALUE = None
-    
+
     def __init__(self, value, owner=None):
         self._value = value
         # TODO: Rethink this; it's an indication of poor design.
@@ -49,7 +49,6 @@ class _Statistic:
 
 
 class _VariableStatistic(_Statistic):
-
     def __init__(self, value):
         self._value = value
         self._current_value = value
@@ -94,7 +93,7 @@ class _BaseStatistic(_Statistic):
     # an abstract class but should be. Maybe statistics don't need to be
     # this complicated.
     # Also, what if I want to make Strength variable but not display that in
-    # the `stats` command? 
+    # the `stats` command?
     _MIN_VALUE = 0
     _MAX_VALUE = 30
 
@@ -129,7 +128,13 @@ class Insanity(_Statistic):
 class Actor:
 
     _CANONICAL_STAT_ORDER = [
-        'health', 'psyche', 'strength', 'stamina', 'will', 'wisdom', 'insanity'
+        "health",
+        "psyche",
+        "strength",
+        "stamina",
+        "will",
+        "wisdom",
+        "insanity",
     ]
 
     def __init__(self, actor_item, *statistics, **kwargs):
@@ -138,7 +143,7 @@ class Actor:
         for statistic in statistics:
             self._statistics[statistic.name] = statistic
             statistic.owner = self
-        self._ai = kwargs.pop('ai', None)
+        self._ai = kwargs.pop("ai", None)
         self._death_throes = lambda this: None
 
         self.alive = True
@@ -168,12 +173,14 @@ class Actor:
         """Returns stat names and values in a reasonable order."""
         # TODO: There's got to be a better way to do this.
         stat_order = self._CANONICAL_STAT_ORDER + sorted(
-                self._statistics.keys() - set(self._CANONICAL_STAT_ORDER))
+            self._statistics.keys() - set(self._CANONICAL_STAT_ORDER)
+        )
         return [self._statistics[stat_name] for stat_name in stat_order]
 
     def die(self):
         from engine import say
-        say.insayne(f'{self.name.title()} has died!')
+
+        say.insayne(f"{self.name.title()} has died!")
         self._death_throes(self)
 
     def upon_death(self, callback):
@@ -182,8 +189,8 @@ class Actor:
 
 # TODO: Make this a classmethod of Actor.
 def create_actor(
-        health, psyche, strength, stamina, will, wisdom, insanity, name,
-        *aliases, **kwargs):
+    health, psyche, strength, stamina, will, wisdom, insanity, name, *aliases, **kwargs
+):
     """Convenience function to create actors with canonical stats."""
     actor_item = _Item(name, *aliases)
     return Actor(

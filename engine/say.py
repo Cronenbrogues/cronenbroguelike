@@ -52,7 +52,7 @@ def insayne(text, add_newline=True, insanity=None):
     is not pristine. Renders UI text less and less legible as sanity degrades.
     """
     if add_newline:
-        adventurelib.say('')
+        adventurelib.say("")
     if insanity is None:
         insanity = G.player.insanity.value
     text = _hear_voices(text, insanity)
