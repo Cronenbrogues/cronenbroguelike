@@ -23,7 +23,7 @@ class _MeatRoomEvent(Event):
         adventurelib.say("")
 
         # TODO: Add the log in the insanity setter instead of here.
-        G.player.mod_stat("insanity", 10)
+        G.player.insanity.modify(10)
         say.insayne("Your insanity increases by 10.")
         adventurelib.say("")
         self.room.description = (
@@ -58,6 +58,8 @@ room_2.add_exit(
 
 
 _monster = actor.create_actor(
+    health=10,
+    psyche=10,
     strength=10,
     stamina=10,
     will=10, wisdom=10, insanity=100, name="Fish Man",

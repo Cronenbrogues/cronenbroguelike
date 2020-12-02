@@ -7,7 +7,7 @@ class _GameState:
     def __init__(self):
         self.current_room = None
         self._player = actor.create_actor(
-            strength=10, stamina=10, will=10, wisdom=10, insanity=0, name="player"
+            health=10, psyche=10, strength=10, stamina=10, will=10, wisdom=10, insanity=0, name="player"
         )
         self._text_queue = collections.deque()
 

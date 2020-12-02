@@ -23,15 +23,15 @@ def insayne(text):
     Interpolates arcane markings and violent exhortations if player's sanity
     is not pristine. Renders UI text less and less legible as sanity degrades.
     """
-    if G.player.insanity < 30:
+    if G.player.insanity.value < 30:
         adventurelib.say(text)
         return
 
     # TODO: Too much zalgo text! Decide letter-by-letter whether to zalgofy.
-    _Z.maxAccentsPerLetter = max(0, int((G.player.insanity - 20) / 10))
+    _Z.maxAccentsPerLetter = max(0, int((G.player.insanity.value - 20) / 10))
 
     # TODO: Condition breakpoints on length of text!
-    num_breaks = int((G.player.insanity - 40) / 10)
+    num_breaks = int((G.player.insanity.value - 40) / 10)
     breakpoints = []
     if num_breaks > 0:
         breaks = [0]

@@ -53,8 +53,15 @@ def look():
 
 @adventurelib.when("stats")
 def stats():
-    for stat_name, stat_value in G.player.all_stats():
-        say.insayne(f"{stat_name:10}: {stat_value}")
+    name_str = f'{G.player.name}'
+    say.insayne(name_str)
+    # TODO: Unfuck this for zalgo.
+    say.insayne(''.join('-' for _ in name_str))
+    for stat in G.player.all_stats():
+        if hasattr(stat, 'current_value'):
+            say.insayne(f"{stat.name:10}: {stat.current_value}/{stat.value}")
+        else:
+            say.insayne(f"{stat.name:10}: {stat.value}")
 
 
 @adventurelib.when("cheat CODE")
@@ -66,7 +73,7 @@ def cheat(code):
     stat, delta = m.groups()
     stat = stat.lower()
     delta = int(delta)
-    G.player.mod_stat(stat, delta)
+    getattr(G.player, stat).modify(delta)
     adventurelib.say(
         f"{stat.title()} {'in' if delta >= 0 else 'de'}creased by {delta}."
     )
@@ -82,14 +89,17 @@ def _resolve_attack(attacker, defender):
     miss = 'miss' if is_player else 'misses'
     hit = 'hit' if is_player else 'hits'
 
-    strength_mod = int((attacker.strength - 10) / 2)
+    strength_mod = int((attacker.strength.value - 10) / 2)
     to_hit = strength_mod + dice.roll('1d20')
-    if to_hit < (10 + (defender.stamina - 10) / 2):
+    if to_hit < (10 + (defender.stamina.value - 10) / 2):
         say.insayne(f'{subj.title()} {miss}.')
 
     else:
         damage = dice.roll('1d8') + strength_mod
+        # TODO: How to organize messages better? Death also creates text, so
+        # there should be a way to make sure the messages are ordered.
         say.insayne(f'{subj.title()} {hit} for {damage} damage!')
+        defender.health.heal_or_harm(-1 * damage)
 
 
 def _get_opponent(actor_name):
