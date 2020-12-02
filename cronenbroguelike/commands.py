@@ -39,6 +39,7 @@ def look():
     G.enqueue_text(G.current_room.description)
 
     # TODO: Bespoke descriptions for all items and characters.
+    # TODO: Fix a(n) problems throughout code base.
     for item in G.current_room.items:
         G.enqueue_text(f'There is a(n) {item.name} lying on the ground.')
     for character in G.current_room.characters:
