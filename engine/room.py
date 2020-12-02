@@ -2,8 +2,8 @@ import adventurelib
 import collections
 
 
-# TODO: Just fork adventurelib; I need to hack it up so much to get it work the
-# way I want.
+# TODO: Just fork adventurelib; I need to hack it up so much to get it to work
+# the way I want.
 class Room(adventurelib.Room):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
