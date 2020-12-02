@@ -122,6 +122,8 @@ def _get_opponent(actor_name):
 def attack(actor):
     actor_name = actor  # Variable names are constrained by adventurelib.
     # TODO: Consider turn order--some kind of agility stat?
+    # TODO: Other actions should be considered "combat" actions. Implement some
+    # notion of turns.
     # TODO: Other combat actions--spells, items, fleeing, etc.
     # TODO: Affinity/factions so monsters can choose whom to strike.
     defender = _get_opponent(actor_name)
@@ -140,6 +142,7 @@ def attack(actor):
         G.player.insanity.modify(10)
         say.insayne("Your insanity increases by 10.")
         adventurelib.say('')
+        return
 
     _resolve_attack(G.player, defender)
     for character in G.current_room.characters:
