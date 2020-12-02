@@ -42,7 +42,13 @@ def look():
     for item in G.current_room.items:
         G.enqueue_text(f'There is a(n) {item.name} lying on the ground.')
     for character in G.current_room.characters:
-        G.enqueue_text(f'There is a(n) {character.name} slobbering in the corner.')
+        # TODO: Move these descriptions to the actor.
+        if character.alive:
+            G.enqueue_text(
+                    f'There is a(n) {character.name} slobbering in the corner.')
+        else:
+            G.enqueue_text(
+                    f'The corpse of a(n) {character.name} molders here.')
     G.enqueue_text(f'Exits are {", ".join(G.current_room.exits)}.')
 
     for i, text in enumerate(G.generate_text()):
@@ -66,6 +72,7 @@ def stats():
 
 @adventurelib.when("cheat CODE")
 def cheat(code):
+    # TODO: Make healing more general.
     m = re.search(r"([a-zA-Z]+)\s+(\-?\d+)", code)
     if m is None:
         return
@@ -73,9 +80,14 @@ def cheat(code):
     stat, delta = m.groups()
     stat = stat.lower()
     delta = int(delta)
-    getattr(G.player, stat).modify(delta)
+    if stat == 'heal':
+        G.player.health.heal_or_harm(delta)
+        stat_str = 'health'
+    else:
+        getattr(G.player, stat).modify(delta)
+        stat_str = stat.title()
     adventurelib.say(
-        f"{stat.title()} {'in' if delta >= 0 else 'de'}creased by {delta}."
+        f"{stat_str} {'in' if delta >= 0 else 'de'}creased by {delta}."
     )
 
 
@@ -115,10 +127,24 @@ def attack(actor):
     defender = _get_opponent(actor_name)
     if defender is None:
         say.insayne(f'There is no {actor_name} here.')
+        adventurelib.say('')
         return
 
+    if not defender.alive:
+        say.insayne(
+                f"In a blind fury, you hack uselessly at the {actor_name}'s "
+                "corpse.")
+        adventurelib.say('')
+        # TODO: Log in the statistic setter instead of here.
+        # TODO: Really, seriously fix the newline issue.
+        G.player.insanity.modify(10)
+        say.insayne("Your insanity increases by 10.")
+        adventurelib.say('')
+
     _resolve_attack(G.player, defender)
-    for actor in G.current_room.characters:
-        assert actor.ai is not None
-        defender = actor.ai.choose_target(G.current_room)
-        _resolve_attack(actor, defender)
+    for character in G.current_room.characters:
+        if not character.alive:
+            continue
+        assert character.ai is not None
+        defender = character.ai.choose_target(G.current_room)
+        _resolve_attack(character, defender)

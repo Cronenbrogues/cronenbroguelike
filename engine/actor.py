@@ -101,6 +101,11 @@ class Insanity(_Statistic):
     _NAME = "insanity"
 
 
+# TODO: Make a Player class whose death ends (or restarts) the game.
+# TODO: If any other Actor dies, there should be an `alive` flag to reflect
+# that. Actors that are not alive should be removed from the room's
+# _characters bag and added to the _items bag (or otherwise prevented from
+# attacking, maybe with a separate bag for corpses?).
 class Actor:
 
     _CANONICAL_STAT_ORDER = [
@@ -114,6 +119,9 @@ class Actor:
             self._statistics[statistic.name] = statistic
             statistic.owner = self
         self._ai = kwargs.pop('ai', None)
+        self._death_throes = lambda this: None
+
+        self.alive = True
 
     @property
     def ai(self):
@@ -145,8 +153,13 @@ class Actor:
     def die(self):
         from engine import say
         say.insayne(f'{self.name.title()} has died!')
+        self._death_throes(self)
+
+    def upon_death(self, callback):
+        self._death_throes = callback
 
 
+# TODO: Make this a classmethod of Actor.
 def create_actor(
         health, psyche, strength, stamina, will, wisdom, insanity, name,
         *aliases, **kwargs):

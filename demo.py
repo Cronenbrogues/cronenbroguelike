@@ -48,25 +48,6 @@ def _create_rooms(number_of_rooms):
     return random.sample(rooms, number_of_rooms)
 
 
-G.current_room, room_2, room_3 = _create_rooms(3)
-possible_exits = [
-        directions.north, directions.south, directions.east, directions.west]
-exit_1 = random.choice(possible_exits)
-room_2.add_exit(exit_1, G.current_room)
-room_2.add_exit(
-    random.choice(list(set(possible_exits) - set([exit_1]))), room_3)
-
-
-_monster = actor.create_actor(
-    health=10,
-    psyche=10,
-    strength=10,
-    stamina=10,
-    will=10, wisdom=10, insanity=100, name="Fish Man",
-    ai=ai.HatesPlayer())
-random.choice([G.current_room, room_2, room_3]).add_character(_monster)
-
-
 def _get_random_start():
     cause_of_death = random.choice(
         [
@@ -85,9 +66,56 @@ def _get_random_start():
         adventurelib.say("")
 
 
-_get_random_start()
+def _start_game(_):
+
+    # Creates the player character and ensures game will restart upon death.
+    G.player = actor.create_actor(
+        health=10, psyche=10, strength=10, stamina=10, will=10, wisdom=10,
+        insanity=0, name="player"
+    )
+    G.player.upon_death(_start_game)
+
+    # Creates a small dungeon.
+    G.current_room, room_2, room_3 = _create_rooms(3)
+    possible_exits = [
+            directions.north, directions.south, directions.east, directions.west]
+    exit_1 = random.choice(possible_exits)
+    room_2.add_exit(exit_1, G.current_room)
+    room_2.add_exit(
+        random.choice(list(set(possible_exits) - set([exit_1]))), room_3)
+
+    # Places a monster in a random room.
+    _monster = actor.create_actor(
+        health=10,
+        psyche=10,
+        strength=10,
+        stamina=10,
+        will=10, wisdom=10, insanity=100, name="Fish Man",
+        ai=ai.HatesPlayer())
+
+    # TODO: Make a Monster class (or component) that encapsulates this behavior.
+    # TODO: Store location as a member of Actors and Items. That way, monsters can
+    # run away bleeding or something and die where they are, rather than being
+    # presumed to die in the current room. Alternately, simply change how attacking
+    # works when monsters are dead.
+    #
+    # TODO: Why isn't .alive = False working?
+    def fish_man_death_throes(fish_man):
+        say.insayne(
+            f'{fish_man.name} flops breathlessly upon the ground, blood '
+            'commingling with piscine slobber. Half-formed gills flutter '
+            'helplessly, urgently, then fall slack.')
+        fish_man.alive = False
+
+    _monster.upon_death(fish_man_death_throes)
+    random.choice([G.current_room, room_2, room_3]).add_character(_monster)
+
+    # Starts it up.
+    _get_random_start()
+    commands.enter_room(G.current_room)
+    adventurelib.say("")
 
 
-commands.enter_room(G.current_room)
-adventurelib.say("")
+_start_game(None)
+G.player.upon_death(_start_game)
 adventurelib.start()
