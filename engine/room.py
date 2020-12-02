@@ -61,6 +61,7 @@ class Room(adventurelib.Room):
 
     def events(self):
         # TODO: Rename this method.
+        # TODO: Make Event.execute a generator.
         self._events.append(None)
         while True:
             next_event = self._events.popleft()
