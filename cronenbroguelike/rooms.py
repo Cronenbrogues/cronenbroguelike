@@ -46,4 +46,6 @@ intestine_room.add_event(_IntestineRoomEvent())
 
 
 def all_rooms():
+    # TODO: Don't do this via copies. Maybe use getter functions. Maybe just
+    # use inheritance.
     return copy.deepcopy(_ALL_ROOMS)
