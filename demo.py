@@ -3,6 +3,7 @@ import random
 import adventurelib
 
 from cronenbroguelike import commands
+from cronenbroguelike import monsters
 from cronenbroguelike import rooms
 from engine import actor
 from engine import ai

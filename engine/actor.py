@@ -1,5 +1,6 @@
-from adventurelib import Item as _Item
+import adventurelib
 
+from engine import item
 from engine import say
 
 
@@ -145,6 +146,7 @@ class Actor:
             statistic.owner = self
         self._ai = kwargs.pop("ai", None)
         self._death_throes = lambda this: None
+        self._inventory = adventurelib.Bag()
 
         self.alive = True
         self.log_stats = False
@@ -152,6 +154,10 @@ class Actor:
     @property
     def ai(self):
         return self._ai
+
+    @property
+    def inventory(self):
+        return self._inventory
 
     # TODO: This sucks; using __getattr__ or something might help. Maybe just
     # hard-code the stats that all actors have? Dynamically add properties?
@@ -192,7 +198,7 @@ def create_actor(
     health, psyche, strength, stamina, will, wisdom, insanity, name, *aliases, **kwargs
 ):
     """Convenience function to create actors with canonical stats."""
-    actor_item = _Item(name, *aliases)
+    actor_item = item.Item(name, *aliases)
     return Actor(
         actor_item,
         Health(health),

@@ -1,6 +1,12 @@
+from engine import actor
+from engine import ai
+from engine import item
+from engine import say
+
+
 # TODO: I don't like doing this functionally. Use classes instead.
 def fish_man():
-    _monster = actor.create_actor(
+    monster = actor.create_actor(
         health=10,
         psyche=10,
         strength=10,
@@ -27,5 +33,6 @@ def fish_man():
         )
         fish_man.alive = False
 
-    _monster.upon_death(fish_man_death_throes)
-    return _monster
+    monster.upon_death(fish_man_death_throes)
+    monster.inventory.add(item.Item('ceremonial knife', 'knife', 'kris'))
+    return monster

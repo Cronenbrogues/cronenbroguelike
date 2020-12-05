@@ -72,6 +72,17 @@ def stats():
         say.insayne(line, add_newline=add_newline)
 
 
+@adventurelib.when("inventory")
+def inventory():
+    say.insayne("You possess the following:")
+    if not G.player.inventory:
+        say.insayne("Nothing.", add_newline=False)
+        return
+    # TODO: This is repeated in inspect(). Collapse these into a single function.
+    for item in G.player.inventory:
+        say.insayne(item.description, add_newline=False)
+
+
 @adventurelib.when("cheat CODE")
 def cheat(code):
     # TODO: Make healing more general.
@@ -113,26 +124,27 @@ def _resolve_attack(attacker, defender):
         defender.health.heal_or_harm(-1 * damage)
 
 
-def _get_opponent(actor_name):
+def _get_present_actor(actor_name):
     return G.current_room.characters.find(actor_name)
 
 
 @adventurelib.when("attack ACTOR")
 def attack(actor):
+    """Attacks another character in the same room."""
     actor_name = actor  # Variable names are constrained by adventurelib.
     # TODO: Consider turn order--some kind of agility stat?
     # TODO: Other actions should be considered "combat" actions. Implement some
     # notion of turns.
     # TODO: Other combat actions--spells, items, fleeing, etc.
     # TODO: Affinity/factions so monsters can choose whom to strike.
-    defender = _get_opponent(actor_name)
+    defender = _get_present_actor(actor_name)
     if defender is None:
         say.insayne(f"There is no {actor_name} here.")
         return
 
     if not defender.alive:
         say.insayne(
-            f"In a blind fury, you hack uselessly at the {actor_name}'s " "corpse."
+            f"In a blind fury, you hack uselessly at the {actor_name}'s corpse."
         )
         G.player.insanity.modify(10)
         return
@@ -144,3 +156,72 @@ def attack(actor):
         assert character.ai is not None
         defender = character.ai.choose_target(G.current_room)
         _resolve_attack(character, defender)
+
+
+@adventurelib.when("inspect ITEM")
+def inspect(item):
+    item_name = item  # Variable names are constrained by adventurelib.
+
+    room_item = G.current_room.items.find(item_name)
+    if room_item is not None:
+        say.insayne(room_item.description)
+        return
+
+    character = G.current_room.characters.find(item_name)
+    if character is not None:
+        if not character.alive:
+            # TODO: How to deal with definite articles when actor's name is a 
+            # proper name?
+            message = f"Searching the {character.name}'s corpse, you find "
+            if not character.inventory:
+                message += "only still flesh and the fug of early death."
+                say.insayne(message)
+                return
+            message += "the following items: "
+            say.insayne(message)
+            for item in character.inventory:
+                say.insayne(item.description, add_newline=False)
+        else:
+            # TODO: Collapse this with descriptive text in look().
+            say.insayne(f"There is a(n) {character.name} slobbering in the corner.")
+        return
+
+    say.insayne(f"There is no {item} here to inspect.")
+
+
+def _loot(looter, lootee, item):
+    lootee.inventory.remove(item)
+    looter.inventory.add(item)
+
+
+@adventurelib.when("loot ITEM from CORPSE")
+def loot(item, corpse):
+    item_name = item
+    corpse_name = corpse
+    corpse = _get_present_actor(corpse_name)
+
+    # TODO: This is duplicated from above. Maybe an "interact" function is
+    # called for?
+    if corpse is None:
+        say.insayne(f"There is no {actor_name} here.")
+
+    # TODO: Really need some abstraction around combat turns to avoid this
+    # duplication.
+    elif corpse.alive:
+        message = "You cannot loot the living!"
+        # TODO: What if none of the character present chooses to attack?
+        if any(character.alive for character in G.current_room.characters):
+            message += " All enemies attack as your clumsy pickpocketing attempt fails."
+        say.insayne(message)
+        for character in G.current_room.characters:
+            if not character.alive:
+                continue
+            assert character.ai is not None
+            defender = character.ai.choose_target(G.current_room)
+            _resolve_attack(character, defender)
+
+    else:
+        item = corpse.inventory.find(item_name)
+        if item is not None:
+            say.insayne(f"You liberate {item.name} from the corpse.")
+            _loot(G.player, corpse, item)
