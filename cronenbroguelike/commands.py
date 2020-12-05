@@ -2,6 +2,7 @@ import re
 
 import adventurelib
 
+from engine import ai
 from engine import dice
 from engine.globals import G
 from engine import say
@@ -101,8 +102,10 @@ def cheat(code):
         stat_str = stat.title()
 
 
-def _resolve_attack(attacker, defender):
+def _resolve_attack(attacker, attack):
     # TODO: Add equipment, different damage dice, etc.
+    # TODO: Respect attack.method.
+    defender = attack.target
     is_player = attacker is G.player
     if is_player:
         subj, obj = ["you", defender.name]
@@ -144,19 +147,44 @@ def attack(actor):
 
     if not defender.alive:
         say.insayne(
-            f"In a blind fury, you hack uselessly at the {actor_name}'s corpse."
+            f"In a blind fury, you hack uselessly at the {defender.name}'s corpse."
         )
         G.player.insanity.modify(10)
         return
 
-    _resolve_attack(G.player, defender)
+    # TODO: Move this to player AI. Use defender as a "hint."
+    _resolve_attack(G.player, ai.Attack(target=defender, method=None))
     for character in G.current_room.characters:
         if not character.alive:
             continue
         assert character.ai is not None
-        defender = character.ai.choose_target(G.current_room)
-        _resolve_attack(character, defender)
+        action = character.ai.choose_action(G.current_room)
+        if action.attack is not None:
+            _resolve_attack(character, action.attack)
 
+
+@adventurelib.when("talk ACTOR")
+def talk(actor):
+    # TODO: Collapse common functionality in attack.
+    actor_name = actor  # Variable names are constrained by adventurelib.
+    interlocutor = _get_present_actor(actor_name)
+    if interlocutor is None:
+        say.insayne(f"There is no {actor_name} here.")
+        return
+    
+    # TODO: Yeah, this is very parallel to attacking. Maybe there should be
+    # a more generic "choose action" function?
+    action = interlocutor.ai.choose_action(G.current_room)
+    if action.attack is not None:
+        attack = action.attack
+        assert attack.target is G.player
+        say.insayne(f"The {interlocutor.name} has no interest in talking and attacks!")
+        # TODO: _resolve_attack should accept the attack action as parameter.
+        _resolve_attack(interlocutor, attack)
+
+    elif action.talk is not None:
+        say.insayne(action.message)
+        
 
 @adventurelib.when("inspect ITEM")
 def inspect(item):
@@ -217,8 +245,9 @@ def loot(item, corpse):
             if not character.alive:
                 continue
             assert character.ai is not None
-            defender = character.ai.choose_target(G.current_room)
-            _resolve_attack(character, defender)
+            action = character.ai.choose_action(G.current_room)
+            if action.attack is not None:
+                _resolve_attack(character, action.attack)
 
     else:
         item = corpse.inventory.find(item_name)
