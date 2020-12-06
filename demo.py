@@ -51,20 +51,32 @@ def _start_game(_):
     G.player.upon_death(_start_game)
 
     # Creates a small dungeon.
-    G.current_room, room_2, room_3 = _create_rooms(3)
+    rooms = _create_rooms(4)
+    last_exit = None
+    last_room = None
     possible_exits = [
         directions.north,
         directions.south,
         directions.east,
         directions.west,
     ]
-    exit_1 = random.choice(possible_exits)
-    room_2.add_exit(exit_1, G.current_room)
-    room_2.add_exit(random.choice(list(set(possible_exits) - set([exit_1]))), room_3)
+    for i, room in enumerate(rooms):
+        #TODO: finish generalizing rooms here.
+        if i == 0:
+            G.current_room = room
+        if last_room is not None:
+            exits = [
+                    exit
+                    for exit in possible_exits
+                    if exit is not last_exit]
+            exit = random.choice(exits)
+            room.add_exit(exit, last_room)
+            last_exit = exit.opposite  # Tracks the exit that cannot be used for next room.
+        last_room = room
 
     # Places a monster in a random room.
     fish_man = monsters.fish_man()
-    random.choice([G.current_room, room_2, room_3]).add_character(fish_man)
+    random.choice(rooms).add_character(fish_man)
 
     # Starts it up.
     _get_random_start()

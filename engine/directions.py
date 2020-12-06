@@ -42,5 +42,7 @@ class Direction:
         return out, back
 
 
+# Make these into classes, not singletons--don't want two copies of the same
+# direction.
 north, south = Direction.make_twoway(["north"], ["south"])
 east, west = Direction.make_twoway(["east"], ["west"])

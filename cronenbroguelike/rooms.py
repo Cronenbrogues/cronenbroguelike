@@ -1,5 +1,7 @@
 import copy
+import random
 
+from engine import dice
 from engine.event import Event as _Event
 from engine.globals import G
 from engine.room import Room as _Room
@@ -27,7 +29,24 @@ iron_womb = _create_room(
 )
 
 
+class _AcidDropEvent(_Event):
+
+    def execute(self):
+        say.insayne('executing ...')
+        if dice.roll('1d100') > 90:
+            say.insayne("A drop of acid falls on your head.")
+            G.player.health.heal_or_harm(-1 * dice.roll('1d2'))
+
+
+acid_room = _create_room(
+        "You are in a large chamber. The ground and walls are like gristle. "
+        "A sphincter on the ceiling occasionally drips into a fetid pit.",
+        theme="behemoth")
+acid_room.add_event(_AcidDropEvent())
+
+
 class _IntestineRoomEvent(_Event):
+
     def execute(self):
         say.insayne(
             "You are in a dark tube. The walls and floor quiver at your touch, "
