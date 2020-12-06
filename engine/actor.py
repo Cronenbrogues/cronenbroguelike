@@ -166,6 +166,8 @@ class Actor:
         return self._abilities
 
     def add_ability(self, ability):
+        # TODO: "You" vs. name problem as always.
+        say.insayne(f"You gain the ability {ability.name}.")
         self._abilities[ability.name] = ability
 
     def has_read(self, book):

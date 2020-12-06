@@ -67,6 +67,10 @@ def stats():
             lines.append(f"{stat.name:10}: {stat.current_value}/{stat.value}")
         else:
             lines.append(f"{stat.name:10}: {stat.value}")
+    lines.append("".join("-" for _ in name_str))
+    lines.append("- abilities -")
+    for ability_name, ability in sorted(G.player.abilities.items()):
+        lines.append(f"{ability_name}: {ability.description}")
 
     for i, line in enumerate(lines):
         add_newline = i == 0

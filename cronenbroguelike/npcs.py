@@ -77,5 +77,5 @@ def mad_librarian():
         librarian.alive = False
 
     npc.upon_death(librarian_death_throes)
-    npc.inventory.add(book.Book('meditation tome'))
+    npc.inventory.add(book.MeditationBook('meditation tome'))
     return npc
