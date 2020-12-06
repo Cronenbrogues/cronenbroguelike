@@ -147,6 +147,8 @@ class Actor:
         self._ai = kwargs.pop("ai", None)
         self._death_throes = lambda this: None
         self._inventory = adventurelib.Bag()
+        self._read_books = set()
+        self._abilities = {}
 
         self.alive = True
         self.log_stats = False
@@ -158,6 +160,19 @@ class Actor:
     @property
     def inventory(self):
         return self._inventory
+
+    @property
+    def abilities(self):
+        return self._abilities
+
+    def add_ability(self, ability):
+        self._abilities[ability.name] = ability
+
+    def has_read(self, book):
+        return book.name in self._read_books
+
+    def set_has_read(self, book):
+        self._read_books.add(book.name)
 
     # TODO: This sucks; using __getattr__ or something might help. Maybe just
     # hard-code the stats that all actors have? Dynamically add properties?
@@ -184,9 +199,6 @@ class Actor:
         return [self._statistics[stat_name] for stat_name in stat_order]
 
     def die(self):
-        from engine import say
-
-        say.insayne(f"{self.name.title()} has died!")
         self._death_throes(self)
 
     def upon_death(self, callback):

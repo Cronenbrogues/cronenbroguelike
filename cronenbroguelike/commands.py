@@ -161,6 +161,8 @@ def attack(actor):
         action = character.ai.choose_action(G.current_room)
         if action.attack is not None:
             _resolve_attack(character, action.attack)
+        else:
+            say.insayne(f"{character.name} makes no hostile motion.")
 
 
 @adventurelib.when("talk ACTOR")
@@ -182,8 +184,11 @@ def talk(actor):
         # TODO: _resolve_attack should accept the attack action as parameter.
         _resolve_attack(interlocutor, attack)
 
-    elif action.talk is not None:
-        say.insayne(action.message)
+    elif action.speak is not None:
+        say.insayne(action.speak.message)
+
+    elif action.event is not None:
+        action.event.event.execute()
         
 
 @adventurelib.when("inspect ITEM")
@@ -217,9 +222,65 @@ def inspect(item):
     say.insayne(f"There is no {item} here to inspect.")
 
 
-def _loot(looter, lootee, item):
-    lootee.inventory.remove(item)
-    looter.inventory.add(item)
+def _find_in_room(item_name):
+    room_item = G.current_room.items.find(item_name)
+    if room_item is not None:
+        return G.current_room.items, room_item
+
+    for corpse in G.current_room.characters:
+        if corpse.alive:
+            continue
+        corpse_item = corpse.inventory.find(item_name)
+        if corpse_item is not None:
+            return corpse.inventory, corpse_item
+
+    return None, None
+
+
+def _find_available_item(item_name):
+    # TODO: Store item <-> inventory relationship as two-way?
+    inventory_item = G.player.inventory.find(item_name)
+    if inventory_item is not None:
+        return G.player.inventory, inventory_item
+    return _find_in_room(item_name)
+
+
+@adventurelib.when("read BOOK")
+def read(book):
+    book_name = book
+    _, book = _find_available_item(book_name)
+    if book is None:
+        say.insayne(f"There is no {book_name} here to read.")
+
+    else:
+        book.read(G.player)
+
+
+def _move_item(old_inventory, new_inventory, item):
+    old_inventory.remove(item)
+    new_inventory.add(item)
+
+
+@adventurelib.when("take ITEM")
+def take(item):
+    item_name = item
+    location, item = _find_in_room(item_name)
+    if location is None or item is None:
+        say.insayne(f"There is no {item_name} here to take.")
+    else:
+        say.insayne(f"You acquire the {item_name}.")
+        _move_item(location, G.player.inventory, item)
+
+
+@adventurelib.when("drop ITEM")
+def drop(item):
+    item_name = item
+    item = G.player.inventory.find(item_name)
+    if item is None:
+        say.insayne(f"You don't have a(n) {item_name} to drop.")
+    else:
+        say.insayne(f"Dropped {item_name}.")
+        _move_item(G.player.inventory, G.current_room.items, item)
 
 
 @adventurelib.when("loot ITEM from CORPSE")
@@ -253,4 +314,4 @@ def loot(item, corpse):
         item = corpse.inventory.find(item_name)
         if item is not None:
             say.insayne(f"You liberate {item.name} from the corpse.")
-            _loot(G.player, corpse, item)
+            _move_item(corpse.inventory, G.player.inventory, item)

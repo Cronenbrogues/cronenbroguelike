@@ -33,7 +33,6 @@ iron_womb = _create_room(
 class _AcidDropEvent(_Event):
 
     def execute(self):
-        say.insayne('executing ...')
         if dice.roll('1d100') > 90:
             say.insayne("A drop of acid falls on your head.")
             G.player.health.heal_or_harm(-1 * dice.roll('1d2'))

@@ -1,7 +1,10 @@
 from engine import actor
 from engine import ai
+from engine import event
 from engine import item
 from engine import say
+
+from cronenbroguelike import book
 
 
 # TODO: I don't like doing this functionally. Use classes instead.
@@ -36,3 +39,43 @@ def fish_man():
     monster.upon_death(fish_man_death_throes)
     monster.inventory.add(item.Item('ceremonial knife', 'knife', 'kris'))
     return monster
+
+
+def mad_librarian():
+    npc = actor.create_actor(
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        100,
+        "mad librarian",
+        "librarian",
+        # TODO: How to deal with intro text? "The librarian leans in ..."
+        ai=ai.Librarian()
+    )
+
+    class _LibrarianEvent(event.Event):
+        
+        def execute(self):
+            say.insayne(
+                    "We all seek stillness of one sort or another. "
+                    "You will find the way to stillness upon my body "
+                    "when I die.")
+            npc.die()
+            self._will_execute = False 
+
+    npc.ai.add_event(_LibrarianEvent())
+
+    def librarian_death_throes(librarian):
+        say.insayne(
+            "The librarian grins impossibly wide. A thin rivulet of blood "
+            "appears between his teeth. His eyes roll back and, with a giggle, "
+            "he falls backward onto the ground as though reclining on a divan."
+        )
+        librarian.alive = False
+
+    npc.upon_death(librarian_death_throes)
+    npc.inventory.add(book.Book('meditation tome'))
+    return npc

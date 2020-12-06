@@ -3,7 +3,7 @@ import random
 import adventurelib
 
 from cronenbroguelike import commands
-from cronenbroguelike import monsters
+from cronenbroguelike import npcs
 from cronenbroguelike import rooms
 from engine import actor
 from engine import ai
@@ -75,8 +75,9 @@ def _start_game(_):
         last_room = room
 
     # Places a monster in a random room.
-    fish_man = monsters.fish_man()
-    random.choice(rooms).add_character(fish_man)
+    occupied_room = random.choice(rooms)
+    occupied_room.add_character(npcs.fish_man())
+    occupied_room.add_character(npcs.mad_librarian())
 
     # Starts it up.
     _get_random_start()
