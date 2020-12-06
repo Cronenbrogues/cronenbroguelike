@@ -20,6 +20,7 @@ def _create_room(*args, **kwargs):
     return result
 
 
+# TODO: Devise a way to load rooms (and maybe events?) from a config file.
 cathedral = _create_room("You are in a cathedral.", theme="cathedral")
 
 
