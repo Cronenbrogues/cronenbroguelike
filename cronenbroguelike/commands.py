@@ -70,7 +70,8 @@ def stats():
     lines.append("".join("-" for _ in name_str))
     lines.append("- abilities -")
     for ability_name, ability in sorted(G.player.abilities.items()):
-        lines.append(f"{ability_name}: {ability.description}")
+        if ability_name:
+            lines.append(f"{ability_name}: {ability.DESCRIPTION}")
 
     for i, line in enumerate(lines):
         add_newline = i == 0
@@ -116,10 +117,10 @@ def _cheat_ability(ability_name):
     from cronenbroguelike import ability
     try:
         to_add = getattr(ability, ability_name)
-    except:
+    except AttributeError:
         raise _CheatException
     else:
-        G.player.add_ability(to_add)
+        G.player.add_ability(to_add())
 
 
 @adventurelib.when("cheat CODE")
@@ -138,7 +139,7 @@ def cheat(code):
         try:
             function(*match.groups())
             break
-        except CheatException:
+        except _CheatException:
             pass
 
     else:
@@ -175,6 +176,16 @@ def _resolve_attack(attacker, attack):
 
 def _get_present_actor(actor_name):
     return G.current_room.characters.find(actor_name)
+
+
+@adventurelib.when("ability ABILITY")
+def ability(ability):
+    ability_name = ability
+    the_ability = G.player.abilities.get(ability_name)
+    if the_ability is None:
+        say.insayne("You know no such ability.")
+    else:
+        the_ability.activate()
 
 
 @adventurelib.when("attack ACTOR")

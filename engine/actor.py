@@ -167,8 +167,10 @@ class Actor:
 
     def add_ability(self, ability):
         # TODO: "You" vs. name problem as always.
-        say.insayne(f"You gain the ability {ability.name}.")
-        self._abilities[ability.name] = ability
+        say.insayne(f"You gain the ability {ability.NAME}.")
+        # TODO: Bidirectional reference problem as always.
+        ability.owner = self
+        self._abilities[ability.NAME] = ability
 
     def has_read(self, book):
         return book.name in self._read_books

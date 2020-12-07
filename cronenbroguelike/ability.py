@@ -1,20 +1,45 @@
-class Ability:
+import sys as _sys
 
-    def __init__(self, name, description):
-        self._description = description
-        self._name = name
+
+_REGISTRY = {}
+
+
+class _Ability:
+
+    NAME = ""
+    DESCRIPTION = ""
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+
+        # Disallows nameless abilities.
+        # TODO: There must be a better mechanism for all this. Maybe just name
+        # the abilities in minuscule?
+        if cls.NAME:
+            _REGISTRY[cls.NAME] = cls
+
+    def __init__(self):
+        self.owner = None
     
     def activate(self):
-        pass
-
-    @property
-    def description(self):
-        return self._description
-
-    @property
-    def name(self):
-        return self._name
+        return NotImplemented
 
 
-meditation = Ability(
-        "meditation", "Soothes the damaged mind; liberates the trapped soul.")
+class Meditation(_Ability):
+
+    NAME = "meditation"
+    DESCRIPTION = "Soothes the damaged mind; liberates the trapped soul."
+
+    def activate(self):
+        # TODO: Add global invocation counter.
+        # TODO: Make events global and event polling constant so that this
+        # ability can win the game.
+        self.owner.insanity.modify(-20)
+
+
+# Makes all registered abilities importable by name.
+for _key, _ability_class in _REGISTRY.items():
+    setattr(_sys.modules[__name__], _key, _ability_class)
+
+
+__all__ = list(_REGISTRY.keys())
