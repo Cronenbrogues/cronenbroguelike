@@ -1,17 +1,4 @@
 import logging
-import random
-
-import adventurelib
-
-from cronenbroguelike import commands
-from cronenbroguelike import floor
-from cronenbroguelike import npcs
-from cronenbroguelike import rooms
-from engine import actor
-from engine import ai
-from engine import directions
-from engine.globals import G
-from engine import say
 
 
 def _load_config():
@@ -27,6 +14,21 @@ def _load_config():
 
 
 _load_config()
+
+
+import random
+
+import adventurelib
+
+from cronenbroguelike import commands
+from cronenbroguelike import floor
+from cronenbroguelike import npcs
+from cronenbroguelike import rooms
+from engine import actor
+from engine import ai
+from engine import directions
+from engine.globals import G
+from engine import say
 
 
 def _create_rooms(number_of_rooms):
