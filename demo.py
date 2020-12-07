@@ -14,7 +14,19 @@ from engine.globals import G
 from engine import say
 
 
-logging.basicConfig(level=logging.DEBUG)
+def _load_config():
+    import json
+    try:
+        with open('config.json', 'r') as inp:
+            config = json.load(inp)
+    except FileNotFoundError:
+        pass
+    else:
+        log_level = config['log_level'].upper()
+        logging.basicConfig(level=getattr(logging, log_level))
+
+
+_load_config()
 
 
 def _create_rooms(number_of_rooms):
