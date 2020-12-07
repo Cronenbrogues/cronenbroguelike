@@ -88,22 +88,64 @@ def inventory():
         say.insayne(item.description, add_newline=False)
 
 
-@adventurelib.when("cheat CODE")
-def cheat(code):
-    # TODO: Make healing more general.
-    m = re.search(r"([a-zA-Z]+)\s+(\-?\d+)", code)
-    if m is None:
-        return
+class _CheatException(Exception):
+    pass
 
-    stat, delta = m.groups()
+
+_STAT_PATTERN = re.compile(r"(\w+)\s+(\-?\d+)")
+
+
+def _cheat_stat(stat, delta):
     stat = stat.lower()
     delta = int(delta)
     if stat == "heal":
         G.player.health.heal_or_harm(delta)
-        stat_str = "health"
     else:
-        getattr(G.player, stat).modify(delta)
-        stat_str = stat.title()
+        try:
+            the_stat = getattr(G.player, stat)
+        except:
+            raise _CheatException
+        else:
+            the_stat.modify(delta)
+
+
+_ABILITY_PATTERN = re.compile(r"add ability (\w+)")
+
+
+def _cheat_ability(ability_name):
+    from cronenbroguelike import ability
+    try:
+        to_add = getattr(ability, ability_name)
+    except:
+        raise _CheatException
+    else:
+        G.player.add_ability(to_add)
+
+
+@adventurelib.when("cheat CODE")
+def cheat(code):
+    # TODO: Make healing more general.
+    matches = []
+    match = _STAT_PATTERN.search(code)
+    if match is not None:
+        matches.append((_cheat_stat, match))
+
+    match = _ABILITY_PATTERN.search(code)
+    if match is not None:
+        matches.append((_cheat_ability, match))
+
+    for function, match in matches:
+        try:
+            function(*match.groups())
+            break
+        except CheatException:
+            pass
+
+    else:
+        say.insayne(
+                "You attempt to pry open cosmic mysteries but fail. Your "
+                "pitiful mind reels with the effort.")
+        G.player.insanity.modify(15)
 
 
 def _resolve_attack(attacker, attack):
