@@ -34,9 +34,12 @@ class _Statistic:
         new_value = self.value
         delta = new_value - old_value
         if self.owner.log_stats:
+            if delta:
+                message = f"{'in' if delta >= 0 else 'de'}creased by {abs(delta)}"
+            else:
+                message = "does not change"
             say.sayne(
-                f"{self._NAME.title()} "
-                f"{'in' if delta >= 0 else 'de'}creased by {abs(delta)}."
+                f"{self._NAME.title()} {message}."
             )
 
     @property
