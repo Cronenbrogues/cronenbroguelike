@@ -3,6 +3,7 @@ import random
 import adventurelib
 
 from cronenbroguelike import commands
+from cronenbroguelike import floor
 from cronenbroguelike import npcs
 from cronenbroguelike import rooms
 from engine import actor
@@ -51,33 +52,16 @@ def _start_game(_):
     G.player.upon_death(_start_game)
 
     # Creates a small dungeon.
-    rooms = _create_rooms(4)
-    last_exit = None
-    last_room = None
-    possible_exits = [
-        directions.north,
-        directions.south,
-        directions.east,
-        directions.west,
-    ]
-    for i, room in enumerate(rooms):
-        #TODO: finish generalizing rooms here.
-        if i == 0:
-            G.current_room = room
-        if last_room is not None:
-            exits = [
-                    exit
-                    for exit in possible_exits
-                    if exit is not last_exit]
-            exit = random.choice(exits)
-            room.add_exit(exit, last_room)
-            last_exit = exit.opposite  # Tracks the exit that cannot be used for next room.
-        last_room = room
+    level = floor.Floor.generate("cathedral", number_rooms=4)
 
     # Places a monster in a random room.
-    occupied_room = random.choice(rooms)
-    occupied_room.add_character(npcs.fish_man())
-    occupied_room.add_character(npcs.mad_librarian())
+    level.random_room().add_character(npcs.fish_man())
+
+    # Places an NPC in a random room.
+    level.random_room().add_character(npcs.mad_librarian())
+
+    # Places the player.
+    G.current_room = level.random_room()
 
     # Starts it up.
     _get_random_start()

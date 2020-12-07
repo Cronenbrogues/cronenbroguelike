@@ -1,7 +1,3 @@
-"""
-
-"""
-
 import collections
 
 
@@ -46,3 +42,6 @@ class Direction:
 # direction.
 north, south = Direction.make_twoway(["north"], ["south"])
 east, west = Direction.make_twoway(["east"], ["west"])
+purple, yellow = Direction.make_twoway(
+        ["through a murky tunnel", "tunnel", "through the tunnel", "through tunnel"],
+        ["by climbing a yawning sphincter", "sphincter", "through the sphincter"])

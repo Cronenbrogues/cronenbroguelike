@@ -5,8 +5,11 @@ import collections
 # TODO: Just fork adventurelib; I need to hack it up so much to get it to work
 # the way I want.
 class Room(adventurelib.Room):
+
+    DEFAULT_THEME = "neutral"
+
     def __init__(self, *args, **kwargs):
-        theme = kwargs.pop("theme", "neutral")
+        theme = kwargs.pop("theme", self.DEFAULT_THEME)
         super().__init__(*args, **kwargs)
 
         # TODO: Directions need a "canonical" description; otherwise, listing
