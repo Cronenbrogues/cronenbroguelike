@@ -27,6 +27,10 @@ class _Statistic:
         # _MIN and _MAX is overkill.
         old_value = self.value
         self._value += delta
+
+        # This line singlehandedly eliminates the nonsense but in a tortuous
+        # fashion.
+        self._value = self.value
         new_value = self.value
         delta = new_value - old_value
         if self.owner.log_stats:
