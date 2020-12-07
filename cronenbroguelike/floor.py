@@ -94,9 +94,7 @@ class Floor:
 
         while all_rooms:
             next_room = all_rooms.pop()
-            print(f'next_room is {next_room}')
             if last_cohort:
-                print("Adding a weird transition!")
                 int_to_room[next_room].add_exit(
                         directions.purple, int_to_room[traversed_rooms.pop()])
                 last_cohort.clear()
@@ -104,10 +102,8 @@ class Floor:
             last_cohort.add(next_room)
             traversal_queue = collections.deque()
             traversal_queue.append(next_room)
-            print('starting traversal')
             while traversal_queue:
                 next_room = traversal_queue.popleft()
-                print(f'next_room is {next_room}')
                 actual_room = int_to_room[next_room]
                 
                 for exit in actual_room.exits:
