@@ -3,8 +3,13 @@ import collections
 
 class Direction:
     def __init__(self, descriptions, opposite=None):
+        self._display_description = descriptions[0]
         self._descriptions = descriptions
         self._opposite = opposite
+
+    @property
+    def display_description(self):
+        return self._display_description
 
     @property
     def descriptions(self):
@@ -16,10 +21,10 @@ class Direction:
 
     # TODO: This is unnecessary nonsense.
     def _hash_criteria(self):
-        return (tuple(self._descriptions), self._opposite)
+        return ((self._display_description,) + tuple(self._descriptions), self._opposite)
 
     def __hash__(self):
-        return hash(tuple(self._descriptions))
+        return hash((self._display_description,) + tuple(self._descriptions))
 
     def __eq__(self, other):
         if not isinstance(other, type(self)):

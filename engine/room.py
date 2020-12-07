@@ -12,8 +12,7 @@ class Room(adventurelib.Room):
         theme = kwargs.pop("theme", self.DEFAULT_THEME)
         super().__init__(*args, **kwargs)
 
-        # TODO: Directions need a "canonical" description; otherwise, listing
-        # exits becomes confusing due to redundant descriptions.
+        self._display_exits = {}
         self._exits = {}
 
         # TODO: adventurelib.Bag should contain an ancillary set of aliases
@@ -38,16 +37,21 @@ class Room(adventurelib.Room):
         return self._items
 
     @classmethod
-    def _add_exit(cls, source, destination, descriptions):
+    def _add_exit(cls, source, destination, direction):
         exits = source._exits
-        for description in descriptions:
+        for description in direction.descriptions:
             assert description not in exits
-            source._exits[description] = destination
+            source._exits[description] = (destination, direction)
+        source._display_exits[direction.display_description] = (destination, direction)
 
     def add_exit(self, direction, destination):
-        self._add_exit(self, destination, direction.descriptions)
+        self._add_exit(self, destination, direction)
         if direction.opposite is not None:
-            self._add_exit(destination, self, direction.opposite.descriptions)
+            self._add_exit(destination, self, direction.opposite)
+
+    @property
+    def display_exits(self):
+        return self._display_exits.keys()
 
     @property
     def exits(self):

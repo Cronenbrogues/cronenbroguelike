@@ -26,11 +26,11 @@ def go(direction):
     # TODO: What about text associated with the movement other than just "you
     # go here"?
     direction = direction.lower()
-    next_room = G.current_room.exit(direction)
+    next_room, the_direction = G.current_room.exit(direction)
     if next_room is None:
         say.insayne(f"It is not possible to proceed {direction}.")
     else:
-        G.enqueue_text(f"You proceed {direction}.")
+        G.enqueue_text(f"You proceed {the_direction.display_description}.")
         G.current_room = next_room
         enter_room(G.current_room)
 
@@ -49,7 +49,7 @@ def look():
             G.enqueue_text(f"There is a(n) {character.name} slobbering in the corner.")
         else:
             G.enqueue_text(f"The corpse of a(n) {character.name} molders here.")
-    G.enqueue_text(f'Exits are {", ".join(G.current_room.exits)}.')
+    G.enqueue_text(f'Exits are {", ".join(G.current_room.display_exits)}.')
 
     for i, text in enumerate(G.generate_text()):
         say.insayne(text)

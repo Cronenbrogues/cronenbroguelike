@@ -1,3 +1,4 @@
+import logging
 import random
 
 import adventurelib
@@ -11,6 +12,9 @@ from engine import ai
 from engine import directions
 from engine.globals import G
 from engine import say
+
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 def _create_rooms(number_of_rooms):

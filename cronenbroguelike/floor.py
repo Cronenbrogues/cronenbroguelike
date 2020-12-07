@@ -1,4 +1,5 @@
 import collections
+import logging
 import random
 
 from cronenbroguelike import rooms
@@ -82,21 +83,15 @@ class Floor:
         # non-Euclidean entrance to address that.
         # TODO: pop() isn't really random!! Does that matter?
         # TODO: Sigh, why doesn't room hashing work?
-        room_to_int = {}
-        int_to_room = []
-        for room in room_dict.values():
-            room_to_int[room] = len(room_to_int)
-            int_to_room.append(room)
-
-        all_rooms = set(room_to_int.values())
+        all_rooms = set(room_dict.values())
         traversed_rooms = set()
         last_cohort = set()
 
         while all_rooms:
             next_room = all_rooms.pop()
             if last_cohort:
-                int_to_room[next_room].add_exit(
-                        directions.purple, int_to_room[traversed_rooms.pop()])
+                logging.debug('adding a weird transition')
+                next_room.add_exit(directions.purple, traversed_rooms.pop())
                 last_cohort.clear()
             traversed_rooms.add(next_room)
             last_cohort.add(next_room)
@@ -104,10 +99,11 @@ class Floor:
             traversal_queue.append(next_room)
             while traversal_queue:
                 next_room = traversal_queue.popleft()
-                actual_room = int_to_room[next_room]
+                actual_room = next_room
                 
                 for exit in actual_room.exits:
-                    destination_number = room_to_int[actual_room.exit(exit)]
+                    destination, _ = actual_room.exit(exit)
+                    destination_number = destination
                     if destination_number in all_rooms:
                         all_rooms.remove(destination_number)
                         traversed_rooms.add(destination_number)
