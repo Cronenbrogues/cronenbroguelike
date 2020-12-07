@@ -60,9 +60,12 @@ def mad_librarian():
         
         def execute(self):
             say.insayne(
-                    "We all seek stillness of one sort or another. "
-                    "You will find the way to stillness upon my body "
-                    "when I die.")
+                    "Tittering and in a halted voice, the librarian utters these words:")
+            say.insayne("\"The flesh is active, yet it's only soothed")
+            say.insayne("when still. Through constant paradox, flesh moves.", add_newline=False)
+            say.insayne("I hold stillness's secret! It is mine!", add_newline=False)
+            say.insayne("Find it upon by body when I die.\"", add_newline=False)
+            say.insayne('"Now watch as the paradox is resolved."', add_newline=False)
             npc.die()
             self._will_execute = False 
 
