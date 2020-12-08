@@ -1,2 +1,2 @@
-git+https://github.com/flosincapite/adventurelib@noenforce-signature-2
+adventurelib
 git+https://github.com/flosincapite/zalgo
