@@ -1,3 +1,6 @@
+import logging
+
+
 class Event:
     def __init__(self):
         self.room = None
@@ -9,3 +12,7 @@ class Event:
 
     def execute(self):
         return NotImplemented
+
+    def kill(self):
+        logging.debug("Event killed.")
+        self._will_execute = False

@@ -76,6 +76,9 @@ class Room(adventurelib.Room):
     def on_enter(self):
         pass
 
+    def on_exit(self):
+        pass
+
     def add_event(self, event):
         # TODO: This is probably bad.
         event.room = self

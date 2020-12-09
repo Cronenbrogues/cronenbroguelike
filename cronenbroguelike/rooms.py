@@ -54,18 +54,35 @@ class _AcidDropEvent(_Event):
             G.player.health.heal_or_harm(-1 * dice.roll('1d2'))
 
 
-acid_room = _Room.create(
+class _AcidRoom(_Room):
+
+    def on_enter(self):
+        super().on_enter()
+        self._event = _AcidDropEvent()
+        G.add_event(self._event, "post")
+
+    def on_exit(self):
+        super().on_exit()
+        self._event.kill()
+
+
+acid_room = _AcidRoom.create(
         "You are in a large chamber. The ground and walls are like gristle. "
         "A sphincter on the ceiling occasionally drips into a fetid pit.",
         theme="behemoth")
-acid_room.add_event(_AcidDropEvent())
 
 
 # TODO: Attach events to the global queue, rather than to individual rooms.
 # TODO: Poll for events after each command.
+# TODO: How to tie events to a specific room, though?
 class _IntestineRoomEvent(_Event):
 
     def execute(self):
+        say.insayne(
+            "You are in a dark tube. The walls and floor quiver at your touch, "
+            "and you realize this is the intestine of a vast behemoth."
+        )
+        G.player.insanity.modify(10)
         G.current_room.description = (
             "The walls and floor of the intestine room shudder at your step."
         )
@@ -81,11 +98,6 @@ class _IntestineRoom(_Room):
     def on_enter(self):
         super().on_enter()
         if not self._entered:
-            say.insayne(
-                "You are in a dark tube. The walls and floor quiver at your touch, "
-                "and you realize this is the intestine of a vast behemoth."
-            )
-            G.player.insanity.modify(10)
             G.add_event(_IntestineRoomEvent(), "post")
             self._entered = True
 

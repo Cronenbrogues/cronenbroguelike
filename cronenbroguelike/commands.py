@@ -2,6 +2,7 @@ import re
 
 import adventurelib
 
+from cronenbroguelike import util
 from engine import ai
 from engine import dice
 from engine.globals import G
@@ -17,22 +18,19 @@ def enter_room(room):
 
 def _look():
     if G.current_room.description:
-        G.enqueue_text(G.current_room.description)
+        util.enqueue_text(G.current_room.description)
 
     # TODO: Bespoke descriptions for all items and characters.
     # TODO: Fix a(n) problems throughout code base.
     for item in G.current_room.items:
-        G.enqueue_text(f"There is a(n) {item.name} lying on the ground.")
+        util.enqueue_text(f"There is a(n) {item.name} lying on the ground.")
     for character in G.current_room.characters:
         # TODO: Move these descriptions to the actor.
         if character.alive:
-            G.enqueue_text(f"There is a(n) {character.name} slobbering in the corner.")
+            util.enqueue_text(f"There is a(n) {character.name} slobbering in the corner.")
         else:
-            G.enqueue_text(f"The corpse of a(n) {character.name} molders here.")
-    G.enqueue_text(f'Exits are {", ".join(G.current_room.display_exits)}.')
-
-    for i, text in enumerate(G.generate_text()):
-        say.insayne(text)
+            util.enqueue_text(f"The corpse of a(n) {character.name} molders here.")
+    util.enqueue_text(f'Exits are {", ".join(G.current_room.display_exits)}.')
 
 
 @when.when("exit DIRECTION")
@@ -49,12 +47,13 @@ def go(direction):
         say.insayne(f"It is not possible to proceed {direction}.")
     else:
         # TODO: Replace enqueue_text with text events.
-        G.enqueue_text(f"You proceed {the_direction.display_description}.")
+        util.enqueue_text(f"You proceed {the_direction.display_description}.")
+        G.current_room.on_exit()
         G.current_room = next_room
         enter_room(G.current_room)
 
 
-@adventurelib.when("look")
+@when.when("look")
 def look():
     _look()
 

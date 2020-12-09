@@ -16,6 +16,8 @@ class _GameState:
         if event.will_execute:
             logging.debug('Added event to global queue.')
             queue.append(event)
+        else:
+            logging.debug(f'Removing event {event}.')
 
     def _queue_for(self, where):
         # TODO: Use an enum.
