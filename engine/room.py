@@ -99,7 +99,7 @@ class Room(adventurelib.Room):
         print(f"I was called with {args} and {kwargs}.")
 
     def exit(self, description):
-        return self._exits.get(description)
+        return self._exits.get(description, (None, None))
 
     def add_direction(self):
         return NotImplemented

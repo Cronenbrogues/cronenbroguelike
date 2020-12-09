@@ -44,7 +44,7 @@ def go(direction):
     direction = direction.lower()
     next_room, the_direction = G.current_room.exit(direction)
     if next_room is None:
-        say.insayne(f"It is not possible to proceed {direction}.")
+        say.insayne(f"It is not possible to proceed {the_direction}.")
     else:
         # TODO: Replace enqueue_text with text events.
         util.enqueue_text(f"You proceed {the_direction.display_description}.")
