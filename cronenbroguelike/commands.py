@@ -6,17 +6,18 @@ from engine import ai
 from engine import dice
 from engine.globals import G
 from engine import say
+from engine import when
 
 
 def enter_room(room):
     """Convenience function called at game start and when entering a room."""
-    for event in room.events():
-        event.execute()
+    room.on_enter()
     _look()
 
 
 def _look():
-    G.enqueue_text(G.current_room.description)
+    if G.current_room.description:
+        G.enqueue_text(G.current_room.description)
 
     # TODO: Bespoke descriptions for all items and characters.
     # TODO: Fix a(n) problems throughout code base.
@@ -34,13 +35,13 @@ def _look():
         say.insayne(text)
 
 
-@adventurelib.when("exit DIRECTION")
-@adventurelib.when("go DIRECTION")
-@adventurelib.when("proceed DIRECTION")
-@adventurelib.when("north", direction="north")
-@adventurelib.when("south", direction="south")
-@adventurelib.when("east", direction="east")
-@adventurelib.when("west", direction="west")
+@when.when("exit DIRECTION")
+@when.when("go DIRECTION")
+@when.when("proceed DIRECTION")
+@when.when("north", direction="north")
+@when.when("south", direction="south")
+@when.when("east", direction="east")
+@when.when("west", direction="west")
 def go(direction):
     direction = direction.lower()
     next_room, the_direction = G.current_room.exit(direction)

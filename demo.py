@@ -29,6 +29,7 @@ from engine import ai
 from engine import directions
 from engine.globals import G
 from engine import say
+from engine import when
 
 
 def _create_rooms(number_of_rooms):
@@ -55,6 +56,11 @@ def _get_random_start():
 
 def _start_game(_):
 
+
+    @when.when("startgame", context="start_game", poll_after=True)
+    def startgame():
+        commands.enter_room(G.current_room)
+
     # Creates the player character and ensures game will restart upon death.
     G.player = actor.create_actor(
         health=10,
@@ -67,10 +73,10 @@ def _start_game(_):
         name="player",
     )
     G.player.log_stats = True
-    G.player.upon_death(_start_game)
+    G.player.upon_death(startgame)
 
     # Creates a small dungeon.
-    level = floor.Floor.generate("cathedral", number_rooms=20)
+    level = floor.Floor.generate("behemoth", number_rooms=4)
 
     # Places a monster in a random room.
     level.random_room().add_character(npcs.fish_man())
@@ -83,7 +89,9 @@ def _start_game(_):
 
     # Starts it up.
     _get_random_start()
-    commands.enter_room(G.current_room)
+    adventurelib.set_context("start_game")
+    startgame()
+    adventurelib.set_context(None)
 
 
 _start_game(None)

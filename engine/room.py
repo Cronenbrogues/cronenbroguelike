@@ -1,5 +1,8 @@
-import adventurelib
 import collections
+
+import adventurelib
+
+from engine import say
 
 
 # TODO: Just fork adventurelib; I need to hack it up so much to get it to work
@@ -7,6 +10,8 @@ import collections
 class Room(adventurelib.Room):
 
     DEFAULT_THEME = "neutral"
+    THEME_TO_ROOMS = {}
+    ALL_ROOMS = []
 
     def __init__(self, *args, **kwargs):
         theme = kwargs.pop("theme", self.DEFAULT_THEME)
@@ -37,6 +42,13 @@ class Room(adventurelib.Room):
         return self._items
 
     @classmethod
+    def create(cls, *args, **kwargs):
+        result = cls(*args, **kwargs)
+        cls.THEME_TO_ROOMS.setdefault(result.theme, []).append(result)
+        cls.ALL_ROOMS.append(result)
+        return result
+
+    @classmethod
     def _add_exit(cls, source, destination, direction):
         exits = source._exits
         for description in direction.descriptions:
@@ -60,6 +72,9 @@ class Room(adventurelib.Room):
     def _maybe_append_event(self, event):
         if event.will_execute:
             self._events.append(event)
+
+    def on_enter(self):
+        pass
 
     def add_event(self, event):
         # TODO: This is probably bad.

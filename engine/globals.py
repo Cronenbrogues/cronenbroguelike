@@ -1,4 +1,5 @@
 import collections
+import logging
 
 
 class _GameState:
@@ -13,6 +14,7 @@ class _GameState:
     @classmethod
     def _maybe_append_event(cls, event, queue):
         if event.will_execute:
+            logging.debug('Added event to global queue.')
             queue.append(event)
 
     def _queue_for(self, where):
