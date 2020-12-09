@@ -12,31 +12,10 @@ def enter_room(room):
     """Convenience function called at game start and when entering a room."""
     for event in room.events():
         event.execute()
-    look()
+    _look()
 
 
-@adventurelib.when("exit DIRECTION")
-@adventurelib.when("go DIRECTION")
-@adventurelib.when("proceed DIRECTION")
-@adventurelib.when("north", direction="north")
-@adventurelib.when("south", direction="south")
-@adventurelib.when("east", direction="east")
-@adventurelib.when("west", direction="west")
-def go(direction):
-    # TODO: What about text associated with the movement other than just "you
-    # go here"?
-    direction = direction.lower()
-    next_room, the_direction = G.current_room.exit(direction)
-    if next_room is None:
-        say.insayne(f"It is not possible to proceed {direction}.")
-    else:
-        G.enqueue_text(f"You proceed {the_direction.display_description}.")
-        G.current_room = next_room
-        enter_room(G.current_room)
-
-
-@adventurelib.when("look")
-def look():
+def _look():
     G.enqueue_text(G.current_room.description)
 
     # TODO: Bespoke descriptions for all items and characters.
@@ -53,6 +32,30 @@ def look():
 
     for i, text in enumerate(G.generate_text()):
         say.insayne(text)
+
+
+@adventurelib.when("exit DIRECTION")
+@adventurelib.when("go DIRECTION")
+@adventurelib.when("proceed DIRECTION")
+@adventurelib.when("north", direction="north")
+@adventurelib.when("south", direction="south")
+@adventurelib.when("east", direction="east")
+@adventurelib.when("west", direction="west")
+def go(direction):
+    direction = direction.lower()
+    next_room, the_direction = G.current_room.exit(direction)
+    if next_room is None:
+        say.insayne(f"It is not possible to proceed {direction}.")
+    else:
+        # TODO: Replace enqueue_text with text events.
+        G.enqueue_text(f"You proceed {the_direction.display_description}.")
+        G.current_room = next_room
+        enter_room(G.current_room)
+
+
+@adventurelib.when("look")
+def look():
+    _look()
 
 
 @adventurelib.when("stats")
