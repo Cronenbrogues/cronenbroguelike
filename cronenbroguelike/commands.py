@@ -191,6 +191,13 @@ def ability(ability):
         the_ability.activate()
 
 
+@when.when("sit there and starve")
+def suicide():
+    # TODO: Set G.cause_of_death in heal_or_harm() and/or die().
+    say.insayne("Realizing the futility of continuing, you resign yourself to death. You lie on the floor and await oblivion.")
+    G.player.health.heal_or_harm(-G.player.health.value, cause="ennui")
+
+
 @adventurelib.when("attack ACTOR")
 def attack(actor):
     """Attacks another character in the same room."""

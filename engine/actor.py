@@ -1,5 +1,6 @@
 import adventurelib
 
+from engine.globals import G
 from engine import item
 from engine import say
 
@@ -60,12 +61,16 @@ class _VariableStatistic(_Statistic):
     def __init__(self, value):
         self._value = value
         self._current_value = value
+        self._last_cause = None
 
     @property
     def current_value(self):
         return self._current_value
 
-    def heal_or_harm(self, delta):
+    def heal_or_harm(self, delta, cause=None):
+        self._last_cause = None
+        # TODO: This logic is crazy. Just do away with all the min/max value
+        # stuff.
         surface_value = self._value
         if self._MIN_VALUE is not None:
             surface_value = max(self._MIN_VALUE, surface_value)
@@ -86,10 +91,10 @@ class _VariableStatistic(_Statistic):
 class Health(_VariableStatistic):
     _NAME = "health"
 
-    def heal_or_harm(self, delta):
-        super().heal_or_harm(delta)
+    def heal_or_harm(self, delta, cause=None):
+        super().heal_or_harm(delta, cause)
         if self._current_value <= 0:
-            self._owner.die()
+            self._owner.die(cause=cause)
 
 
 class Psyche(_VariableStatistic):
@@ -209,7 +214,10 @@ class Actor:
         )
         return [self._statistics[stat_name] for stat_name in stat_order]
 
-    def die(self):
+    def die(self, cause=None):
+        if self is G.player:
+            G.cause_of_death = cause
+            say.insayne("You die.")
         self._death_throes(self)
 
     def upon_death(self, callback):

@@ -45,7 +45,7 @@ def _get_random_start():
         ]
     )
     for text in [
-        f"The memory of {death_text} fades away.",
+        f"You recall your death by {death_text}. The memory fades away.",
         "You know only that you have been here for interminable years, "
         "that you have died innumerable times, and that someone once told "
         "you there was a way out. You were told this an eon ago, or maybe "
