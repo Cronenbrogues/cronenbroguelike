@@ -38,14 +38,14 @@ def _create_rooms(number_of_rooms):
 
 def _get_random_start():
     # TODO: Condition this on how the last death actually occurred.
-    cause_of_death = random.choice(
+    death_text = G.cause_of_death or random.choice(
         [
             "being impaled",
             "slowly suffocating as a glabrous tentacle horror looks on",
         ]
     )
     for text in [
-        f"The memory of {cause_of_death} fades away.",
+        f"The memory of {death_text} fades away.",
         "You know only that you have been here for interminable years, "
         "that you have died innumerable times, and that someone once told "
         "you there was a way out. You were told this an eon ago, or maybe "

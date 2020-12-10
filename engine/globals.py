@@ -7,6 +7,7 @@ class _GameState:
     def __init__(self):
         self.current_room = None
         self.player = None
+        self.cause_of_death = None
         self._pre_events = collections.deque()
         self._post_events = collections.deque()
         self._text_queue = collections.deque()
