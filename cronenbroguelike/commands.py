@@ -103,7 +103,7 @@ def _cheat_stat(stat, delta):
     stat = stat.lower()
     delta = int(delta)
     if stat == "heal":
-        G.player.health.heal_or_harm(delta)
+        G.player.health.heal_or_harm(delta, cause="CHEATING")
     else:
         try:
             the_stat = getattr(G.player, stat)
