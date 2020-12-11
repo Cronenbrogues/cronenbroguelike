@@ -38,7 +38,7 @@ class MeditationBook(_Book):
         return cls("meditation tome", "meditation book", "tome", "book")
 
 
-class Butt(_Consumable):
+class CigaretteButt(_Consumable):
 
     def consume(self, consumer):
         # TODO: Customize text based on whether consumer is player.
@@ -47,7 +47,7 @@ class Butt(_Consumable):
 
     @classmethod
     def create(cls):
-        return cls("cigarette butt")
+        return cls("cigarette butt", "smoke")
 
 
 class CigaretteStub(_Consumable):

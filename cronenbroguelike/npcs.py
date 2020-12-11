@@ -1,6 +1,9 @@
+import random
+
 from engine import actor
 from engine import ai
 from engine import event
+from engine.globals import G as _G
 from engine import say
 
 from cronenbroguelike import items
@@ -33,7 +36,6 @@ def fish_man():
             "commingling with piscine slobber. Half-formed gills flutter "
             "helplessly, urgently, then fall slack."
         )
-        fish_man.alive = False
 
     monster.upon_death(fish_man_death_throes)
     monster.inventory.add(items.CeremonialKnife.create())
@@ -52,7 +54,7 @@ def mad_librarian():
         "mad librarian",
         "librarian",
         # TODO: How to deal with intro text? "The librarian leans in ..."
-        ai=ai.Librarian(),
+        ai=ai.Chill(),
     )
 
     class _LibrarianEvent(event.Event):
@@ -66,7 +68,9 @@ def mad_librarian():
             )
             say.insayne("I hold stillness's secret! It is mine!", add_newline=False)
             say.insayne('Find it upon by body when I die."', add_newline=False)
-            say.insayne('"Now watch as the paradox is resolved."', add_newline=False)
+            say.insayne(
+                    '"Now watch," cries the rag-clad wretch, "as the paradox '
+                    'is resolved."')
             npc.die()
             self._will_execute = False
 
@@ -78,8 +82,58 @@ def mad_librarian():
             "appears between his teeth. His eyes roll back and, with a giggle, "
             "he falls backward onto the ground as though reclining on a divan."
         )
-        librarian.alive = False
 
     npc.upon_death(librarian_death_throes)
     npc.inventory.add(items.MeditationBook.create())
+    return npc
+
+
+def smokes_man():
+    npc = actor.create_actor(
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        100,
+        "smoker",
+        "dude",
+        "chill dude",
+        "guy",
+        ai=ai.Chill(),
+    )
+
+    class _SmokesManEvent(event.Event):
+
+        def execute(self):
+            # TODO: Should not be G.player--what if somebody else wants a smoke?
+            if _G.player.inventory.find("smoke"):
+                say.insayne(
+                        'The smoker clucks his tongue. "You\'ve already got a '
+                        'smoke; why are you trying to bum one off me?')
+
+            else:
+                cigarette = random.choice(
+                        [items.Cigarette, items.CigaretteStub]).create()
+                say.insayne(
+                    '"Here you go," says the smoker between puffs. "Have a '
+                    'smoke with me. It\'s all there is to do here, man. Just '
+                    'that and wait to die and live again."')
+                _G.player.inventory.add(cigarette)
+
+    npc.ai.add_event(_SmokesManEvent())
+
+    def smoker_death_throes(smoker):
+        say.insayne(
+            'The smoker glances placidly around the environs. "Until the next '
+            'time around, I guess." With a final nod, he breathes a perfect '
+            'wreath of smoke, which dissipates solemnly.'
+        )
+
+    npc.upon_death(smoker_death_throes)
+    number_butts = random.choice(range(4, 7))
+    for _ in range(number_butts):
+        npc.inventory.add(items.CigaretteButt.create())
+
     return npc

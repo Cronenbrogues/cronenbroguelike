@@ -1,7 +1,6 @@
 import collections
 
-from engine import event
-from engine.globals import G
+from engine.globals import G as _G
 
 
 # Action types.
@@ -45,10 +44,10 @@ class AI:
 class HatesPlayer(AI):
     def choose_action(self, unused_room):
         # TODO: Is there an elegant way to make current_room aware of player?
-        return _Action(Attack(target=G.player, method=None))
+        return _Action(Attack(target=_G.player, method=None))
 
 
-class Librarian(AI):
+class Chill(AI):
     def __init__(self):
         self._event = None
 

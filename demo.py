@@ -85,6 +85,9 @@ def _start_game(_):
     # Places an NPC in a random room.
     level.random_room().add_character(npcs.mad_librarian())
 
+    # Places a cool NPC in a random room.
+    level.random_room().add_character(npcs.smokes_man())
+
     # Places the player.
     G.current_room = level.random_room()
 
