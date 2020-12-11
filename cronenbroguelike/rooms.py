@@ -69,17 +69,20 @@ class _AcidRoom(_Room):
 
 
 acid_room = _AcidRoom.create(
-    "You are in a large chamber. The ground and walls are like gristle. "
-    "A sphincter on the ceiling occasionally drips into a fetid pit.",
+    "You are in a large chamber. Its center is dominated by a reeking, acidic "
+    "sump. The walls around are like gristle. On the ceiling, an aperture "
+    "occasionally drips pale liquid into the fetid pool.",
     theme="behemoth",
 )
 
 
 # TODO: Attach events to the global queue, rather than to individual rooms.
 # TODO: Poll for events after each command.
+# TODO: Many behemoth rooms should induce insanity ...
 # TODO: How to tie events to a specific room, though?
 class _IntestineRoomEvent(_Event):
     def execute(self):
+        # TODO: This kind of thing could be handled with a description generator.
         say.insayne(
             "You are in a dark tube. The walls and floor quiver at your touch, "
             "and you realize this is the intestine of a vast behemoth."
@@ -105,8 +108,8 @@ class _IntestineRoom(_Room):
 
 intestine_room = _IntestineRoom.create("", theme="behemoth")
 rib_room = _Room.create(
-    "You are standing on a platform of gristle. A ribcage palisade "
-    "surrounds you. The room expands and contracts rhythmically.",
+    "You are standing on a slick, wet floor. The walls are a ribcage palisade. "
+    "The room expands and contracts rhythmically.",
     theme="behemoth",
 )
 
