@@ -1,10 +1,9 @@
 from engine import actor
 from engine import ai
 from engine import event
-from engine import item
 from engine import say
 
-from cronenbroguelike import book
+from cronenbroguelike import items
 
 
 # TODO: I don't like doing this functionally. Use classes instead.
@@ -37,7 +36,7 @@ def fish_man():
         fish_man.alive = False
 
     monster.upon_death(fish_man_death_throes)
-    monster.inventory.add(item.Item("ceremonial knife", "knife", "kris"))
+    monster.inventory.add(items.CeremonialKnife.create())
     return monster
 
 
@@ -82,5 +81,5 @@ def mad_librarian():
         librarian.alive = False
 
     npc.upon_death(librarian_death_throes)
-    npc.inventory.add(book.MeditationBook("meditation tome"))
+    npc.inventory.add(items.MeditationBook.create())
     return npc
