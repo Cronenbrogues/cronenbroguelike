@@ -3,14 +3,17 @@ import logging
 
 def _load_config():
     import json
+
+    config = {'log_level': "INFO"}
     try:
         with open('config.json', 'r') as inp:
-            config = json.load(inp)
+            additionl_config = json.load(inp)
     except FileNotFoundError:
-        pass
-    else:
-        log_level = config['log_level'].upper()
-        logging.basicConfig(level=getattr(logging, log_level))
+        additional_config = {}
+
+    config.update(additional_config)
+    log_level = config['log_level'].upper()
+    logging.basicConfig(level=getattr(logging, log_level))
 
 
 _load_config()
