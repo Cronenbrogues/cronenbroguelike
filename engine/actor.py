@@ -218,6 +218,7 @@ class Actor:
         if self is G.player:
             G.cause_of_death = cause
             say.insayne("You die.")
+            say.insayne("...")
         self._death_throes(self)
 
     def upon_death(self, callback):
