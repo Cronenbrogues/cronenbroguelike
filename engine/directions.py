@@ -21,7 +21,10 @@ class Direction:
 
     # TODO: This is unnecessary nonsense.
     def _hash_criteria(self):
-        return ((self._display_description,) + tuple(self._descriptions), self._opposite)
+        return (
+            (self._display_description,) + tuple(self._descriptions),
+            self._opposite,
+        )
 
     def __hash__(self):
         return hash((self._display_description,) + tuple(self._descriptions))
@@ -48,5 +51,6 @@ class Direction:
 north, south = Direction.make_twoway(["north"], ["south"])
 east, west = Direction.make_twoway(["east"], ["west"])
 purple, yellow = Direction.make_twoway(
-        ["through a murky tunnel", "tunnel", "through the tunnel", "through tunnel"],
-        ["by climbing a yawning sphincter", "sphincter", "through the sphincter"])
+    ["through a murky tunnel", "tunnel", "through the tunnel", "through tunnel"],
+    ["by climbing a yawning sphincter", "sphincter", "through the sphincter"],
+)

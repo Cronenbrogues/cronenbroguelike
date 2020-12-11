@@ -3,7 +3,6 @@ import logging
 
 
 class _GameState:
-
     def __init__(self):
         self.current_room = None
         self.player = None
@@ -15,15 +14,15 @@ class _GameState:
     @classmethod
     def _maybe_append_event(cls, event, queue):
         if event.will_execute:
-            logging.debug('Added event to global queue.')
+            logging.debug("Added event to global queue.")
             queue.append(event)
         else:
-            logging.debug(f'Removing event {event}.')
+            logging.debug(f"Removing event {event}.")
 
     def _queue_for(self, where):
         # TODO: Use an enum.
-        assert where in {'pre', 'post'}
-        return self._pre_events if where == 'pre' else self._post_events
+        assert where in {"pre", "post"}
+        return self._pre_events if where == "pre" else self._post_events
 
     def add_event(self, event, where):
         queue = self._queue_for(where)

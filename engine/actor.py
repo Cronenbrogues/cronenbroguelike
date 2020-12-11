@@ -39,9 +39,7 @@ class _Statistic:
                 message = f"{'in' if delta >= 0 else 'de'}creased by {abs(delta)}"
             else:
                 message = "does not change"
-            say.sayne(
-                f"{self._NAME.title()} {message}."
-            )
+            say.sayne(f"{self._NAME.title()} {message}.")
 
     @property
     def value(self):

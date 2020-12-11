@@ -4,15 +4,15 @@ import logging
 def _load_config():
     import json
 
-    config = {'log_level': "INFO"}
+    config = {"log_level": "INFO"}
     try:
-        with open('config.json', 'r') as inp:
+        with open("config.json", "r") as inp:
             additionl_config = json.load(inp)
     except FileNotFoundError:
         additional_config = {}
 
     config.update(additional_config)
-    log_level = config['log_level'].upper()
+    log_level = config["log_level"].upper()
     logging.basicConfig(level=getattr(logging, log_level))
 
 
@@ -58,8 +58,6 @@ def _get_random_start():
 
 
 def _start_game(_):
-
-
     @when.when("startgame", context="start_game", poll_after=True)
     def startgame():
         commands.enter_room(G.current_room)

@@ -3,7 +3,6 @@ from engine import say
 
 
 class EphemeralTextEvent(event.Event):
-
     def __init__(self, text):
         super().__init__()
         self._text = text
