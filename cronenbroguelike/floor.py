@@ -14,8 +14,7 @@ _HEIGHT = 21
 
 # TODO: What if we abandoned the conceit of a 2d plane and just let this be
 # an arbitrary graph? That's some Cthulhu stuff.
-class _Coordinate(collections.namedtuple('Coordinate', ['x', 'y'])):
-
+class _Coordinate(collections.namedtuple("Coordinate", ["x", "y"])):
     @property
     def north(self):
         return _Coordinate(self.x, (self.y - 1) % _HEIGHT)
@@ -38,7 +37,6 @@ def _add_exit(room, next_room, direction_hint):
 
 
 class Floor:
-
     def __init__(self, room_dict):
         self._rooms = room_dict
 
@@ -54,7 +52,7 @@ class Floor:
         start_coordinate = _Coordinate(10, 10)
         coordinate_queue = collections.deque()
         coordinate_queue.append(start_coordinate)
-        while True: 
+        while True:
             if not coordinate_queue:
                 break
             if number_rooms is not None and len(room_dict) >= number_rooms:
@@ -67,16 +65,16 @@ class Floor:
             room = rooms.get_room(theme)
             room_dict[coordinate] = room
 
-            for direction in ['north', 'south', 'east', 'west']:
+            for direction in ["north", "south", "east", "west"]:
                 # Adds some exits.
                 new_coordinate = getattr(coordinate, direction)
                 next_room = room_dict.get(new_coordinate)
                 if next_room is not None:
-                    if dice.roll('1d100') > 50:
+                    if dice.roll("1d100") > 50:
                         _add_exit(room, next_room, direction)
 
                 # Randomly decides where else to add rooms.
-                if dice.roll('1d100') > 25:
+                if dice.roll("1d100") > 25:
                     coordinate_queue.append(new_coordinate)
 
         # Traverse room graph. If any rooms are not connected, use a
@@ -90,7 +88,7 @@ class Floor:
         while all_rooms:
             next_room = all_rooms.pop()
             if last_cohort:
-                logging.debug('adding a weird transition')
+                logging.debug("adding a weird transition")
                 next_room.add_exit(directions.purple, traversed_rooms.pop())
                 last_cohort.clear()
             traversed_rooms.add(next_room)
@@ -100,7 +98,7 @@ class Floor:
             while traversal_queue:
                 next_room = traversal_queue.popleft()
                 actual_room = next_room
-                
+
                 for exit in actual_room.exits:
                     destination, _ = actual_room.exit(exit)
                     destination_number = destination

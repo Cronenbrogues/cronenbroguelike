@@ -37,7 +37,7 @@ def fish_man():
         fish_man.alive = False
 
     monster.upon_death(fish_man_death_throes)
-    monster.inventory.add(item.Item('ceremonial knife', 'knife', 'kris'))
+    monster.inventory.add(item.Item("ceremonial knife", "knife", "kris"))
     return monster
 
 
@@ -53,21 +53,23 @@ def mad_librarian():
         "mad librarian",
         "librarian",
         # TODO: How to deal with intro text? "The librarian leans in ..."
-        ai=ai.Librarian()
+        ai=ai.Librarian(),
     )
 
     class _LibrarianEvent(event.Event):
-        
         def execute(self):
             say.insayne(
-                    "Tittering and in a halted voice, the librarian utters these words:")
+                "Tittering and in a halted voice, the librarian utters these words:"
+            )
             say.insayne("\"The flesh is active, yet it's only soothed")
-            say.insayne("when still. Through constant paradox, flesh moves.", add_newline=False)
+            say.insayne(
+                "when still. Through constant paradox, flesh moves.", add_newline=False
+            )
             say.insayne("I hold stillness's secret! It is mine!", add_newline=False)
-            say.insayne("Find it upon by body when I die.\"", add_newline=False)
+            say.insayne('Find it upon by body when I die."', add_newline=False)
             say.insayne('"Now watch as the paradox is resolved."', add_newline=False)
             npc.die()
-            self._will_execute = False 
+            self._will_execute = False
 
     npc.ai.add_event(_LibrarianEvent())
 
@@ -80,5 +82,5 @@ def mad_librarian():
         librarian.alive = False
 
     npc.upon_death(librarian_death_throes)
-    npc.inventory.add(book.MeditationBook('meditation tome'))
+    npc.inventory.add(book.MeditationBook("meditation tome"))
     return npc

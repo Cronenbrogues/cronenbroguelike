@@ -5,20 +5,19 @@ from engine.globals import G
 
 
 # Action types.
-class Attack(collections.namedtuple('Attack', ['target', 'method'])):
+class Attack(collections.namedtuple("Attack", ["target", "method"])):
     pass
 
 
-class Speak(collections.namedtuple('Attack', ['target', 'message'])):
+class Speak(collections.namedtuple("Attack", ["target", "message"])):
     pass
 
 
-class Event(collections.namedtuple('Event', ['event'])):
+class Event(collections.namedtuple("Event", ["event"])):
     pass
 
 
 class _Action:
-
     def __init__(self, action_type):
         self._action_type = action_type
 
@@ -39,25 +38,22 @@ class _Action:
 
 
 class AI:
-
     def choose_action(self, room):
         return NotImplemented
 
 
 class HatesPlayer(AI):
-
     def choose_action(self, unused_room):
         # TODO: Is there an elegant way to make current_room aware of player?
         return _Action(Attack(target=G.player, method=None))
 
 
 class Librarian(AI):
-
     def __init__(self):
         self._event = None
 
     def add_event(self, event):
         self._event = event
-    
+
     def choose_action(self, unused_room):
         return _Action(Event(self._event))

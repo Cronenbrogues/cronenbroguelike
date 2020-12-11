@@ -27,7 +27,9 @@ def _look():
     for character in G.current_room.characters:
         # TODO: Move these descriptions to the actor.
         if character.alive:
-            util.enqueue_text(f"There is a(n) {character.name} slobbering in the corner.")
+            util.enqueue_text(
+                f"There is a(n) {character.name} slobbering in the corner."
+            )
         else:
             util.enqueue_text(f"The corpse of a(n) {character.name} molders here.")
     util.enqueue_text(f'Exits are {", ".join(G.current_room.display_exits)}.')
@@ -118,6 +120,7 @@ _ABILITY_PATTERN = re.compile(r"add ability (\w+)")
 
 def _cheat_ability(ability_name):
     from cronenbroguelike import ability
+
     try:
         to_add = getattr(ability, ability_name)
     except AttributeError:
@@ -147,8 +150,9 @@ def cheat(code):
 
     else:
         say.insayne(
-                "You attempt to pry open cosmic mysteries but fail. Your "
-                "pitiful mind reels with the effort.")
+            "You attempt to pry open cosmic mysteries but fail. Your "
+            "pitiful mind reels with the effort."
+        )
         G.player.insanity.modify(15)
 
 
@@ -194,7 +198,9 @@ def ability(ability):
 @when.when("sit there and starve")
 def suicide():
     # TODO: Set G.cause_of_death in heal_or_harm() and/or die().
-    say.insayne("Realizing the futility of continuing, you resign yourself to death. You lie on the floor and await oblivion.")
+    say.insayne(
+        "Realizing the futility of continuing, you resign yourself to death. You lie on the floor and await oblivion."
+    )
     G.player.health.heal_or_harm(-G.player.health.value, cause="ennui")
 
 
@@ -240,7 +246,7 @@ def talk(actor):
     if interlocutor is None:
         say.insayne(f"There is no {actor_name} here.")
         return
-    
+
     # TODO: Yeah, this is very parallel to attacking. Maybe there should be
     # a more generic "choose action" function?
     action = interlocutor.ai.choose_action(G.current_room)
@@ -256,7 +262,7 @@ def talk(actor):
 
     elif action.event is not None:
         action.event.event.execute()
-        
+
 
 @adventurelib.when("inspect ITEM")
 def inspect(item):
@@ -270,7 +276,7 @@ def inspect(item):
     character = G.current_room.characters.find(item_name)
     if character is not None:
         if not character.alive:
-            # TODO: How to deal with definite articles when actor's name is a 
+            # TODO: How to deal with definite articles when actor's name is a
             # proper name?
             message = f"Searching the {character.name}'s corpse, you find "
             if not character.inventory:

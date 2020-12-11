@@ -22,7 +22,7 @@ class _Ability:
 
     def __init__(self):
         self.owner = None
-    
+
     def activate(self):
         return NotImplemented
 
@@ -36,11 +36,10 @@ class Meditation(_Ability):
         # TODO: Add global invocation counter.
         # TODO: Make events global and event polling constant so that this
         # ability can win the game.
+        _say.insayne("You touch the ground. You sit and breathe, are still.")
         _say.insayne(
-                "You touch the ground. You sit and breathe, are still.")
-        _say.insayne(
-                "The stillness soothes your mind and steels your will.",
-                add_newline=False)
+            "The stillness soothes your mind and steels your will.", add_newline=False
+        )
         self.owner.insanity.modify(-20)
 
 
