@@ -30,13 +30,97 @@ cathedral_library = _Room.create(
     theme="cathedral",
 )
 cathedral_office = _Room.create(
-    "A desk is strewn with sheaves of paper. Little of sense is written " "there.",
+    "A desk is strewn with sheaves of paper. Little of sense is written there.",
+    theme="cathedral",
+)
+
+
+class _BoilerHeatEvent(_Event):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._counter = 1
+
+    def execute(self):
+        if self._counter % 3 == 0:
+            say.insayne("The heat is too much for you.")
+            G.player.health.heal_or_harm(-1 * dice.roll("1d2"))
+        self._counter += 1
+
+
+class _BoilerRoom(_Room):
+    def on_enter(self):
+        super().on_enter()
+        self._event = _BoilerHeatEvent()
+        G.add_event(self._event, "post")
+
+    def on_exit(self):
+        super().on_exit()
+        self._event.kill()
+
+
+cathedral_boiler = _BoilerRoom.create(
+    "A boiler sits in the center of this room. Its grate glows red. The air is "
+    "intolerably hot.",
+    theme="cathedral",
+)
+
+
+class _SongInHeadEvent(_Event):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._counter = 2
+
+    def execute(self):
+        say.insayne("🎵 MMMMMMMMBOP ba duba dop ba du dop DING DONG 🎵")
+        self._counter -= 1
+        if self._counter <= 0:
+            self.kill()
+
+
+class _BelfryEvent(_Event):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._counter = 0
+
+    def execute(self):
+        if self._counter % 3 == 0:
+            say.insayne(
+                "Suddenly, the bells begin to chime in simultaneity, if not "
+                "exactly unison. From the chaos can be discerned a discordant "
+                "melody. It is a blasphemous all-bells rendition of Hanson's "
+                "'MMMBop.' As the final incomprehensible peal subsides, you "
+                "realize the song is stuck in your head, threatening the "
+                "sinews of your very sanity.")
+            G.player.insanity.modify(15)
+            G.add_event(_SongInHeadEvent())
+        self._counter += 1
+
+
+class _BelfryRoom(_Room):
+    def on_enter(self):
+        super().on_enter()
+        self._event = _BelfryEvent()
+        G.add_event(self._event, "post")
+
+    def on_exit(self):
+        super().on_exit()
+        self._event.kill()
+
+
+cathedral_belfry = _BelfryRoom.create(
+    "A disquieting array of bells hangs from the ceiling here. The clappers "
+    "swing low, nearly grazing the top of your head. An unseen motive force "
+    "sweeps through the bells at random, causing them to chime.",
     theme="cathedral",
 )
 
 
 blank = _Room.create(
-    "A featureless room. The air tastes stale here. The walls and floor " "are sallow."
+    "A featureless room. The air tastes stale here. The walls and "
+    "floor are sallow."
 )
 sitting_room = _Room.create(
     "A gloomy expanse filled with furniture. You feel you are perhaps "
