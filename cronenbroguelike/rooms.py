@@ -107,6 +107,7 @@ class _BelfryRoom(_Room):
 
     def on_exit(self):
         super().on_exit()
+        logging.debug(f"Killing event {self._event}.")
         self._event.kill()
 
 
@@ -149,6 +150,7 @@ class _AcidRoom(_Room):
 
     def on_exit(self):
         super().on_exit()
+        logging.debug(f"Killing event {self._event}.")
         self._event.kill()
 
 
