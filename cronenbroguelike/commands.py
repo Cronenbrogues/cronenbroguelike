@@ -185,7 +185,7 @@ def _get_present_actor(actor_name):
     return G.current_room.characters.find(actor_name)
 
 
-@adventurelib.when("ability ABILITY")
+@when.when("ability ABILITY")
 def ability(ability):
     ability_name = ability
     the_ability = G.player.abilities.get(ability_name)
@@ -204,7 +204,7 @@ def suicide():
     G.player.health.heal_or_harm(-G.player.health.value, cause="ennui")
 
 
-@adventurelib.when("attack ACTOR")
+@when.when("attack ACTOR")
 def attack(actor):
     """Attacks another character in the same room."""
     actor_name = actor  # Variable names are constrained by adventurelib.
@@ -238,7 +238,7 @@ def attack(actor):
             say.insayne(f"{character.name} makes no hostile motion.")
 
 
-@adventurelib.when("talk ACTOR")
+@when.when("talk ACTOR")
 def talk(actor):
     # TODO: Collapse common functionality in attack.
     actor_name = actor  # Variable names are constrained by adventurelib.
@@ -318,7 +318,7 @@ def _find_available_item(item_name):
     return _find_in_room(item_name)
 
 
-@adventurelib.when("read BOOK")
+@when.when("read BOOK")
 def read(book):
     book_name = book
     _, book = _find_available_item(book_name)
@@ -338,7 +338,7 @@ def _move_item(old_inventory, new_inventory, item):
 # TODO: Fucccckkk I could create a @when decorator in the item subclasses
 # themselves with a decorator on the specific methods (e.g. consume()).
 @adventurelib.when("use ITEM")
-@adventurelib.when("consume ITEM")
+@when.when("consume ITEM")
 def use(item):
     item_name = item
     item = G.player.inventory.find(item_name)
@@ -374,6 +374,7 @@ def drop(item):
 
 
 @adventurelib.when("loot ITEM from CORPSE")
+@when.when("loot CORPSE", item="everything")
 def loot(item, corpse):
     item_name = item
     corpse_name = corpse
@@ -401,7 +402,13 @@ def loot(item, corpse):
                 _resolve_attack(character, action.attack)
 
     else:
-        item = corpse.inventory.find(item_name)
-        if item is not None:
-            say.insayne(f"You liberate {item.name} from the corpse.")
-            _move_item(corpse.inventory, G.player.inventory, item)
+        if item_name in {"all", "everything"}:
+            items = {item.name: item for item in corpse.inventory}
+        else:
+            items = {item_name: [corpse.inventory.find(item_name)]}
+        for name, item in items.items():
+            if item is None:
+                say.insayne(f"There is no {item.name} on the corpse.")
+            else:
+                _move_item(corpse.inventory, G.player.inventory, item)
+                say.insayne(f"You liberate {item.name} from the corpse.")
