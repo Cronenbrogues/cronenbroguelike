@@ -36,6 +36,14 @@ def _add_exit(room, next_room, direction_hint):
     room.add_exit(getattr(directions, direction_hint), next_room)
 
 
+def _room_generator(theme):
+    while True:
+        room_list = rooms.all_rooms(theme)
+        random.shuffle(room_list)
+        for room in room_list:
+            yield room
+
+
 class Floor:
     def __init__(self, room_dict):
         self._rooms = room_dict
@@ -49,9 +57,11 @@ class Floor:
     @classmethod
     def generate(cls, theme, number_rooms=None):
         room_dict = {}
+        room_generator = _room_generator(theme)
         start_coordinate = _Coordinate(10, 10)
         coordinate_queue = collections.deque()
         coordinate_queue.append(start_coordinate)
+
         while True:
             if not coordinate_queue:
                 break
@@ -62,7 +72,7 @@ class Floor:
                 continue
 
             # Creates a new room in that location.
-            room = rooms.get_room(theme)
+            room = next(room_generator)
             room_dict[coordinate] = room
 
             for direction in ["north", "south", "east", "west"]:
@@ -80,7 +90,6 @@ class Floor:
         # Traverse room graph. If any rooms are not connected, use a
         # non-Euclidean entrance to address that.
         # TODO: pop() isn't really random!! Does that matter?
-        # TODO: Sigh, why doesn't room hashing work?
         all_rooms = set(room_dict.values())
         traversed_rooms = set()
         last_cohort = set()
