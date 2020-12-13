@@ -95,7 +95,7 @@ class _BelfryEvent(_Event):
                 "realize the song is stuck in your head, threatening the "
                 "sinews of your very sanity.")
             G.player.insanity.modify(15)
-            G.add_event(_SongInHeadEvent())
+            G.add_event(_SongInHeadEvent(), "pre")
         self._counter += 1
 
 
