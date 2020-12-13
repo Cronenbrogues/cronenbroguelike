@@ -11,21 +11,17 @@ from cronenbroguelike import ability
 
 # TODO: Make this equippable.
 class CeremonialKnife(_Item):
-
     @classmethod
     def create(cls):
         return cls("ceremonial knife", "knife", "kris")
 
 
 class MeditationBook(_Book):
-
     def read(self, actor):
         if actor.has_read(self):
             # TODO: Condition pronoun/verb agreement on whether actor is
             # player or not. Make a utility function for this.
-            say.insayne(
-                "You have already tasted the wisdom distilled in this book."
-            )
+            say.insayne("You have already tasted the wisdom distilled in this book.")
 
         else:
             actor.add_ability(ability.meditation)
@@ -39,7 +35,6 @@ class MeditationBook(_Book):
 
 
 class Butt(_Consumable):
-
     def consume(self, consumer):
         # TODO: Customize text based on whether consumer is player.
         say.insayne(f"You eat the {self.name}. What is wrong with you?")
@@ -51,14 +46,14 @@ class Butt(_Consumable):
 
 
 class CigaretteStub(_Consumable):
-
     def consume(self, consumer):
         # TODO: Customize text based on whether consumer is player.
         say.insayne(
-                f"You take a furtive puff on the {self.name}. It tastes foul "
-                "and acrid. You do not feel like you are wearing a leather "
-                "jacket at all.")
-        consumer.health.heal_or_harm(- dice.roll("2d2"))
+            f"You take a furtive puff on the {self.name}. It tastes foul "
+            "and acrid. You do not feel like you are wearing a leather "
+            "jacket at all."
+        )
+        consumer.health.heal_or_harm(-dice.roll("2d2"))
         consumer.inventory.add(CigaretteButt.create())
 
     @classmethod
@@ -67,19 +62,19 @@ class CigaretteStub(_Consumable):
 
 
 class Cigarette(_Consumable):
-
     def consume(self, consumer):
         # TODO: Customize text based on whether consumer is player.
         # TODO: Add location to actors so that the state of onlookers can
         # be properly assessed.
         aliases = random.sample(2, self.aliases)
         say.insayne(
-                f"You take a long, smooth drag on the {aliases[0]}. Time seems "
-                "to mellow; all activity nearby slows. Onlookers watch as you "
-                "draw measured, pensive little puffs from the delicious "
-                "{aliases[1]}. You look very cool.")
+            f"You take a long, smooth drag on the {aliases[0]}. Time seems "
+            "to mellow; all activity nearby slows. Onlookers watch as you "
+            "draw measured, pensive little puffs from the delicious "
+            "{aliases[1]}. You look very cool."
+        )
         # TODO: Buff strength for a little bit.
-        consumer.health.heal_or_harm(- dice.roll("1d2"))
+        consumer.health.heal_or_harm(-dice.roll("1d2"))
         # TODO: I don't like this solution as it presumes the item is in the
         # consumer's inventory. Maybe that is a fine assumption. If not,
         # consider storing the inventory relationship as two-way.

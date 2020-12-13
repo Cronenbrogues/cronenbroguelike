@@ -14,12 +14,10 @@ class Item(_Item):
 
 
 class Consumable(Item):
-
     def consume(self, consumer):
         return NotImplemented
 
 
 class Book(Item):
-
     def read(self, actor):
         return NotImplemented
