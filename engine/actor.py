@@ -160,6 +160,8 @@ class Actor:
         self._read_books = set()
         self._abilities = {}
 
+        # Assignable data members.
+        self.current_room = None
         self.alive = True
         self.log_stats = False
 
@@ -222,6 +224,8 @@ class Actor:
         else:
             self.alive = False
         self._death_throes(self)
+        self.current_room.characters.remove(self)
+        self.current_room.corpses.add(self)
 
     def upon_death(self, callback):
         self._death_throes = callback

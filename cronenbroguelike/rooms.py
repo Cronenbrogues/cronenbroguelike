@@ -172,7 +172,8 @@ class _IntestineRoomEvent(_Event):
             "and you realize this is the intestine of a vast behemoth."
         )
         G.player.insanity.modify(10)
-        G.current_room.description = (
+        # TODO: change to self.room.description
+        G.player.current_room.description = (
             "The walls and floor of the intestine room shudder at your step."
         )
         self._will_execute = False
