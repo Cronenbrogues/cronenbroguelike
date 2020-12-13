@@ -17,22 +17,23 @@ def enter_room(room):
 
 
 def _look():
-    if G.current_room.description:
-        say.insayne(G.current_room.description)
+    if G.player.current_room.description:
+        say.insayne(G.player.current_room.description)
 
     # TODO: Bespoke descriptions for all items and characters.
     # TODO: Fix a(n) problems throughout code base.
-    for item in G.current_room.items:
+    for item in G.player.current_room.items:
         say.insayne(f"There is a(n) {item.name} lying on the ground.")
-    for character in G.current_room.characters:
+    for character in G.player.current_room.characters:
+        if character is G.player:
+            continue
         # TODO: Move these descriptions to the actor.
-        if character.alive:
-            say.insayne(
-                f"There is a(n) {character.name} slobbering in the corner."
-            )
-        else:
-            say.insayne(f"The corpse of a(n) {character.name} molders here.")
-    say.insayne(f'Exits are {", ".join(G.current_room.display_exits)}.')
+        say.insayne(
+            f"There is a(n) {character.name} slobbering in the corner."
+        )
+    for corpse in G.player.current_room.corpses:
+        say.insayne(f"The corpse of a(n) {corpse.name} molders here.")
+    say.insayne(f'Exits are {", ".join(G.player.current_room.display_exits)}.')
 
 
 @adventurelib.when("exit DIRECTION")
@@ -44,15 +45,15 @@ def _look():
 @when.when("west", direction="west")
 def go(direction):
     direction = direction.lower()
-    next_room, the_direction = G.current_room.exit(direction)
+    next_room, the_direction = G.player.current_room.exit(direction)
     if next_room is None:
         say.insayne(f"It is not possible to proceed {direction}.")
     else:
         # TODO: Replace enqueue_text with text events.
         say.insayne(f"You proceed {the_direction.display_description}.")
-        G.current_room.on_exit()
-        G.current_room = next_room
-        enter_room(G.current_room)
+        G.player.current_room.on_exit()
+        G.player.current_room = next_room
+        enter_room(G.player.current_room)
 
 
 @when.when("look")
@@ -182,7 +183,7 @@ def _resolve_attack(attacker, attack):
 
 
 def _get_present_actor(actor_name):
-    return G.current_room.characters.find(actor_name)
+    return G.player.current_room.characters.find(actor_name)
 
 
 @when.when("ability ABILITY")
@@ -195,9 +196,13 @@ def ability(ability):
         the_ability.activate()
 
 
+@adventurelib.when("suicide")
+@adventurelib.when("commit suicide")
+@adventurelib.when("die")
+@adventurelib.when("just die")
+@adventurelib.when("hold breath forever")
 @when.when("sit there and starve")
 def suicide():
-    # TODO: Set G.cause_of_death in heal_or_harm() and/or die().
     say.insayne(
         "Realizing the futility of continuing, you resign yourself to death. You lie on the floor and await oblivion."
     )
@@ -227,11 +232,9 @@ def attack(actor):
 
     # TODO: Move this to player AI. Use defender as a "hint."
     _resolve_attack(G.player, ai.Attack(target=defender, method=None))
-    for character in G.current_room.characters:
-        if not character.alive:
-            continue
+    for character in G.player.current_room.characters:
         assert character.ai is not None
-        action = character.ai.choose_action(G.current_room)
+        action = character.ai.choose_action(G.player.current_room)
         if action.attack is not None:
             _resolve_attack(character, action.attack)
         else:
@@ -249,7 +252,7 @@ def talk(actor):
 
     # TODO: Yeah, this is very parallel to attacking. Maybe there should be
     # a more generic "choose action" function?
-    action = interlocutor.ai.choose_action(G.current_room)
+    action = interlocutor.ai.choose_action(interlocutor.current_room)
     if action.attack is not None:
         attack = action.attack
         assert attack.target is G.player
@@ -268,41 +271,41 @@ def talk(actor):
 def inspect(item):
     item_name = item  # Variable names are constrained by adventurelib.
 
-    room_item = G.current_room.items.find(item_name)
+    room_item = G.player.current_room.items.find(item_name)
     if room_item is not None:
         say.insayne(room_item.description)
         return
 
-    character = G.current_room.characters.find(item_name)
+    character = G.player.current_room.corpses.find(item_name)
     if character is not None:
-        if not character.alive:
-            # TODO: How to deal with definite articles when actor's name is a
-            # proper name?
-            message = f"Searching the {character.name}'s corpse, you find "
-            if not character.inventory:
-                message += "only still flesh and the fug of early death."
-                say.insayne(message)
-                return
-            message += "the following items: "
+        # TODO: How to deal with definite articles when actor's name is a
+        # proper name?
+        message = f"Searching the {character.name}'s corpse, you find "
+        if not character.inventory:
+            message += "only still flesh and the fug of early death."
             say.insayne(message)
-            for item in character.inventory:
-                say.insayne(item.description, add_newline=False)
-        else:
-            # TODO: Collapse this with descriptive text in look().
-            say.insayne(f"There is a(n) {character.name} slobbering in the corner.")
+            return
+        message += "the following items: "
+        say.insayne(message)
+        for item in character.inventory:
+            say.insayne(item.description, add_newline=False)
+        return
+
+    character = G.player.current_room.characters.find(item_name)
+    if character is not None:
+        # TODO: Collapse this with descriptive text in look().
+        say.insayne(f"There is a(n) {character.name} slobbering in the corner.")
         return
 
     say.insayne(f"There is no {item} here to inspect.")
 
 
 def _find_in_room(item_name):
-    room_item = G.current_room.items.find(item_name)
+    room_item = G.player.current_room.items.find(item_name)
     if room_item is not None:
-        return G.current_room.items, room_item
+        return G.player.current_room.items, room_item
 
-    for corpse in G.current_room.characters:
-        if corpse.alive:
-            continue
+    for corpse in G.player.current_room.corpses:
         corpse_item = corpse.inventory.find(item_name)
         if corpse_item is not None:
             return corpse.inventory, corpse_item
@@ -369,8 +372,8 @@ def drop(item):
     if item is None:
         say.insayne(f"You don't have a(n) {item_name} to drop.")
     else:
-        say.insayne(f"Dropped {item_name}.")
-        _move_item(G.player.inventory, G.current_room.items, item)
+        say.insayne(f"You drop the {item_name} on the ground.")
+        _move_item(G.player.inventory, G.player.current_room.items, item)
 
 
 @adventurelib.when("loot ITEM from CORPSE")
@@ -378,28 +381,30 @@ def drop(item):
 def loot(item, corpse):
     item_name = item
     corpse_name = corpse
-    corpse = _get_present_actor(corpse_name)
-
-    # TODO: This is duplicated from above. Maybe an "interact" function is
-    # called for?
-    if corpse is None:
-        say.insayne(f"There is no {corpse_name} here.")
+    character = _get_present_actor(corpse_name)
 
     # TODO: Really need some abstraction around combat turns to avoid this
     # duplication.
-    elif corpse.alive:
+    if character is not None:
         message = "You cannot loot the living!"
         # TODO: What if none of the character present chooses to attack?
-        if any(character.alive for character in G.current_room.characters):
+        if any(character.alive for character in G.player.current_room.characters):
             message += " All enemies attack as your clumsy pickpocketing attempt fails."
         say.insayne(message)
-        for character in G.current_room.characters:
+        for character in G.player.current_room.characters:
             if not character.alive:
                 continue
             assert character.ai is not None
-            action = character.ai.choose_action(G.current_room)
+            action = character.ai.choose_action(G.player.current_room)
             if action.attack is not None:
                 _resolve_attack(character, action.attack)
+        return
+
+    # TODO: This is duplicated from above. Maybe an "interact" function is
+    # called for?
+    corpse = G.player.current_room.characters.find(corpse_name)
+    if corpse is None:
+        say.insayne(f"There is no {corpse_name} here.")
 
     else:
         if item_name in {"all", "everything"}:

@@ -81,12 +81,17 @@ class _SongInHeadEvent(_Event):
 
 class _BelfryEvent(_Event):
 
+    _TURNS_TO_CHIME = 24
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._counter = 0
+        self._counter = -1
 
     def execute(self):
-        if self._counter % 3 == 0:
+        self._counter += 1
+        if self.room is not G.player.current_room:
+            return
+        if self._counter % self._TURNS_TO_CHIME == 0:
             say.insayne(
                 "Suddenly, the bells begin to chime in simultaneity, if not "
                 "exactly unison. From the chaos can be discerned a discordant "
@@ -96,18 +101,17 @@ class _BelfryEvent(_Event):
                 "sinews of your very sanity.")
             G.player.insanity.modify(15)
             G.add_event(_SongInHeadEvent(), "pre")
-        self._counter += 1
 
 
 class _BelfryRoom(_Room):
     def on_enter(self):
         super().on_enter()
         self._event = _BelfryEvent()
+        self._event.room = self
         G.add_event(self._event, "post")
 
     def on_exit(self):
         super().on_exit()
-        self._event.kill()
 
 
 cathedral_belfry = _BelfryRoom.create(
@@ -149,6 +153,7 @@ class _AcidRoom(_Room):
 
     def on_exit(self):
         super().on_exit()
+        logging.debug(f"Killing event {self._event}.")
         self._event.kill()
 
 
@@ -172,7 +177,8 @@ class _IntestineRoomEvent(_Event):
             "and you realize this is the intestine of a vast behemoth."
         )
         G.player.insanity.modify(10)
-        G.current_room.description = (
+        # TODO: change to self.room.description
+        G.player.current_room.description = (
             "The walls and floor of the intestine room shudder at your step."
         )
         self._will_execute = False

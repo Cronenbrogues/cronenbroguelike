@@ -14,5 +14,5 @@ class Event:
         return NotImplemented
 
     def kill(self):
-        logging.debug("Event killed.")
+        logging.debug(f"Event {self} killed.")
         self._will_execute = False

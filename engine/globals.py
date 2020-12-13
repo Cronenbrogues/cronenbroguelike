@@ -14,7 +14,7 @@ class _GameState:
     @classmethod
     def _maybe_append_event(cls, event, queue):
         if event.will_execute:
-            logging.debug("Added event to global queue.")
+            logging.debug(f"Added event {event} to global queue.")
             queue.append(event)
         else:
             logging.debug(f"Removing event {event}.")
@@ -38,7 +38,8 @@ class _GameState:
             next_event = queue.popleft()
             if next_event is None:
                 break
-            yield next_event
+            if next_event.will_execute:
+                yield next_event
             self._maybe_append_event(next_event, queue)
 
     def enqueue_text(self, text):

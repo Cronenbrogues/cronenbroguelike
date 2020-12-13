@@ -1,5 +1,6 @@
 import adventurelib
 
+from engine import bag
 from engine.globals import G
 from engine import item
 from engine import say
@@ -156,10 +157,12 @@ class Actor:
             statistic.owner = self
         self._ai = kwargs.pop("ai", None)
         self._death_throes = lambda this: None
-        self._inventory = adventurelib.Bag()
+        self._inventory = bag.Bag()
         self._read_books = set()
         self._abilities = {}
 
+        # Assignable data members.
+        self.current_room = None
         self.alive = True
         self.log_stats = False
 
@@ -169,6 +172,8 @@ class Actor:
 
     @property
     def inventory(self):
+        # TODO: Would be good if player's inventory always alerted when an item
+        # was gained/lost.
         return self._inventory
 
     @property
@@ -220,6 +225,8 @@ class Actor:
         else:
             self.alive = False
         self._death_throes(self)
+        self.current_room.characters.remove(self)
+        self.current_room.corpses.add(self)
 
     def upon_death(self, callback):
         self._death_throes = callback

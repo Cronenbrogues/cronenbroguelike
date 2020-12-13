@@ -2,6 +2,7 @@ import collections
 
 import adventurelib
 
+from engine import bag
 from engine import say
 
 
@@ -22,13 +23,19 @@ class Room(adventurelib.Room):
 
         # TODO: adventurelib.Bag should contain an ancillary set of aliases
         # to obviate O(n) lookup by alias.
-        self._items = adventurelib.Bag()
-        self._characters = adventurelib.Bag()
+        self._items = bag.Bag()
+        self._characters = bag.Bag()
+        self._corpses = bag.Bag()
         self._events = collections.deque()
         self.theme = theme
 
     def add_character(self, character):
+        character.current_room = self
         self._characters.add(character)
+
+    @property
+    def corpses(self):
+        return self._corpses
 
     @property
     def characters(self):

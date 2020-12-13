@@ -12,12 +12,14 @@ def _poll_context(poll_before=True, poll_after=True):
     logging.debug("Polling pre-events.")
     if poll_before:
         for event in _G.events("pre"):
-            event.execute()
+            if event.will_execute:
+                event.execute()
     yield
     logging.debug("Polling post-events.")
     if poll_after:
         for event in _G.events("post"):
-            event.execute()
+            if event.will_execute:
+                event.execute()
 
 
 def _add_parameter_strings(parameter, kind_to_argstrings, kind_to_callstrings):

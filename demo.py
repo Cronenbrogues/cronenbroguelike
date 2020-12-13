@@ -60,7 +60,7 @@ def _get_random_start():
 def _start_game(_):
     @when.when("startgame", context="start_game", poll_after=True)
     def startgame():
-        commands.enter_room(G.current_room)
+        commands.enter_room(G.player.current_room)
 
     # Creates the player character and ensures game will restart upon death.
     G.player = actor.create_actor(
@@ -89,7 +89,7 @@ def _start_game(_):
     level.random_room().add_character(npcs.smokes_man())
 
     # Places the player.
-    G.current_room = level.random_room()
+    level.random_room().add_character(G.player)
 
     # Starts it up.
     _get_random_start()

@@ -61,7 +61,9 @@ class CigaretteStub(_Consumable):
                 "jacket at all.")
         consumer.health.heal_or_harm(- dice.roll("2d2"))
         consumer.inventory.remove(self)
-        consumer.inventory.add(CigaretteButt.create())
+        cigarette_butt = CigaretteButt.create()
+        consumer.inventory.add(cigarette_butt)
+        say.insayne("You acquire a {cigarette_butt.name}.")
 
     @classmethod
     def create(cls):
@@ -86,7 +88,9 @@ class Cigarette(_Consumable):
         # consumer's inventory. Maybe that is a fine assumption. If not,
         # consider storing the inventory relationship as two-way.
         consumer.inventory.remove(self)
-        consumer.inventory.add(CigaretteStub.create())
+        cigarette_stub = CigaretteStub.create()
+        consumer.inventory.add(cigarette_stub)
+        say.insayne("You acquire a {cigarette_stub.name}.")
 
     @classmethod
     def create(cls):
