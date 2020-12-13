@@ -85,13 +85,13 @@ class _BelfryEvent(_Event):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._counter = self._TURNS_TO_CHIME - 1
+        self._counter = -1
 
     def execute(self):
         self._counter += 1
         if self.room is not G.player.current_room:
             return
-        if self._counter % _TURNS_TO_CHIME == 0:
+        if self._counter % self._TURNS_TO_CHIME == 0:
             say.insayne(
                 "Suddenly, the bells begin to chime in simultaneity, if not "
                 "exactly unison. From the chaos can be discerned a discordant "
@@ -107,6 +107,7 @@ class _BelfryRoom(_Room):
     def on_enter(self):
         super().on_enter()
         self._event = _BelfryEvent()
+        self._event.room = self
         G.add_event(self._event, "post")
 
     def on_exit(self):
