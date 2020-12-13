@@ -34,6 +34,10 @@ class Room(adventurelib.Room):
         self._characters.add(character)
 
     @property
+    def corpses(self):
+        return self._corpses
+
+    @property
     def characters(self):
         return self._characters
 
