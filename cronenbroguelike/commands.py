@@ -35,12 +35,12 @@ def _look():
     util.enqueue_text(f'Exits are {", ".join(G.current_room.display_exits)}.')
 
 
-@when.when("exit DIRECTION")
-@when.when("go DIRECTION")
-@when.when("proceed DIRECTION")
-@when.when("north", direction="north")
-@when.when("south", direction="south")
-@when.when("east", direction="east")
+@adventurelib.when("exit DIRECTION")
+@adventurelib.when("go DIRECTION")
+@adventurelib.when("proceed DIRECTION")
+@adventurelib.when("north", direction="north")
+@adventurelib.when("south", direction="south")
+@adventurelib.when("east", direction="east")
 @when.when("west", direction="west")
 def go(direction):
     direction = direction.lower()
