@@ -67,10 +67,10 @@ def mad_librarian():
                 "when still. Through constant paradox, flesh moves.", add_newline=False
             )
             say.insayne("I hold stillness's secret! It is mine!", add_newline=False)
-            say.insayne('Find it upon by body when I die."', add_newline=False)
+            say.insayne("Find it upon by body when I die.\"", add_newline=False)
             say.insayne(
-                    '"Now watch," cries the rag-clad wretch, "as the paradox '
-                    'is resolved."')
+                    "\"Now watch,\" cries the rag-clad wretch, \"as the paradox "
+                    "is resolved.\"")
             npc.die()
             self._will_execute = False
 
