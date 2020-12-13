@@ -104,11 +104,17 @@ class _BelfryEvent(_Event):
 
 
 class _BelfryRoom(_Room):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._event = None
+
     def on_enter(self):
         super().on_enter()
-        self._event = _BelfryEvent()
-        self._event.room = self
-        G.add_event(self._event, "post")
+        if self._event is None:
+            self._event = _BelfryEvent()
+            self._event.room = self
+            G.add_event(self._event, "post")
 
     def on_exit(self):
         super().on_exit()

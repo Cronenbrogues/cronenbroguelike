@@ -1,2 +1,2 @@
-adventurelib
+git+https://github.com/lordmauve/adventurelib
 git+https://github.com/flosincapite/zalgo
