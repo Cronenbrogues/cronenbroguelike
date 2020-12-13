@@ -383,7 +383,7 @@ def loot(item, corpse):
     # TODO: This is duplicated from above. Maybe an "interact" function is
     # called for?
     if corpse is None:
-        say.insayne(f"There is no {actor_name} here.")
+        say.insayne(f"There is no {corpse_name} here.")
 
     # TODO: Really need some abstraction around combat turns to avoid this
     # duplication.
