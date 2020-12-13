@@ -169,6 +169,8 @@ class Actor:
 
     @property
     def inventory(self):
+        # TODO: Would be good if player's inventory always alerted when an item
+        # was gained/lost.
         return self._inventory
 
     @property

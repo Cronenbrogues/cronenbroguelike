@@ -121,6 +121,7 @@ def smokes_man():
                     'smoke with me. It\'s all there is to do here, man. Just '
                     'that and wait to die and live again."')
                 _G.player.inventory.add(cigarette)
+                say.insayne(f"You acquire a {cigarette.name}.")
 
     npc.ai.add_event(_SmokesManEvent())
 

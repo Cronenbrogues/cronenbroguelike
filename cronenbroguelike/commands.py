@@ -369,7 +369,7 @@ def drop(item):
     if item is None:
         say.insayne(f"You don't have a(n) {item_name} to drop.")
     else:
-        say.insayne(f"Dropped {item_name}.")
+        say.insayne(f"You drop the {item_name} on the ground.")
         _move_item(G.player.inventory, G.current_room.items, item)
 
 
