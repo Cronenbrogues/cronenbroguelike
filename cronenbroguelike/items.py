@@ -63,7 +63,7 @@ class CigaretteStub(_Consumable):
         consumer.inventory.remove(self)
         cigarette_butt = CigaretteButt.create()
         consumer.inventory.add(cigarette_butt)
-        say.insayne("You acquire a {cigarette_butt.name}.")
+        say.insayne(f"You acquire a {cigarette_butt.name}.")
 
     @classmethod
     def create(cls):
@@ -90,7 +90,7 @@ class Cigarette(_Consumable):
         consumer.inventory.remove(self)
         cigarette_stub = CigaretteStub.create()
         consumer.inventory.add(cigarette_stub)
-        say.insayne("You acquire a {cigarette_stub.name}.")
+        say.insayne(f"You acquire a {cigarette_stub.name}.")
 
     @classmethod
     def create(cls):
