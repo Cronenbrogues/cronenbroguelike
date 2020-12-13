@@ -81,12 +81,17 @@ class _SongInHeadEvent(_Event):
 
 class _BelfryEvent(_Event):
 
+    _TURNS_TO_CHIME = 24
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._counter = 0
+        self._counter = self._TURNS_TO_CHIME - 1
 
     def execute(self):
-        if self._counter % 3 == 0:
+        self._counter += 1
+        if self.room is not G.player.current_room:
+            return
+        if self._counter % _TURNS_TO_CHIME == 0:
             say.insayne(
                 "Suddenly, the bells begin to chime in simultaneity, if not "
                 "exactly unison. From the chaos can be discerned a discordant "
@@ -96,7 +101,6 @@ class _BelfryEvent(_Event):
                 "sinews of your very sanity.")
             G.player.insanity.modify(15)
             G.add_event(_SongInHeadEvent(), "pre")
-        self._counter += 1
 
 
 class _BelfryRoom(_Room):
@@ -107,8 +111,6 @@ class _BelfryRoom(_Room):
 
     def on_exit(self):
         super().on_exit()
-        logging.debug(f"Killing event {self._event}.")
-        self._event.kill()
 
 
 cathedral_belfry = _BelfryRoom.create(
