@@ -18,21 +18,21 @@ def enter_room(room):
 
 def _look():
     if G.current_room.description:
-        util.enqueue_text(G.current_room.description)
+        say.insayne(G.current_room.description)
 
     # TODO: Bespoke descriptions for all items and characters.
     # TODO: Fix a(n) problems throughout code base.
     for item in G.current_room.items:
-        util.enqueue_text(f"There is a(n) {item.name} lying on the ground.")
+        say.insayne(f"There is a(n) {item.name} lying on the ground.")
     for character in G.current_room.characters:
         # TODO: Move these descriptions to the actor.
         if character.alive:
-            util.enqueue_text(
+            say.insayne(
                 f"There is a(n) {character.name} slobbering in the corner."
             )
         else:
-            util.enqueue_text(f"The corpse of a(n) {character.name} molders here.")
-    util.enqueue_text(f'Exits are {", ".join(G.current_room.display_exits)}.')
+            say.insayne(f"The corpse of a(n) {character.name} molders here.")
+    say.insayne(f'Exits are {", ".join(G.current_room.display_exits)}.')
 
 
 @adventurelib.when("exit DIRECTION")
@@ -49,7 +49,7 @@ def go(direction):
         say.insayne(f"It is not possible to proceed {direction}.")
     else:
         # TODO: Replace enqueue_text with text events.
-        util.enqueue_text(f"You proceed {the_direction.display_description}.")
+        say.insayne(f"You proceed {the_direction.display_description}.")
         G.current_room.on_exit()
         G.current_room = next_room
         enter_room(G.current_room)

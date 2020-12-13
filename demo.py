@@ -77,7 +77,7 @@ def _start_game(_):
     G.player.upon_death(startgame)
 
     # Creates a small dungeon.
-    level = floor.Floor.generate("behemoth", number_rooms=4)
+    level = floor.Floor.generate("cathedral", number_rooms=15)
 
     # Places a monster in a random room.
     level.random_room().add_character(npcs.fish_man())
