@@ -324,7 +324,6 @@ def read(book):
     _, book = _find_available_item(book_name)
     if book is None:
         say.insayne(f"There is no {book_name} here to read.")
-
     else:
         book.read(G.player)
 
@@ -332,6 +331,24 @@ def read(book):
 def _move_item(old_inventory, new_inventory, item):
     old_inventory.remove(item)
     new_inventory.add(item)
+
+
+# TODO: Collapse with read?
+# TODO: Unfortunate that you can't say stuff like "smoke" or whatever.
+# TODO: Fucccckkk I could create a @when decorator in the item subclasses
+# themselves with a decorator on the specific methods (e.g. consume()).
+@adventurelib.when("use ITEM")
+@adventurelib.when("consume ITEM")
+def use(item):
+    item_name = item
+    item = G.player.inventory.find(item_name)
+    if item is None:
+        say.insayne(f"You don't have a(n) {item_name}.")
+        return
+    try:
+        item.consume(G.player)
+    except AttributeError:
+        say.insayne(f"You can't use the {item_name}.")
 
 
 @adventurelib.when("take ITEM")
