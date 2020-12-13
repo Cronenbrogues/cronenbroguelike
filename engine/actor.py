@@ -1,5 +1,6 @@
 import adventurelib
 
+from engine import bag
 from engine.globals import G
 from engine import item
 from engine import say
@@ -156,7 +157,7 @@ class Actor:
             statistic.owner = self
         self._ai = kwargs.pop("ai", None)
         self._death_throes = lambda this: None
-        self._inventory = adventurelib.Bag()
+        self._inventory = bag.Bag()
         self._read_books = set()
         self._abilities = {}
 
