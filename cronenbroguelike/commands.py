@@ -2,12 +2,13 @@ import re
 
 import adventurelib
 
-from cronenbroguelike import util
 from engine import ai
 from engine import dice
 from engine.globals import G
 from engine import say
 from engine import when
+
+from cronenbroguelike import ability as cheat_ability
 
 
 def enter_room(room):
@@ -110,8 +111,8 @@ def _cheat_stat(stat, delta):
     else:
         try:
             the_stat = getattr(G.player, stat)
-        except:
-            raise _CheatException
+        except Exception as ex:
+            raise _CheatException from ex
         else:
             the_stat.modify(delta)
 
@@ -120,12 +121,10 @@ _ABILITY_PATTERN = re.compile(r"add ability (\w+)")
 
 
 def _cheat_ability(ability_name):
-    from cronenbroguelike import ability
-
     try:
-        to_add = getattr(ability, ability_name)
-    except AttributeError:
-        raise _CheatException
+        to_add = getattr(cheat_ability, ability_name)
+    except AttributeError as ex:
+        raise _CheatException from ex
     else:
         G.player.add_ability(to_add())
 
@@ -163,9 +162,9 @@ def _resolve_attack(attacker, attack):
     defender = attack.target
     is_player = attacker is G.player
     if is_player:
-        subj, obj = ["you", defender.name]
+        subj = "you"
     else:
-        subj, obj = [attacker.name, "you"]
+        subj = attacker.name
     miss = "miss" if is_player else "misses"
     hit = "hit" if is_player else "hits"
 
@@ -204,7 +203,8 @@ def ability(ability):
 @when.when("sit there and starve")
 def suicide():
     say.insayne(
-        "Realizing the futility of continuing, you resign yourself to death. You lie on the floor and await oblivion."
+        "Realizing the futility of continuing, you resign yourself to death. "
+        "You lie on the floor and await oblivion."
     )
     G.player.health.heal_or_harm(-G.player.health.value, cause="ennui")
 
@@ -254,11 +254,10 @@ def talk(actor):
     # a more generic "choose action" function?
     action = interlocutor.ai.choose_action(interlocutor.current_room)
     if action.attack is not None:
-        attack = action.attack
-        assert attack.target is G.player
+        assert action.attack.target is G.player
         say.insayne(f"The {interlocutor.name} has no interest in talking and attacks!")
         # TODO: _resolve_attack should accept the attack action as parameter.
-        _resolve_attack(interlocutor, attack)
+        _resolve_attack(interlocutor, action.attack)
 
     elif action.speak is not None:
         say.insayne(action.speak.message)
@@ -287,8 +286,8 @@ def inspect(item):
             return
         message += "the following items: "
         say.insayne(message)
-        for item in character.inventory:
-            say.insayne(item.description, add_newline=False)
+        for i in character.inventory:
+            say.insayne(i.description, add_newline=False)
         return
 
     character = G.player.current_room.characters.find(item_name)
@@ -408,12 +407,12 @@ def loot(item, corpse):
 
     else:
         if item_name in {"all", "everything"}:
-            items = {item.name: item for item in corpse.inventory}
+            items = corpse.inventory
         else:
-            items = {item_name: [corpse.inventory.find(item_name)]}
-        for name, item in items.items():
-            if item is None:
-                say.insayne(f"There is no {item.name} on the corpse.")
+            items = [corpse.inventory.find(item_name)]
+        for i in items:
+            if i is None:
+                say.insayne(f"There is no {i.name} on the corpse.")
             else:
-                _move_item(corpse.inventory, G.player.inventory, item)
-                say.insayne(f"You liberate {item.name} from the corpse.")
+                _move_item(corpse.inventory, G.player.inventory, i)
+                say.insayne(f"You liberate {i.name} from the corpse.")
