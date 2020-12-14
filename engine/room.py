@@ -3,8 +3,6 @@ import collections
 import adventurelib
 
 from engine import bag
-from engine import say
-
 
 # TODO: Just fork adventurelib; I need to hack it up so much to get it to work
 # the way I want.

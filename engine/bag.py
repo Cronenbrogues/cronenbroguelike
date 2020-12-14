@@ -5,7 +5,7 @@ from engine import say
 
 
 class Bag(_Bag):
-    
+
     def _add_aliases(self, item):
         super()._add_aliases(item)
         if self is _G.player.inventory:

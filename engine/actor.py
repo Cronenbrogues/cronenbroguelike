@@ -1,5 +1,3 @@
-import adventurelib
-
 from engine import bag
 from engine.globals import G
 from engine import item
@@ -10,6 +8,7 @@ class _Statistic:
 
     _MIN_VALUE = None
     _MAX_VALUE = None
+    _NAME = None
 
     def __init__(self, value, owner=None):
         self._value = value

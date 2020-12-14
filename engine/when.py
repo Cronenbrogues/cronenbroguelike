@@ -37,8 +37,8 @@ def _add_parameter_strings(parameter, kind_to_argstrings, kind_to_callstrings):
         arg_string = f"**{parameter.name}"
         call_string = f"**{parameter.name}"
     if parameter.default is not inspect.Parameter.empty:
-        arg_string = f"{parameter_string}={parameter.default}"
-        call_string = f"{parameter_string}={parameter_string}"
+        arg_string = f"{parameter.name}={parameter.default}"
+        call_string = f"{parameter.name}={parameter.name}"
     kind_to_argstrings.setdefault(parameter.kind, []).append(arg_string)
     kind_to_callstrings.setdefault(parameter.kind, []).append(call_string)
 

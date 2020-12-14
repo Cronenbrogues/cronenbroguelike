@@ -1,6 +1,3 @@
-import collections
-
-
 class Direction:
     def __init__(self, descriptions, opposite=None):
         self._display_description = descriptions[0]
