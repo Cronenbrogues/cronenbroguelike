@@ -29,9 +29,7 @@ def _look():
         if character is G.player:
             continue
         # TODO: Move these descriptions to the actor.
-        say.insayne(
-            f"There is a(n) {character.name} slobbering in the corner."
-        )
+        say.insayne(f"There is a(n) {character.name} slobbering in the corner.")
     for corpse in G.player.current_room.corpses:
         say.insayne(f"The corpse of a(n) {corpse.name} molders here.")
     say.insayne(f'Exits are {", ".join(G.player.current_room.display_exits)}.')

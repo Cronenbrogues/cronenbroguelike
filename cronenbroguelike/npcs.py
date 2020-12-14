@@ -67,10 +67,11 @@ def mad_librarian():
                 "when still. Through constant paradox, flesh moves.", add_newline=False
             )
             say.insayne("I hold stillness's secret! It is mine!", add_newline=False)
-            say.insayne("Find it upon my body when I die.\"", add_newline=False)
+            say.insayne('Find it upon my body when I die."', add_newline=False)
             say.insayne(
-                    "\"Now watch,\" cries the rag-clad wretch, \"as the paradox "
-                    "is resolved.\"")
+                '"Now watch," cries the rag-clad wretch, "as the paradox '
+                'is resolved."'
+            )
             npc.die()
             self._will_execute = False
 
@@ -105,21 +106,23 @@ def smokes_man():
     )
 
     class _SmokesManEvent(event.Event):
-
         def execute(self):
             # TODO: Should not be G.player--what if somebody else wants a smoke?
             if _G.player.inventory.find("smoke"):
                 say.insayne(
-                        'The smoker clucks his tongue. "You\'ve already got a '
-                        'smoke; why are you trying to bum one off me?')
+                    "The smoker clucks his tongue. \"You've already got a "
+                    "smoke; why are you trying to bum one off me?"
+                )
 
             else:
                 cigarette = random.choice(
-                        [items.Cigarette, items.CigaretteStub]).create()
+                    [items.Cigarette, items.CigaretteStub]
+                ).create()
                 say.insayne(
                     '"Here you go," says the smoker between puffs. "Have a '
-                    'smoke with me. It\'s all there is to do here, man. Just '
-                    'that and wait to die and live again."')
+                    "smoke with me. It's all there is to do here, man. Just "
+                    'that and wait to die and live again."'
+                )
                 _G.player.inventory.add(cigarette)
                 say.insayne(f"You acquire a {cigarette.name}.")
 
@@ -129,7 +132,7 @@ def smokes_man():
         say.insayne(
             'The smoker glances placidly around the environs. "Until the next '
             'time around, I guess." With a final nod, he breathes a perfect '
-            'wreath of smoke, which dissipates solemnly.'
+            "wreath of smoke, which dissipates solemnly."
         )
 
     npc.upon_death(smoker_death_throes)

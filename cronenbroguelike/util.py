@@ -1,5 +1,6 @@
-from cronenbroguelike.events import EphemeralTextEvent as _EphemeralTextEvent
 from engine.globals import G as _G
+
+from cronenbroguelike.events import EphemeralTextEvent as _EphemeralTextEvent
 
 
 def enqueue_text(text, where="post"):

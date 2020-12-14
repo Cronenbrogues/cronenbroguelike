@@ -36,7 +36,6 @@ cathedral_office = _Room.create(
 
 
 class _BoilerHeatEvent(_Event):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._counter = 1
@@ -67,7 +66,6 @@ cathedral_boiler = _BoilerRoom.create(
 
 
 class _SongInHeadEvent(_Event):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._counter = 2
@@ -98,7 +96,8 @@ class _BelfryEvent(_Event):
                 "melody. It is a blasphemous all-bells rendition of Hanson's "
                 "'MMMBop.' As the final incomprehensible peal subsides, you "
                 "realize the song is stuck in your head, threatening the "
-                "sinews of your very sanity.")
+                "sinews of your very sanity."
+            )
             G.player.insanity.modify(15)
             G.add_event(_SongInHeadEvent(), "pre")
 
@@ -123,8 +122,7 @@ cathedral_belfry = _BelfryRoom.create(
 
 
 blank = _Room.create(
-    "A featureless room. The air tastes stale here. The walls and "
-    "floor are sallow."
+    "A featureless room. The air tastes stale here. The walls and floor are sallow."
 )
 sitting_room = _Room.create(
     "A gloomy expanse filled with furniture. You feel you are perhaps "

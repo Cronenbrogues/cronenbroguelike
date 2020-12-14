@@ -2,9 +2,10 @@ import collections
 import logging
 import random
 
-from cronenbroguelike import rooms
 from engine import dice
 from engine import directions
+
+from cronenbroguelike import rooms
 
 
 # TODO: Make these a coordinate attribute?
@@ -108,8 +109,8 @@ class Floor:
                 next_room = traversal_queue.popleft()
                 actual_room = next_room
 
-                for exit in actual_room.exits:
-                    destination, _ = actual_room.exit(exit)
+                for ex in actual_room.exits:
+                    destination, _ = actual_room.exit(ex)
                     destination_number = destination
                     if destination_number in all_rooms:
                         all_rooms.remove(destination_number)
