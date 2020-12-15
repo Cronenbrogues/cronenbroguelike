@@ -95,3 +95,10 @@ class Cigarette(_Consumable):
     @classmethod
     def create(cls):
         return cls("cigarette", "smoke", "coffin nail", "cancer stick")
+
+
+class Lighter(_Item):
+    
+    @classmethod
+    def create(cls):
+        return cls("lighter")
