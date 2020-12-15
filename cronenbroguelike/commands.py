@@ -337,12 +337,14 @@ def _move_item(old_inventory, new_inventory, item):
 
 
 # TODO: Collapse with read?
-# TODO: Unfortunate that you can't say stuff like "smoke" or whatever.
-# TODO: Fucccckkk I could create a @when decorator in the item subclasses
-# themselves with a decorator on the specific methods (e.g. consume()).
-@adventurelib.when("use ITEM")
-@when.when("consume ITEM")
-def use(item):
+# TODO: Could create a @when decorator in the item subclasses
+# themselves that automatically registers a command.
+# TODO: Refactor items; let items have "verb" objects which map to events.
+@adventurelib.when("use ITEM", verb="use")
+@adventurelib.when("eat ITEM", verb="eat")
+@adventurelib.when("smoke ITEM", verb="smoke")
+@when.when("consume ITEM", verb="consume")
+def use(item, verb):
     item_name = item
     item = G.player.inventory.find(item_name)
     if item is None:
