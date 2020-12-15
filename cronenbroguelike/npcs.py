@@ -122,13 +122,11 @@ def smokes_man():
                     'smoke with me. It\'s all there is to do here, man. Just '
                     'that and wait to die and live again."')
                 _G.player.inventory.add(cigarette)
-                say.insayne(f"You acquire a {cigarette.name}.")
                 lighter = npc.inventory.find("lighter")
                 if lighter is not None:
                     say.insayne('"Here, you\'ll need this, too."')
                     npc.inventory.remove(lighter)
                     _G.player.inventory.add(lighter)
-                    say.insayne(f"You acquire a {lighter.name}.")
                     say.insayne('"No smoke without fire."')
 
     npc.ai.add_event(_SmokesManEvent())
