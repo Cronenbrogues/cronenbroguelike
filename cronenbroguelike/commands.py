@@ -24,9 +24,7 @@ def _look():
     # TODO: Fix a(n) problems throughout code base.
     for item in G.player.current_room.items:
         say.insayne(f"There is a(n) {item.name} lying on the ground.")
-    for character in G.player.current_room.characters:
-        if character is G.player:
-            continue
+    for character in G.player.current_room.npcs:
         # TODO: Move these descriptions to the actor.
         say.insayne(
             f"There is a(n) {character.name} slobbering in the corner."
@@ -183,7 +181,7 @@ def _resolve_attack(attacker, attack):
 
 
 def _get_present_actor(actor_name):
-    return G.player.current_room.characters.find(actor_name)
+    return G.player.current_room.npcs.find(actor_name)
 
 
 @when.when("ability ABILITY")
@@ -231,8 +229,11 @@ def attack(actor):
         return
 
     # TODO: Move this to player AI. Use defender as a "hint."
+    # TODO: Migrating to player AI will avoid the special-casing of Room.npcs.
+    # TODO: Migrating to player AI can also allow for a more nuanced
+    # menu when attacking.
     _resolve_attack(G.player, ai.Attack(target=defender, method=None))
-    for character in G.player.current_room.characters:
+    for character in G.player.current_room.npcs:
         assert character.ai is not None
         action = character.ai.choose_action(G.player.current_room)
         if action.attack is not None:
@@ -291,7 +292,7 @@ def inspect(item):
             say.insayne(item.description, add_newline=False)
         return
 
-    character = G.player.current_room.characters.find(item_name)
+    character = G.player.current_room.npcs.find(item_name)
     if character is not None:
         # TODO: Collapse this with descriptive text in look().
         say.insayne(f"There is a(n) {character.name} slobbering in the corner.")
@@ -337,12 +338,14 @@ def _move_item(old_inventory, new_inventory, item):
 
 
 # TODO: Collapse with read?
-# TODO: Unfortunate that you can't say stuff like "smoke" or whatever.
-# TODO: Fucccckkk I could create a @when decorator in the item subclasses
-# themselves with a decorator on the specific methods (e.g. consume()).
-@adventurelib.when("use ITEM")
-@when.when("consume ITEM")
-def use(item):
+# TODO: Could create a @when decorator in the item subclasses
+# themselves that automatically registers a command.
+# TODO: Refactor items; let items have "verb" objects which map to events.
+@adventurelib.when("use ITEM", verb="use")
+@adventurelib.when("eat ITEM", verb="eat")
+@adventurelib.when("smoke ITEM", verb="smoke")
+@when.when("consume ITEM", verb="consume")
+def use(item, verb):
     item_name = item
     item = G.player.inventory.find(item_name)
     if item is None:
@@ -361,7 +364,6 @@ def take(item):
     if location is None or item is None:
         say.insayne(f"There is no {item_name} here to take.")
     else:
-        say.insayne(f"You acquire the {item_name}.")
         _move_item(location, G.player.inventory, item)
 
 
@@ -376,8 +378,8 @@ def drop(item):
         _move_item(G.player.inventory, G.player.current_room.items, item)
 
 
-@adventurelib.when("loot ITEM from CORPSE")
-@when.when("loot CORPSE", item="everything")
+@adventurelib.when("loot CORPSE", item="everything")
+@when.when("loot ITEM from CORPSE")
 def loot(item, corpse):
     item_name = item
     corpse_name = corpse
@@ -388,12 +390,10 @@ def loot(item, corpse):
     if character is not None:
         message = "You cannot loot the living!"
         # TODO: What if none of the character present chooses to attack?
-        if any(character.alive for character in G.player.current_room.characters):
+        if G.player.current_room.npcs:
             message += " All enemies attack as your clumsy pickpocketing attempt fails."
         say.insayne(message)
-        for character in G.player.current_room.characters:
-            if not character.alive:
-                continue
+        for character in G.player.current_room.npcs:
             assert character.ai is not None
             action = character.ai.choose_action(G.player.current_room)
             if action.attack is not None:
@@ -402,7 +402,7 @@ def loot(item, corpse):
 
     # TODO: This is duplicated from above. Maybe an "interact" function is
     # called for?
-    corpse = G.player.current_room.characters.find(corpse_name)
+    corpse = G.player.current_room.corpses.find(corpse_name)
     if corpse is None:
         say.insayne(f"There is no {corpse_name} here.")
 
@@ -410,7 +410,7 @@ def loot(item, corpse):
         if item_name in {"all", "everything"}:
             items = {item.name: item for item in corpse.inventory}
         else:
-            items = {item_name: [corpse.inventory.find(item_name)]}
+            items = {item_name: corpse.inventory.find(item_name)}
         for name, item in items.items():
             if item is None:
                 say.insayne(f"There is no {item.name} on the corpse.")

@@ -98,6 +98,7 @@ def smokes_man():
         10,
         100,
         "smoker",
+        "smokes man",
         "dude",
         "chill dude",
         "guy",
@@ -121,7 +122,12 @@ def smokes_man():
                     'smoke with me. It\'s all there is to do here, man. Just '
                     'that and wait to die and live again."')
                 _G.player.inventory.add(cigarette)
-                say.insayne(f"You acquire a {cigarette.name}.")
+                lighter = npc.inventory.find("lighter")
+                if lighter is not None:
+                    say.insayne('"Here, you\'ll need this, too."')
+                    npc.inventory.remove(lighter)
+                    _G.player.inventory.add(lighter)
+                    say.insayne('"No smoke without fire."')
 
     npc.ai.add_event(_SmokesManEvent())
 
@@ -136,5 +142,9 @@ def smokes_man():
     number_butts = random.choice(range(4, 7))
     for _ in range(number_butts):
         npc.inventory.add(items.CigaretteButt.create())
+    npc.inventory.add(items.CigaretteStub.create())
+    npc.inventory.add(items.CigaretteStub.create())
+    npc.inventory.add(items.Cigarette.create())
+    npc.inventory.add(items.Lighter.create())
 
     return npc

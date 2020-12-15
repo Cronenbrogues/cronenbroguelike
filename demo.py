@@ -4,7 +4,7 @@ import logging
 def _load_config():
     import json
 
-    config = {"log_level": "INFO"}
+    config = {"log_level": "INFO", "num_rooms": 15}
     try:
         with open("config.json", "r") as inp:
             additional_config = json.load(inp)
@@ -12,11 +12,12 @@ def _load_config():
         additional_config = {}
 
     config.update(additional_config)
-    log_level = config["log_level"].upper()
-    logging.basicConfig(level=getattr(logging, log_level))
+    config["log_level"] = config["log_level"].upper()
+    return config
 
 
-_load_config()
+CONFIG = _load_config()
+logging.basicConfig(level=getattr(logging, log_level))
 
 
 import random
@@ -77,7 +78,7 @@ def _start_game(_):
     G.player.upon_death(startgame)
 
     # Creates a small dungeon.
-    level = floor.Floor.generate("cathedral", number_rooms=15)
+    level = floor.Floor.generate("cathedral", number_rooms=CONFIG["num_rooms"])
 
     # Places a monster in a random room.
     level.random_room().add_character(npcs.fish_man())
