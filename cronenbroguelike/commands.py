@@ -178,7 +178,7 @@ def _resolve_attack(attacker, attack):
         damage = dice.roll("1d8") + strength_mod
         # TODO: How to organize messages better? Death also creates text, so
         # there should be a way to make sure the messages are ordered.
-        say.insayne(f"{subj.title()} {hit} for {damage} damage!")
+        say.insayne(f"{subj.title()} {hit} {obj} for {damage} damage!")
         defender.health.heal_or_harm(-1 * damage)
 
 
