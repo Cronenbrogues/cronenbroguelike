@@ -3,6 +3,7 @@ import collections
 import adventurelib
 
 from engine import bag
+from engine.globals import G as _G
 from engine import say
 
 
@@ -40,6 +41,10 @@ class Room(adventurelib.Room):
     @property
     def characters(self):
         return self._characters
+
+    @property
+    def npcs(self):
+        return self._characters.difference({_G.player})
 
     def add_item(self, item):
         self._items.add(item)
