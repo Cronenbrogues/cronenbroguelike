@@ -364,7 +364,6 @@ def take(item):
     if location is None or item is None:
         say.insayne(f"There is no {item_name} here to take.")
     else:
-        say.insayne(f"You acquire the {item_name}.")
         _move_item(location, G.player.inventory, item)
 
 
