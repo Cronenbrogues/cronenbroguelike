@@ -1,3 +1,4 @@
+import adventurelib
 import copy
 import logging
 import random
@@ -124,6 +125,28 @@ cathedral_belfry = _BelfryRoom.create(
     "A disquieting array of bells hangs from the ceiling here. The clappers "
     "swing low, nearly grazing the top of your head. An unseen motive force "
     "sweeps through the bells at random, causing them to chime.",
+    theme="cathedral",
+)
+
+
+class _AltarRoom(_Room):
+    
+    def on_enter(self):
+        super().on_enter()
+        adventurelib.set_context("altar")
+
+    def on_exit(self):
+        super().on_exit()
+        adventurelib.set_context(None)
+
+
+cathedral_altar = _AltarRoom.create(
+    "An idol with ruby eyes and a soot-stained maw sneers at you, showing "
+    "carven fangs. Directly beneath its chin sits an altar, resting atop a "
+    "stone plinth. Its sides are embellished with bas-relief ivory friezes "
+    "depicting various acts both lewd and violent. On one side is depicted "
+    "the apparent sacrifice of a man wrapped in leaves. The smoke rises up to "
+    "a face, which is depicted grinning.",
     theme="cathedral",
 )
 

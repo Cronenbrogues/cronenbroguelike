@@ -17,7 +17,7 @@ def _load_config():
 
 
 CONFIG = _load_config()
-logging.basicConfig(level=getattr(logging, log_level))
+logging.basicConfig(level=getattr(logging, CONFIG["log_level"]))
 
 
 import random
