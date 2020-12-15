@@ -404,7 +404,7 @@ def loot(item, corpse):
 
     # TODO: This is duplicated from above. Maybe an "interact" function is
     # called for?
-    corpse = G.player.current_room.characters.find(corpse_name)
+    corpse = G.player.current_room.corpses.find(corpse_name)
     if corpse is None:
         say.insayne(f"There is no {corpse_name} here.")
 
