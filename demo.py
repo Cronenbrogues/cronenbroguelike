@@ -31,7 +31,8 @@ from cronenbroguelike import rooms
 from engine import actor
 from engine import ai
 from engine import directions
-from engine.globals import G
+from engine.globals import G as _G
+from engine.globals import poll_events as _poll_events
 from engine import say
 from engine import when
 
@@ -42,7 +43,7 @@ def _create_rooms(number_of_rooms):
 
 def _get_random_start():
     # TODO: Condition this on how the last death actually occurred.
-    death_text = G.cause_of_death or random.choice(
+    death_text = _G.cause_of_death or random.choice(
         [
             "being impaled",
             "slowly suffocating as a glabrous tentacle horror looks on",
@@ -59,12 +60,13 @@ def _get_random_start():
 
 
 def _start_game(_):
-    @when.when("startgame", context="start_game", poll_after=True)
-    def startgame():
-        commands.enter_room(G.player.current_room)
+
+    def startgame(unused_actor):
+        with _poll_events(poll_after=True):
+            commands.enter_room(_G.player.current_room)
 
     # Creates the player character and ensures game will restart upon death.
-    G.player = actor.create_actor(
+    _G.player = actor.create_actor(
         health=10,
         psyche=10,
         strength=10,
@@ -74,8 +76,8 @@ def _start_game(_):
         insanity=0,
         name="player",
     )
-    G.player.log_stats = True
-    G.player.upon_death(startgame)
+    _G.player.log_stats = True
+    _G.player.upon_death(startgame)
 
     # Creates a small dungeon.
     level = floor.Floor.generate("cathedral", number_rooms=CONFIG["num_rooms"])
@@ -90,16 +92,16 @@ def _start_game(_):
     level.random_room().add_character(npcs.smokes_man())
 
     # Places the player.
-    level.random_room().add_character(G.player)
+    level.random_room().add_character(_G.player)
 
     # Starts it up.
     _get_random_start()
     adventurelib.set_context("start_game")
-    startgame()
+    startgame(None)
     adventurelib.set_context(None)
 
 
 _start_game(None)
-G.player.upon_death(_start_game)
+_G.player.upon_death(_start_game)
 adventurelib.say("")  # Necessary for space before first prompt.
 adventurelib.start()
