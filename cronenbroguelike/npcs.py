@@ -82,6 +82,7 @@ def mad_librarian():
             "appears between his teeth. His eyes roll back and, with a giggle, "
             "he falls backward onto the ground as though reclining on a divan."
         )
+        say.insayne("The edge of a hidebound book peeks from his rags.")
 
     npc.upon_death(librarian_death_throes)
     npc.inventory.add(items.MeditationBook.create())
