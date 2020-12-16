@@ -113,7 +113,7 @@ def smokes_man():
             if _G.player.inventory.find("smoke"):
                 say.insayne(
                         'The smoker clucks his tongue. "You\'ve already got a '
-                        'smoke; why are you trying to bum one off me?')
+                        'smoke; why are you trying to bum one off me?"')
 
             else:
                 cigarette = random.choice(
