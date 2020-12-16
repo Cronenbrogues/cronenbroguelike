@@ -392,9 +392,12 @@ def loot(item, corpse):
     corpse_name = corpse
     character = _get_present_actor(corpse_name)
 
+    if character is None:
+        say.insayne(f"There is no {corpse_name} here.")
+
     # TODO: Really need some abstraction around combat turns to avoid this
     # duplication.
-    if character is not None:
+    if character.alive:
         message = "You cannot loot the living!"
         # TODO: What if none of the character present chooses to attack?
         if G.player.current_room.npcs:
@@ -407,20 +410,14 @@ def loot(item, corpse):
                 _resolve_attack(character, action.attack)
         return
 
-    # TODO: This is duplicated from above. Maybe an "interact" function is
-    # called for?
-    corpse = G.player.current_room.corpses.find(corpse_name)
-    if corpse is None:
-        say.insayne(f"There is no {corpse_name} here.")
-
     else:
         if item_name in {"all", "everything"}:
-            items = {item.name: item for item in corpse.inventory}
+            items = {item.name: item for item in character.inventory}
         else:
-            items = {item_name: corpse.inventory.find(item_name)}
+            items = {item_name: character.inventory.find(item_name)}
         for name, item in items.items():
             if item is None:
-                say.insayne(f"There is no {item.name} on the corpse.")
+                say.insayne(f"There is no {name} on the corpse.")
             else:
-                _move_item(corpse.inventory, G.player.inventory, item)
                 say.insayne(f"You liberate {item.name} from the corpse.")
+                _move_item(character.inventory, G.player.inventory, item)
