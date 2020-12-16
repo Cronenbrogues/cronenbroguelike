@@ -23,7 +23,7 @@ def _look():
     # TODO: Bespoke descriptions for all items and characters.
     # TODO: Fix a(n) problems throughout code base.
     for item in G.player.current_room.items:
-        say.insayne(f"There is a(n) {item.name} lying on the ground.")
+        say.insayne(item.idle_description)
     for character in G.player.current_room.npcs:
         # TODO: Move these descriptions to the actor.
         say.insayne(
