@@ -5,21 +5,7 @@ import logging
 from adventurelib import when as _when
 
 from engine.globals import G as _G
-
-
-@contextlib.contextmanager
-def _poll_context(poll_before=True, poll_after=True):
-    logging.debug("Polling pre-events.")
-    if poll_before:
-        for event in _G.events("pre"):
-            if event.will_execute:
-                event.execute()
-    yield
-    logging.debug("Polling post-events.")
-    if poll_after:
-        for event in _G.events("post"):
-            if event.will_execute:
-                event.execute()
+from engine.globals import poll_events as _poll
 
 
 def _add_parameter_strings(parameter, kind_to_argstrings, kind_to_callstrings):
@@ -71,12 +57,13 @@ def _build_arg_strings(func):
 
 
 def when(command, context=None, **kwargs):
-    def decorator(func):
+
+    def wear_my_args_like_a_nasty_skin_mask(func):
         arg_string, call_string = _build_arg_strings(func)
         logging.debug(f"arg_string: {arg_string}")
         logging.debug(f"call_string: {call_string}")
         these_globals = {
-            "_poll_context": _poll_context,
+            "_poll": _poll,
             "logging": logging,
             "poll_before": kwargs.pop("poll_before", False),
             "poll_after": kwargs.pop("poll_after", False),
@@ -86,7 +73,7 @@ def when(command, context=None, **kwargs):
 
         exec(
             f"""def wrapped({arg_string}):
-            with _poll_context():
+            with _poll():
                 logging.debug("returning from context")
                 return func({call_string})""",
             these_globals,
@@ -95,4 +82,4 @@ def when(command, context=None, **kwargs):
 
         return _when(command, context=context, **kwargs)(these_locals["wrapped"])
 
-    return decorator
+    return wear_my_args_like_a_nasty_skin_mask
