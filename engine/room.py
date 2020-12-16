@@ -86,10 +86,11 @@ class Room(adventurelib.Room):
             self._events.append(event)
 
     def on_enter(self):
-        pass
+        self.add_character(_G.player)
 
     def on_exit(self):
-        pass
+        _G.player.current_room = None
+        self._characters.remove(_G.player)
 
     def add_event(self, event):
         # TODO: This is probably bad.
