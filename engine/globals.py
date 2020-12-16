@@ -1,4 +1,6 @@
 import collections
+import contextlib
+import inspect
 import logging
 
 
@@ -51,3 +53,18 @@ class _GameState:
 
 
 G = _GameState()
+
+
+@contextlib.contextmanager
+def poll_events(poll_before=True, poll_after=True):
+    logging.debug("Polling pre-events.")
+    if poll_before:
+        for event in G.events("pre"):
+            if event.will_execute:
+                event.execute()
+    yield
+    logging.debug("Polling post-events.")
+    if poll_after:
+        for event in G.events("post"):
+            if event.will_execute:
+                event.execute()
