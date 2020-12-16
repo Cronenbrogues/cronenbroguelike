@@ -102,3 +102,23 @@ class Lighter(_Item):
     @classmethod
     def create(cls):
         return cls("lighter")
+
+
+# TODO: Maybe make ephemeral items and have a global event that polls for them,
+# changing their state?
+class Smoke(_Item):
+
+    @classmethod
+    def create(cls):
+        return cls(
+                "event_smoke", description="plumes of smoke",
+                idle_description="Thick wreaths of acrid smoke hang in the air.")
+
+
+class FadingSmoke(_Item):
+
+    @classmethod
+    def create(cls):
+        return cls(
+                "event_smoke", description="plumes of smoke",
+                idle_description="A thin haze of smoke remains here.")

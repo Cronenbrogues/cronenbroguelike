@@ -370,6 +370,8 @@ def take(item):
     location, item = _find_in_room(item_name)
     if location is None or item is None:
         say.insayne(f"There is no {item_name} here to take.")
+    elif not item.obtainable:
+        say.insayne("You can't take the {item_name}.")
     else:
         _move_item(location, G.player.inventory, item)
 
