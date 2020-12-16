@@ -181,7 +181,9 @@ def _resolve_attack(attacker, attack):
 
 
 def _get_present_actor(actor_name):
-    return G.player.current_room.npcs.find(actor_name)
+    return (
+        G.player.current_room.npcs.find(actor_name) or
+        G.player.current_room.corpses.find(actor_name))
 
 
 @when.when("ability ABILITY")
@@ -249,6 +251,11 @@ def talk(actor):
     interlocutor = _get_present_actor(actor_name)
     if interlocutor is None:
         say.insayne(f"There is no {actor_name} here.")
+        return
+
+    if not interlocutor.alive:
+        # TODO: Actors/items should have a "definite article" form.
+        say.insayne(f"The corpse of {interlocutor.name} is a poor conversationalist.")
         return
 
     # TODO: Yeah, this is very parallel to attacking. Maybe there should be
