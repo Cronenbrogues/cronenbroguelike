@@ -8,6 +8,9 @@ from engine.globals import G
 
 
 _Z = zalgo_text.zalgo()
+_Z.numAccentsUp = (1, 10)
+_Z.numAccentsDown = (1, 10)
+_Z.numAccentsMiddle = (1, 4)
 
 
 _VOICES = [
@@ -18,12 +21,19 @@ _VOICES = [
 ]
 
 
+def _y(x):
+    """Shallow parabolic curve ensuring zalgo increases little at first.
+
+    Then explodes.
+    """
+    return (5 / 900) * (x ** 2) + (4 / 9) * x
+
+
 def _hear_voices(text, insanity):
-    if insanity < 30:
-        return text
 
     # TODO: Too much zalgo text! Decide letter-by-letter whether to zalgofy.
-    _Z.maxAccentsPerLetter = max(0, int((insanity - 20) / 10))
+    _Z.zalgoChance = _y(insanity) / 100
+    _Z.maxAccentsPerLetter = max(1, int(insanity / 10))
 
     # TODO: Condition number of breakpoints on length of text!
     num_breaks = int((insanity - 40) / 10)
