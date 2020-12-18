@@ -51,6 +51,9 @@ class _GameState:
         while self._text_queue:
             yield self._text_queue.popleft()
 
+    def set_flag(self, flag):
+        logging.debug('set_flag called')
+
 
 G = _GameState()
 

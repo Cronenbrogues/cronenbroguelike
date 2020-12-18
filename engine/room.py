@@ -22,8 +22,6 @@ class Room(adventurelib.Room):
         self._display_exits = {}
         self._exits = {}
 
-        # TODO: adventurelib.Bag should contain an ancillary set of aliases
-        # to obviate O(n) lookup by alias.
         self._items = bag.Bag()
         self._characters = bag.Bag()
         self._corpses = bag.Bag()
@@ -94,8 +92,8 @@ class Room(adventurelib.Room):
 
     def add_event(self, event):
         # TODO: This is probably bad.
+        self.event = event
         event.room = self
-        self._maybe_append_event(event)
 
     def events(self):
         # TODO: Rename this method.
@@ -107,9 +105,6 @@ class Room(adventurelib.Room):
                 break
             yield next_event
             self._maybe_append_event(next_event)
-
-    def __call__(self, *args, **kwargs):
-        print(f"I was called with {args} and {kwargs}.")
 
     def exit(self, description):
         return self._exits.get(description, (None, None))

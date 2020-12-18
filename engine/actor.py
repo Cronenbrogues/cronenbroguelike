@@ -156,6 +156,8 @@ class Actor:
             self._statistics[statistic.name] = statistic
             statistic.owner = self
         self._ai = kwargs.pop("ai", None)
+        if self._ai is not None:
+            self._ai.owner = self
         self._death_throes = lambda this: None
         self._inventory = bag.Bag()
         self._read_books = set()
@@ -196,6 +198,8 @@ class Actor:
     # TODO: This sucks; using __getattr__ or something might help. Maybe just
     # hard-code the stats that all actors have? Dynamically add properties?
     # ... use metaclasses?
+    # TODO: How does this change when equipment is added?
+    # TODO: How does this change when body-swapping is added?
     def get_stat(self, stat_name):
         stat = self._statistics.get(stat_name)
         if stat is not None:

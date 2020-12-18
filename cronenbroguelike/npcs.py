@@ -2,6 +2,7 @@ import random
 
 from engine import actor
 from engine import ai
+from engine import dice
 from engine import event
 from engine.globals import G as _G
 from engine import say
@@ -74,7 +75,7 @@ def mad_librarian():
             npc.die()
             self._will_execute = False
 
-    npc.ai.add_event(_LibrarianEvent())
+    npc.ai.add_event(_LibrarianEvent(), "talk")
 
     def librarian_death_throes(librarian):
         say.insayne(
@@ -110,10 +111,10 @@ def smokes_man():
 
         def execute(self):
             # TODO: Should not be G.player--what if somebody else wants a smoke?
-            if _G.player.inventory.find("smoke"):
+            if _G.player.inventory.find("cigarette") or _G.player.inventory.find("stub"):
                 say.insayne(
                         'The smoker clucks his tongue. "You\'ve already got a '
-                        'smoke; why are you trying to bum one off me?')
+                        'smoke; why are you trying to bum one off me?"')
 
             else:
                 cigarette = random.choice(
@@ -130,7 +131,26 @@ def smokes_man():
                     _G.player.inventory.add(lighter)
                     say.insayne('"No smoke without fire."')
 
-    npc.ai.add_event(_SmokesManEvent())
+    class _SmokesManSmokes(event.Event):
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.owner = None
+            self._timer = -1
+
+        def execute(self):
+            self._timer += 1
+            if self._timer % 3 != 0:
+                return
+            roll = dice.roll('1d10')
+            if roll <= 4:
+                return
+            cig = items.Cigarette.create()
+            self.owner.inventory.add(cig)
+            cig.consume(self.owner)
+
+    npc.ai.add_event(_SmokesManEvent(), "talk")
+    npc.ai.add_default_event(_SmokesManSmokes())
 
     def smoker_death_throes(smoker):
         say.insayne(

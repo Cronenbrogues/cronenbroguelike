@@ -23,7 +23,7 @@ def _look():
     # TODO: Bespoke descriptions for all items and characters.
     # TODO: Fix a(n) problems throughout code base.
     for item in G.player.current_room.items:
-        say.insayne(f"There is a(n) {item.name} lying on the ground.")
+        say.insayne(item.idle_description)
     for character in G.player.current_room.npcs:
         # TODO: Move these descriptions to the actor.
         say.insayne(
@@ -56,6 +56,14 @@ def go(direction):
 
 @when.when("look")
 def look():
+    for character in G.player.current_room.npcs:
+        assert character.ai is not None
+        action = character.ai.choose_action(G.player.current_room)
+        if action.attack is not None:
+            _resolve_attack(character, action.attack)
+        elif action.event is not None:
+            if action.event.event is not None:
+                action.event.event.execute()
     _look()
 
 
@@ -220,7 +228,7 @@ def attack(actor):
     # TODO: Affinity/factions so monsters can choose whom to strike.
     defender = _get_present_actor(actor_name)
     if defender is None:
-        say.insayne(f"There is no {actor_name} here.")
+        say.insayne(f"There is no {actor_name} here to attack.")
         return
 
     if not defender.alive:
@@ -237,7 +245,7 @@ def attack(actor):
     _resolve_attack(G.player, ai.Attack(target=defender, method=None))
     for character in G.player.current_room.npcs:
         assert character.ai is not None
-        action = character.ai.choose_action(G.player.current_room)
+        action = character.ai.choose_action(G.player.current_room, impulse="attack")
         if action.attack is not None:
             _resolve_attack(character, action.attack)
         else:
@@ -250,7 +258,18 @@ def talk(actor):
     actor_name = actor  # Variable names are constrained by adventurelib.
     interlocutor = _get_present_actor(actor_name)
     if interlocutor is None:
-        say.insayne(f"There is no {actor_name} here.")
+        if _find_available_item(actor_name) is not None:
+            if _G.player.insanity > 30:
+                say.insayne(
+                        f"You talk to {actor_name} at length. In response, "
+                        "it expatiates on the nature of reality. It's making "
+                        f"a lot of sense, that talking {actor_name}.")
+                _G.player.insanity.modify(15)
+            else:
+                say.insayne(f"Why are you talking to {actor_name}, crazy?")
+                _G.player.insanity.modify(5)
+        else:
+            say.insayne(f"There is no {actor_name} here to talk to.")
         return
 
     if not interlocutor.alive:
@@ -260,7 +279,7 @@ def talk(actor):
 
     # TODO: Yeah, this is very parallel to attacking. Maybe there should be
     # a more generic "choose action" function?
-    action = interlocutor.ai.choose_action(interlocutor.current_room)
+    action = interlocutor.ai.choose_action(interlocutor.current_room, impulse="talk")
     if action.attack is not None:
         attack = action.attack
         assert attack.target is G.player
@@ -362,6 +381,7 @@ def use(item, verb):
         item.consume(G.player)
     except AttributeError:
         say.insayne(f"You can't use the {item_name}.")
+        raise
 
 
 @adventurelib.when("take ITEM")
@@ -369,7 +389,14 @@ def take(item):
     item_name = item
     location, item = _find_in_room(item_name)
     if location is None or item is None:
-        say.insayne(f"There is no {item_name} here to take.")
+        if G.player.current_room.npcs.find(item_name):
+            say.insayne("You cannot take sentient beings.")
+        elif G.player.current_room.corpses.find(item_name):
+            say.insayne("The corpse would be too burdensome to carry.")
+        else:
+            say.insayne(f"There is no {item_name} here to take.")
+    elif not item.obtainable:
+        say.insayne("You can't take the {item_name}.")
     else:
         _move_item(location, G.player.inventory, item)
 
