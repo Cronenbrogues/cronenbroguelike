@@ -373,6 +373,7 @@ def use(item, verb):
         item.consume(G.player)
     except AttributeError:
         say.insayne(f"You can't use the {item_name}.")
+        raise
 
 
 @adventurelib.when("take ITEM")

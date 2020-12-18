@@ -19,6 +19,7 @@ class Item(_Item):
             idle_description = f"There is a {name} lying on the ground."
         self.description = description  # Fully mutable member.
         self.idle_description = idle_description  # Fully mutable member.
+        self.holder = None  # Fully mutable member.
         self._obtainable = obtainable
 
     @property

@@ -110,7 +110,7 @@ def smokes_man():
 
         def execute(self):
             # TODO: Should not be G.player--what if somebody else wants a smoke?
-            if _G.player.inventory.find("smoke"):
+            if _G.player.inventory.find("cigarette") or _G.player.inventory.find("stub"):
                 say.insayne(
                         'The smoker clucks his tongue. "You\'ve already got a '
                         'smoke; why are you trying to bum one off me?"')

@@ -1,5 +1,8 @@
+import logging
 import random
 
+from engine.event import Event as _Event
+from engine.globals import G as _G
 from engine.item import Book as _Book
 from engine.item import Consumable as _Consumable
 from engine.item import Item as _Item
@@ -48,12 +51,16 @@ class CigaretteButt(_Consumable):
 
     @classmethod
     def create(cls):
-        return cls("cigarette butt", "smoke")
+        return cls("cigarette butt")
 
 
 class CigaretteStub(_Consumable):
 
     def consume(self, consumer):
+        if not consumer.inventory.find('lighter'):
+            say.insayne(f'You have no way to light the {self.name}.')
+            return
+
         # TODO: Customize text based on whether consumer is player.
         say.insayne(
                 f"You take a furtive puff on the {self.name}. It tastes foul "
@@ -63,16 +70,20 @@ class CigaretteStub(_Consumable):
         consumer.inventory.remove(self)
         cigarette_butt = CigaretteButt.create()
         consumer.inventory.add(cigarette_butt)
-        say.insayne(f"You acquire a {cigarette_butt.name}.")
+        consumer.current_room.items.add(Smoke.create(consumer.current_room))
 
     @classmethod
     def create(cls):
-        return cls("cigarette stub", "smoke")
+        return cls("cigarette stub", "stub")
 
 
 class Cigarette(_Consumable):
 
     def consume(self, consumer):
+        if not consumer.inventory.find('lighter'):
+            say.insayne(f'You have no way to light the {self.name}.')
+            return
+
         # TODO: Customize text based on whether consumer is player.
         # TODO: Add location to actors so that the state of onlookers can
         # be properly assessed.
@@ -90,11 +101,11 @@ class Cigarette(_Consumable):
         consumer.inventory.remove(self)
         cigarette_stub = CigaretteStub.create()
         consumer.inventory.add(cigarette_stub)
-        say.insayne(f"You acquire a {cigarette_stub.name}.")
+        consumer.current_room.items.add(Smoke.create(consumer.current_room))
 
     @classmethod
     def create(cls):
-        return cls("cigarette", "smoke", "coffin nail", "cancer stick")
+        return cls("cigarette", "coffin nail", "cancer stick")
 
 
 class Lighter(_Item):
@@ -104,14 +115,44 @@ class Lighter(_Item):
         return cls("lighter")
 
 
+class _FadingSmokeEvent(_Event):
+
+    def execute(self):
+        logging.debug("FadingSmokeEvent executing.")
+        to_remove = []
+
+        for item in self.room.items:
+            if isinstance(item, FadingSmoke) or isinstance(item, Smoke):
+                to_remove.append(item)
+
+        if not to_remove:
+            self.kill()
+
+        for item in to_remove:
+            if isinstance(item, FadingSmoke):
+                self.room.items.remove(item)
+            elif isinstance(item, Smoke):
+                item.turns -= 1
+                if item.turns <= 0:
+                    self.room.items.add(FadingSmoke.create())
+                    self.room.items.remove(item)
+
+
 # TODO: Maybe make ephemeral items and have a global event that polls for them,
 # changing their state?
 class Smoke(_Item):
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.turns = 2
+
     @classmethod
-    def create(cls):
+    def create(cls, room):
+        event = _FadingSmokeEvent()
+        room.add_event(event)
+        _G.add_event(event, "post")
         return cls(
-                "event_smoke", description="plumes of smoke",
+                "smoke", description="plumes of smoke",
                 idle_description="Thick wreaths of acrid smoke hang in the air.")
 
 
@@ -120,5 +161,5 @@ class FadingSmoke(_Item):
     @classmethod
     def create(cls):
         return cls(
-                "event_smoke", description="plumes of smoke",
+                "fading smoke", description="plumes of smoke",
                 idle_description="A thin haze of smoke remains here.")

@@ -129,10 +129,54 @@ cathedral_belfry = _BelfryRoom.create(
 )
 
 
+class _AltarEvent(_Event):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def execute(self):
+        smoke = self.room.items.find('smoke') or self.room.items.find('fading smoke')
+        if smoke is not None:
+            say.insayne(
+                "The smoke whirls for a moment on the altar as though set "
+                "there for an offering. "
+                "The idol's ruby eyes seem to blaze as the smoke makes "
+                "languorous curls beneath its nose. With a sound like the "
+                "clatter of gravel and like the snuffling of many beasts, the "
+                "idol draws the smoke into its nostrils. Its mouth shudders "
+                "and falls open, smashing the altar beneath to shards. ")
+            say.insayne("All beings present are pelted with debris.")
+            for character in self.room.characters:
+                character.health.heal_or_harm(-1)
+            say.insayne(
+                "In the idol's lax jaws can be seen a passage "
+                "winding downard.")
+            self.room.description = (
+                "An idol with ruby eyes and a soot-stained maw yawns at you. "
+                "Its throat, of an almost irritated red color, is large enough "
+                "for you to pass through. The idol's mandible lies atop a pile "
+                "of rubble. Fragments of stone are "
+                "punctuated with the remains of an ivory frieze. One "
+                "piece of ivory appears to depict the idol itself, its mouth "
+                "cavernous, the red gold of its eyes showing contentment.")
+            G.set_flag("IDOL_MOUTH_OPEN")
+            self.room.items.remove(smoke)
+            self.kill()
+
+
 class _AltarRoom(_Room):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._event = None
     
     def on_enter(self):
         super().on_enter()
+        if self._event is None:
+            self._event = _AltarEvent()
+            # TODO: Use add_event here and elsewhere; omit _maybe_append_event from Room.add_event.
+            self._event.room = self
+            G.add_event(self._event, "post")
         adventurelib.set_context("altar")
 
     def on_exit(self):
@@ -140,13 +184,15 @@ class _AltarRoom(_Room):
         adventurelib.set_context(None)
 
 
+# TODO: Add a battle with a wrathful being if the smoker is slain.
 cathedral_altar = _AltarRoom.create(
     "An idol with ruby eyes and a soot-stained maw sneers at you, showing "
     "carven fangs. Directly beneath its chin sits an altar, resting atop a "
     "stone plinth. Its sides are embellished with bas-relief ivory friezes "
     "depicting various acts both lewd and violent. On one side is depicted "
-    "the apparent sacrifice of a man wrapped in leaves. The smoke rises up to "
-    "a face, which is depicted grinning.",
+    "the apparent sacrifice of a man bearing a sprig of leaves, overseen by an angry "
+    "beast. On another is shown a burnt offering of the same leaves. The smoke "
+    "rises up toward a face, whose mouth gapes in a slack-jawed smile.",
     theme="cathedral",
 )
 
