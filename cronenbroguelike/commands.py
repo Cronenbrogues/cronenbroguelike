@@ -56,6 +56,14 @@ def go(direction):
 
 @when.when("look")
 def look():
+    for character in G.player.current_room.npcs:
+        assert character.ai is not None
+        action = character.ai.choose_action(G.player.current_room)
+        if action.attack is not None:
+            _resolve_attack(character, action.attack)
+        elif action.event is not None:
+            if action.event.event is not None:
+                action.event.event.execute()
     _look()
 
 
@@ -237,7 +245,7 @@ def attack(actor):
     _resolve_attack(G.player, ai.Attack(target=defender, method=None))
     for character in G.player.current_room.npcs:
         assert character.ai is not None
-        action = character.ai.choose_action(G.player.current_room)
+        action = character.ai.choose_action(G.player.current_room, impulse="attack")
         if action.attack is not None:
             _resolve_attack(character, action.attack)
         else:
@@ -271,7 +279,7 @@ def talk(actor):
 
     # TODO: Yeah, this is very parallel to attacking. Maybe there should be
     # a more generic "choose action" function?
-    action = interlocutor.ai.choose_action(interlocutor.current_room)
+    action = interlocutor.ai.choose_action(interlocutor.current_room, impulse="talk")
     if action.attack is not None:
         attack = action.attack
         assert attack.target is G.player
@@ -381,7 +389,12 @@ def take(item):
     item_name = item
     location, item = _find_in_room(item_name)
     if location is None or item is None:
-        say.insayne(f"There is no {item_name} here to take.")
+        if G.player.current_room.npcs.find(item_name):
+            say.insayne("You cannot take sentient beings.")
+        elif G.player.current_room.corpses.find(item_name):
+            say.insayne("The corpse would be too burdensome to carry.")
+        else:
+            say.insayne(f"There is no {item_name} here to take.")
     elif not item.obtainable:
         say.insayne("You can't take the {item_name}.")
     else:
