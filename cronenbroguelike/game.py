@@ -1,4 +1,17 @@
 import logging
+import random
+import adventurelib
+from . import commands
+from . import floor
+from . import npcs
+from . import rooms
+from engine import actor
+from engine import ai
+from engine import directions
+from engine.globals import G as _G
+from engine.globals import poll_events as _poll_events
+from engine import say
+from engine import when
 
 
 def _load_config():
@@ -14,28 +27,6 @@ def _load_config():
     config.update(additional_config)
     config["log_level"] = config["log_level"].upper()
     return config
-
-
-CONFIG = _load_config()
-logging.basicConfig(level=getattr(logging, CONFIG["log_level"]))
-
-
-import random
-
-import adventurelib
-
-from cronenbroguelike import commands
-from cronenbroguelike import floor
-from cronenbroguelike import npcs
-from cronenbroguelike import rooms
-from engine import actor
-from engine import ai
-from engine import directions
-from engine.globals import G as _G
-from engine.globals import poll_events as _poll_events
-from engine import say
-from engine import when
-
 
 def _create_rooms(number_of_rooms):
     return random.sample(rooms.all_rooms(), number_of_rooms)
@@ -59,7 +50,7 @@ def _get_random_start():
         say.insayne(text)
 
 
-def _start_game(_):
+def _start_game(_, CONFIG):
 
     def startgame(unused_actor):
         with _poll_events(poll_after=True):
@@ -100,8 +91,10 @@ def _start_game(_):
     startgame(None)
     adventurelib.set_context(None)
 
-
-_start_game(None)
-_G.player.upon_death(_start_game)
-adventurelib.say("")  # Necessary for space before first prompt.
-adventurelib.start()
+def main():
+    CONFIG = _load_config()
+    logging.basicConfig(level=getattr(logging, CONFIG["log_level"]))
+    _start_game(None, CONFIG)
+    _G.player.upon_death(_start_game)
+    adventurelib.say("")  # Necessary for space before first prompt.
+    adventurelib.start()
