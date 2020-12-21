@@ -28,6 +28,7 @@ def _load_config():
     config["log_level"] = config["log_level"].upper()
     return config
 
+
 def _create_rooms(number_of_rooms):
     return random.sample(rooms.all_rooms(), number_of_rooms)
 
@@ -51,7 +52,6 @@ def _get_random_start():
 
 
 def _start_game(_, CONFIG):
-
     def startgame(unused_actor):
         with _poll_events(poll_after=True):
             commands.enter_room(_G.player.current_room)
@@ -90,6 +90,7 @@ def _start_game(_, CONFIG):
     adventurelib.set_context("start_game")
     startgame(None)
     adventurelib.set_context(None)
+
 
 def main():
     CONFIG = _load_config()
