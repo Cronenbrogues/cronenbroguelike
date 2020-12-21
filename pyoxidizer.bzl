@@ -14,6 +14,7 @@ def make_exe(dist):
     )
 
     exe.add_python_resources(exe.pip_install(["-r", "requirements.txt"]))
+    exe.add_python_resources(exe.pip_install([CWD]))
 
     return exe
 
