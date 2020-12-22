@@ -16,6 +16,10 @@ def _load_config():
     return config
 
 
+# This has to come here to ensure that logging works.
+logging.basicConfig(level=getattr(logging, _load_config()["log_level"]))
+
+
 import random
 import adventurelib
 from . import commands
@@ -54,7 +58,8 @@ def _get_random_start():
 
 
 def _start_game(_, config):
-    def startgame(unused_actor):
+
+    def _restart(unused_actor):
         # Creates the player character and ensures game will restart upon death.
         _G.player = actor.create_actor(
             health=10,
@@ -67,7 +72,10 @@ def _start_game(_, config):
             name="player",
         )
         _G.player.log_stats = True
-        _G.player.upon_death(startgame)
+        _G.player.upon_death(_restart)
+
+        # Removes all events from global queue.
+        _G.clear_queues()
 
         # Creates a small dungeon.
         level = floor.Floor.generate("cathedral", number_rooms=config["num_rooms"])
@@ -91,7 +99,7 @@ def _start_game(_, config):
         with _poll_events(poll_after=True):
             commands.enter_room(_G.player.current_room)
 
-    startgame(None)
+    _restart(None)
 
 
 def main():
