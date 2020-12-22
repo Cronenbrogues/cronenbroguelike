@@ -58,11 +58,10 @@ class CigaretteButt(_Consumable):
 class CigaretteStub(_Consumable):
 
     def consume(self, consumer):
-        if not consumer.inventory.find('lighter'):
-            say.insayne(f'You have no way to light the {self.name}.')
-            return
-
         if consumer is _G.player:
+            if not consumer.inventory.find('lighter'):
+                say.insayne(f'You have no way to light the {self.name}.')
+                return
             say.insayne(
                     f"You take a furtive puff on the {self.name}. It tastes foul "
                     "and acrid. You do not feel like you are wearing a leather "
