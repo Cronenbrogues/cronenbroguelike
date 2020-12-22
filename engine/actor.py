@@ -150,6 +150,8 @@ class Actor:
     ]
 
     def __init__(self, actor_item, *statistics, **kwargs):
+        # Many of these private methods will be swappable if body-swapping is
+        # implemented, e.g. mental stats, abilities, idle_text, ai ...
         self._actor_item = actor_item
         self._statistics = {}
         for statistic in statistics:
@@ -158,6 +160,7 @@ class Actor:
         self._ai = kwargs.pop("ai", None)
         if self._ai is not None:
             self._ai.owner = self
+        self._idle_text = kwargs.pop("idle_text", None)
         self._death_throes = lambda this: None
         self._inventory = bag.Bag()
         self._read_books = set()
@@ -181,6 +184,10 @@ class Actor:
     @property
     def abilities(self):
         return self._abilities
+
+    @property
+    def idle_text(self):
+        return self._idle_text        
 
     def add_ability(self, ability):
         # TODO: "You" vs. name problem as always.

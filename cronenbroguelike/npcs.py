@@ -8,6 +8,7 @@ from engine.globals import G as _G
 from engine import say
 
 from cronenbroguelike import items
+from cronenbroguelike import util
 
 
 # TODO: I don't like doing this functionally. Use classes instead.
@@ -20,7 +21,8 @@ def fish_man():
         will=10,
         wisdom=10,
         insanity=100,
-        name="Fish Man",
+        name="fish man",
+        idle_text="There is a fish man slobbering in the corner.",
         ai=ai.HatesPlayer(),
     )
 
@@ -33,9 +35,9 @@ def fish_man():
     # TODO: Why isn't .alive = False working?
     def fish_man_death_throes(fish_man):
         say.insayne(
-            f"{fish_man.name} flops breathlessly upon the ground, blood "
-            "commingling with piscine slobber. Half-formed gills flutter "
-            "helplessly, urgently, then fall slack."
+            f"{util.capitalized(fish_man.name)} flops breathlessly upon the "
+            "ground, blood commingling with piscine slobber. Half-formed gills "
+            "flutter helplessly, urgently, then fall slack."
         )
 
     monster.upon_death(fish_man_death_throes)
@@ -55,6 +57,7 @@ def mad_librarian():
         "mad librarian",
         "librarian",
         # TODO: How to deal with intro text? "The librarian leans in ..."
+        idle_text="A mad librarian, clad in rags, hunches over a musty book.",
         ai=ai.Chill(),
     )
 
@@ -104,6 +107,9 @@ def smokes_man():
         "dude",
         "chill dude",
         "guy",
+        idle_text=(
+                "A smoker puffs meditatively on a cigarette. He looks extremely "
+                "cool."),
         ai=ai.Chill(),
     )
 
