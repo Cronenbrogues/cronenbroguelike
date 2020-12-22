@@ -58,23 +58,31 @@ class CigaretteButt(_Consumable):
 class CigaretteStub(_Consumable):
 
     def consume(self, consumer):
-        if consumer is _G.player:
-            if not consumer.inventory.find('lighter'):
+        if not consumer.inventory.find('lighter'):
+            if consumer is _G.player:
                 say.insayne(f'You have no way to light the {self.name}.')
                 return
-            say.insayne(
-                    f"You take a furtive puff on the {self.name}. It tastes foul "
-                    "and acrid. You do not feel like you are wearing a leather "
-                    "jacket at all.")
-            consumer.health.heal_or_harm(- dice.roll("2d2"), cause="smoking half a cig")
-        else:
-            name = util.capitalized(consumer.name)
-            say.insayne(f"{name} puffs furtively on a {self.name}.")
-        
         consumer.inventory.remove(self)
         cigarette_butt = CigaretteButt.create()
         consumer.inventory.add(cigarette_butt)
         consumer.current_room.items.add(Smoke.create(consumer.current_room))
+
+        if consumer is _G.player:
+            say.insayne(
+                    f"You take a furtive puff on the {self.name}. It tastes foul "
+                    "and acrid. You do not feel like you are wearing a leather "
+                    "jacket at all.")
+            consumer.psyche.heal_or_harm(dice.roll("1d2"))
+            # TODO: Make insanity a variable statistic?
+            consumer.insanity.modify(- dice.roll("1d2"))
+            # TODO: Interesting problem with how this is implemented:
+            # because text is not queued but printed directly, if this line
+            # precedes anything else in this function and player dies,
+            # weird stuff will ensue.
+            consumer.health.heal_or_harm(- dice.roll("2d2"), cause="smoking half a cig")
+        else:
+            name = util.capitalized(consumer.name)
+            say.insayne(f"{name} puffs furtively on a {self.name}.")
 
     @classmethod
     def create(cls):
@@ -85,8 +93,19 @@ class Cigarette(_Consumable):
 
     def consume(self, consumer):
         if not consumer.inventory.find('lighter'):
-            say.insayne(f'You have no way to light the {self.name}.')
-            return
+            if consumer is _G.player:
+                say.insayne(f'You have no way to light the {self.name}.')
+                return
+
+        # TODO: Buff strength for a little bit.
+        # TODO: Heal insanity, restore psyche.
+        # TODO: I don't like this solution as it presumes the item is in the
+        # consumer's inventory. Maybe that is a fine assumption. If not,
+        # consider storing the inventory relationship as two-way.
+        consumer.inventory.remove(self)
+        cigarette_stub = CigaretteStub.create()
+        consumer.inventory.add(cigarette_stub)
+        consumer.current_room.items.add(Smoke.create(consumer.current_room))
 
         # TODO: Customize text based on whether consumer is player.
         # TODO: Add location to actors so that the state of onlookers can
@@ -99,19 +118,12 @@ class Cigarette(_Consumable):
                     "draw measured, pensive little puffs from the delicious "
                     f"{aliases[1]}. You look very cool.")
             consumer.health.heal_or_harm(- dice.roll("1d2"), cause="being cool")
+            consumer.psyche.heal_or_harm(dice.roll("2d2"))
+            # TODO: Make insanity a variable statistic?
+            consumer.insanity.modify(- dice.roll("2d2"))
         else:
             name = util.capitalized(consumer.name)
             say.insayne(f"{name} puffs mellowly on a {self.name}, looking extremely fly.")
-
-        # TODO: Buff strength for a little bit.
-        # TODO: Heal insanity, restore psyche.
-        # TODO: I don't like this solution as it presumes the item is in the
-        # consumer's inventory. Maybe that is a fine assumption. If not,
-        # consider storing the inventory relationship as two-way.
-        consumer.inventory.remove(self)
-        cigarette_stub = CigaretteStub.create()
-        consumer.inventory.add(cigarette_stub)
-        consumer.current_room.items.add(Smoke.create(consumer.current_room))
 
     @classmethod
     def create(cls):
