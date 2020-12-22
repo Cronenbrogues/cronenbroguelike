@@ -108,8 +108,8 @@ def smokes_man():
         "chill dude",
         "guy",
         idle_text=(
-                "A smoker puffs meditatively on a cigarette. He looks extremely "
-                "cool."),
+                "A smoker stands meditatively, cigarette in hand. "
+                "He looks cool, maybe cooler than you."),
         ai=ai.Chill(),
     )
 

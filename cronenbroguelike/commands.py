@@ -22,14 +22,12 @@ def _look():
         say.insayne(G.player.current_room.description)
 
     # TODO: Bespoke descriptions for all items and characters.
-    # TODO: Fix a(n) problems throughout code base.
     for item in G.player.current_room.items:
         say.insayne(item.idle_description)
     for character in G.player.current_room.npcs:
-        # TODO: Move these descriptions to the actor.
         say.insayne(character.idle_text)
     for corpse in G.player.current_room.corpses:
-        say.insayne(f"The corpse of a(n) {corpse.name} molders here.")
+        say.insayne(f"The corpse of {util.a(corpse.name)} molders here.")
     say.insayne(f'Exits are {", ".join(G.player.current_room.display_exits)}.')
 
 
@@ -171,22 +169,23 @@ def _resolve_attack(attacker, attack):
         subj, obj = ["you", defender.name]
     else:
         subj, obj = [attacker.name, "you"]
+    subj = util.capitalized(subj)
     miss = "miss" if is_player else "misses"
     hit = "hit" if is_player else "hits"
 
     strength_mod = int((attacker.strength.value - 10) / 2)
     to_hit = strength_mod + dice.roll("1d20")
     if to_hit < (10 + (defender.stamina.value - 10) / 2):
-        say.insayne(f"{subj.title()} {miss}.")
+        say.insayne(f"{subj} {miss}.")
 
     else:
         damage = dice.roll("1d8") + strength_mod
         # TODO: How to organize messages better? Death also creates text, so
         # there should be a way to make sure the messages are ordered.
-        say.insayne(f"{subj.title()} {hit} {obj} for {damage} damage!")
+        say.insayne(f"{subj} {hit} {obj} for {damage} damage!")
         # TODO: Attack should have associated text which is consulted here.
         defender.health.heal_or_harm(
-                -1 * damage, cause=f"the fins of a {attacker.name}")
+                -1 * damage, cause=f"the fins of {util.a(attacker.name)}")
 
 
 def _get_present_actor(actor_name):
@@ -250,7 +249,7 @@ def attack(actor):
         if action.attack is not None:
             _resolve_attack(character, action.attack)
         else:
-            say.insayne(f"{character.name} makes no hostile motion.")
+            say.insayne(f"{util.capitalized(character.name)} makes no hostile motion.")
 
 
 @when.when("talk ACTOR")
@@ -322,7 +321,7 @@ def inspect(item):
     character = G.player.current_room.npcs.find(item_name)
     if character is not None:
         # TODO: Collapse this with descriptive text in look().
-        say.insayne(f"There is a(n) {character.name} slobbering in the corner.")
+        say.insayne(character.idle_text)
         return
 
     say.insayne(f"There is no {item} here to inspect.")
@@ -376,7 +375,7 @@ def use(item, verb):
     item_name = item
     item = G.player.inventory.find(item_name)
     if item is None:
-        say.insayne(f"You don't have a(n) {item_name}.")
+        say.insayne(f"You don't have {util.a(item_name)}.")
         return
     try:
         item.consume(G.player)
@@ -407,7 +406,7 @@ def drop(item):
     item_name = item
     item = G.player.inventory.find(item_name)
     if item is None:
-        say.insayne(f"You don't have a(n) {item_name} to drop.")
+        say.insayne(f"You don't have {util.a(item_name)} to drop.")
     else:
         say.insayne(f"You drop the {item_name} on the ground.")
         _move_item(G.player.inventory, G.player.current_room.items, item)

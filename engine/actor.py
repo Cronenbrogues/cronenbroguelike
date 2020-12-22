@@ -5,6 +5,8 @@ from engine.globals import G
 from engine import item
 from engine import say
 
+from cronenbroguelike import util
+
 
 class _Statistic:
 
@@ -40,7 +42,7 @@ class _Statistic:
                 message = f"{'in' if delta >= 0 else 'de'}creased by {abs(delta)}"
             else:
                 message = "does not change"
-            say.sayne(f"{self._NAME.title()} {message}.")
+            say.sayne(f"{util.capitalized(self._NAME)} {message}.")
 
     @property
     def value(self):
@@ -82,7 +84,7 @@ class _VariableStatistic(_Statistic):
         delta = new_value - old_value
         if self.owner.log_stats and do_log:
             say.sayne(
-                f"{self._NAME.title()} "
+                f"{util.capitalized(self._NAME)} "
                 f"{'restored' if delta >= 0 else 'damaged'} by {abs(delta)}."
             )
 

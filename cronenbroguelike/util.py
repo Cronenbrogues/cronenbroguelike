@@ -1,3 +1,6 @@
+import re
+
+
 from cronenbroguelike.events import EphemeralTextEvent as _EphemeralTextEvent
 from engine.globals import G as _G
 
@@ -9,3 +12,9 @@ def enqueue_text(text, where="post"):
 
 def capitalized(text):
     return text[0].upper() + text[1:]
+
+
+def a(text):
+    if re.search(r'^[aeiou]', text):
+        return 'an {text}'
+    return 'a {text}'

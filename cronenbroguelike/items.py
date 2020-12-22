@@ -10,6 +10,7 @@ from engine import dice
 from engine import say
 
 from cronenbroguelike import ability
+from cronenbroguelike import util
 
 
 # TODO: Make this equippable.
@@ -57,18 +58,17 @@ class CigaretteButt(_Consumable):
 class CigaretteStub(_Consumable):
 
     def consume(self, consumer):
-        if not consumer.inventory.find('lighter'):
-            say.insayne(f'You have no way to light the {self.name}.')
-            return
-
         if consumer is _G.player:
+            if not consumer.inventory.find('lighter'):
+                say.insayne(f'You have no way to light the {self.name}.')
+                return
             say.insayne(
                     f"You take a furtive puff on the {self.name}. It tastes foul "
                     "and acrid. You do not feel like you are wearing a leather "
                     "jacket at all.")
             consumer.health.heal_or_harm(- dice.roll("2d2"), cause="smoking half a cig")
         else:
-            name = consumer.name[0].upper() + consumer.name[1:]
+            name = util.capitalized(consumer.name)
             say.insayne(f"{name} puffs furtively on a {self.name}.")
         
         consumer.inventory.remove(self)
@@ -100,7 +100,7 @@ class Cigarette(_Consumable):
                     f"{aliases[1]}. You look very cool.")
             consumer.health.heal_or_harm(- dice.roll("1d2"), cause="being cool")
         else:
-            name = consumer.name[0].upper() + consumer.name[1:]
+            name = util.capitalized(consumer.name)
             say.insayne(f"{name} puffs mellowly on a {self.name}, looking extremely fly.")
 
         # TODO: Buff strength for a little bit.
