@@ -27,9 +27,7 @@ def _look():
         say.insayne(item.idle_description)
     for character in G.player.current_room.npcs:
         # TODO: Move these descriptions to the actor.
-        say.insayne(
-            f"There is a(n) {character.name} slobbering in the corner."
-        )
+        say.insayne(character.idle_text)
     for corpse in G.player.current_room.corpses:
         say.insayne(f"The corpse of a(n) {corpse.name} molders here.")
     say.insayne(f'Exits are {", ".join(G.player.current_room.display_exits)}.')
@@ -188,7 +186,7 @@ def _resolve_attack(attacker, attack):
         say.insayne(f"{subj.title()} {hit} {obj} for {damage} damage!")
         # TODO: Attack should have associated text which is consulted here.
         defender.health.heal_or_harm(
-                -1 * damage, cause=f"at the gills of a {attacker.name}")
+                -1 * damage, cause=f"the fins of a {attacker.name}")
 
 
 def _get_present_actor(actor_name):
