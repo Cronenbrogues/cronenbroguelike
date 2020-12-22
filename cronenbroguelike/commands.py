@@ -171,22 +171,24 @@ def _resolve_attack(attacker, attack):
         subj, obj = ["you", defender.name]
     else:
         subj, obj = [attacker.name, "you"]
+    subj = util.capitalized(subj)
     miss = "miss" if is_player else "misses"
     hit = "hit" if is_player else "hits"
 
     strength_mod = int((attacker.strength.value - 10) / 2)
     to_hit = strength_mod + dice.roll("1d20")
     if to_hit < (10 + (defender.stamina.value - 10) / 2):
-        say.insayne(f"{subj.title()} {miss}.")
+        say.insayne(f"{subj} {miss}.")
 
     else:
         damage = dice.roll("1d8") + strength_mod
         # TODO: How to organize messages better? Death also creates text, so
         # there should be a way to make sure the messages are ordered.
-        say.insayne(f"{subj.title()} {hit} {obj} for {damage} damage!")
+        say.insayne(f"{subj} {hit} {obj} for {damage} damage!")
         # TODO: Attack should have associated text which is consulted here.
+        # TODO: Fix a(n)!
         defender.health.heal_or_harm(
-                -1 * damage, cause=f"the fins of a {attacker.name}")
+                -1 * damage, cause=f"the fins of a(n) {attacker.name}")
 
 
 def _get_present_actor(actor_name):
@@ -250,7 +252,7 @@ def attack(actor):
         if action.attack is not None:
             _resolve_attack(character, action.attack)
         else:
-            say.insayne(f"{character.name} makes no hostile motion.")
+            say.insayne(f"{util.capitalized(character.name)} makes no hostile motion.")
 
 
 @when.when("talk ACTOR")

@@ -10,6 +10,7 @@ from engine import dice
 from engine import say
 
 from cronenbroguelike import ability
+from cronenbroguelike import util
 
 
 # TODO: Make this equippable.
@@ -68,7 +69,7 @@ class CigaretteStub(_Consumable):
                     "jacket at all.")
             consumer.health.heal_or_harm(- dice.roll("2d2"), cause="smoking half a cig")
         else:
-            name = consumer.name[0].upper() + consumer.name[1:]
+            name = util.capitalized(consumer.name)
             say.insayne(f"{name} puffs furtively on a {self.name}.")
         
         consumer.inventory.remove(self)
@@ -100,7 +101,7 @@ class Cigarette(_Consumable):
                     f"{aliases[1]}. You look very cool.")
             consumer.health.heal_or_harm(- dice.roll("1d2"), cause="being cool")
         else:
-            name = consumer.name[0].upper() + consumer.name[1:]
+            name = util.capitalized(consumer.name)
             say.insayne(f"{name} puffs mellowly on a {self.name}, looking extremely fly.")
 
         # TODO: Buff strength for a little bit.
