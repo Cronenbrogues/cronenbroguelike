@@ -9,6 +9,7 @@ class _GameState:
         self.current_room = None
         self.player = None
         self.cause_of_death = None
+        self.just_died = False
         self._pre_events = collections.deque()
         self._post_events = collections.deque()
         self._text_queue = collections.deque()
@@ -31,15 +32,18 @@ class _GameState:
         self._maybe_append_event(event, queue)
 
     def events(self, where):
+        logging.debug(f'Events called with where={where}')
         queue = self._queue_for(where)
+        new_queue = []
+        new_queue.extend(queue)
+        queue.clear()
+        logging.debug(f'Queue is {queue}')
+        logging.debug(f'new_queue is {new_queue}')
         # TODO: Rename this method.
         # TODO: Remove this method from Room.
         # TODO: Make Event.execute a generator to avoid this will_execute stuff.
-        queue.append(None)
-        while True:
-            next_event = queue.popleft()
-            if next_event is None:
-                break
+        for next_event in new_queue:
+            logging.debug(f'next_event is {next_event}')
             if next_event.will_execute:
                 yield next_event
             self._maybe_append_event(next_event, queue)
@@ -55,9 +59,12 @@ class _GameState:
         logging.debug('set_flag called')
 
     def clear_queues(self):
-        self._pre_events.clear()
-        self._post_events.clear()
-        self._text_queue.clear()
+        logging.debug('Killing all events.')
+        for queue in [self._pre_events, self._post_events]:
+            for event in queue:
+                if event is not None:
+                    event.kill()
+            queue.clear()
 
 
 G = _GameState()

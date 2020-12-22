@@ -232,13 +232,16 @@ class Actor:
 
     def die(self, cause=None):
         cause = cause or self.health.last_cause
-        if self is G.player:
+        self.alive = False
+        is_player = self is G.player
+        if is_player:
+            G.player.current_room.on_exit()
             G.cause_of_death = cause
             say.insayne("You die.")
             say.insayne("...")
-        else:
-            self.alive = False
         self._death_throes(self)
+        if is_player:
+            return
         self.current_room.characters.remove(self)
         self.current_room.corpses.add(self)
 
