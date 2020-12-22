@@ -186,8 +186,9 @@ def _resolve_attack(attacker, attack):
         # TODO: How to organize messages better? Death also creates text, so
         # there should be a way to make sure the messages are ordered.
         say.insayne(f"{subj.title()} {hit} {obj} for {damage} damage!")
+        # TODO: Attack should have associated text which is consulted here.
         defender.health.heal_or_harm(
-                -1 * damage, cause=f"being hit by {attacker.name}")
+                -1 * damage, cause=f"at the gills of a {attacker.name}")
 
 
 def _get_present_actor(actor_name):
