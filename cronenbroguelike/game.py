@@ -1,27 +1,8 @@
-import logging
-
-
-def _load_config():
-    import json
-
-    config = {"log_level": "INFO", "num_rooms": 15}
-    try:
-        with open("config.json", "r") as inp:
-            additional_config = json.load(inp)
-    except FileNotFoundError:
-        additional_config = {}
-
-    config.update(additional_config)
-    config["log_level"] = config["log_level"].upper()
-    return config
-
-
-# This has to come here to ensure that logging works.
-logging.basicConfig(level=getattr(logging, _load_config()["log_level"]))
-
-
+import json
 import random
+
 import adventurelib
+
 from . import commands
 from . import floor
 from . import npcs
@@ -33,6 +14,17 @@ from engine.globals import G as _G
 from engine.globals import poll_events as _poll_events
 from engine import say
 from engine import when
+
+
+def _load_config():
+    game_config = {"num_rooms": 15}
+    try:
+        with open("game_config.json", "r") as inp:
+            additional_config = json.load(inp)
+    except FileNotFoundError:
+        additional_config = {}
+    game_config.update(additional_config)
+    return game_config
 
 
 def _create_rooms(number_of_rooms):
@@ -103,8 +95,7 @@ def _start_game(_, config):
 
 
 def main():
-    config = _load_config()
-    logging.basicConfig(level=getattr(logging, config["log_level"]))
-    _start_game(None, config)
+    game_config = _load_config()
+    _start_game(None, game_config)
     adventurelib.say("")  # Necessary for space before first prompt.
     adventurelib.start()
