@@ -54,6 +54,8 @@ def go(direction):
 @when.when("look")
 def look():
     for character in G.player.current_room.npcs:
+        if G.just_died:
+            return
         assert character.ai is not None
         action = character.ai.choose_action(G.player.current_room)
         if action.attack is not None:
@@ -187,6 +189,9 @@ def _resolve_attack(attacker, attack):
         defender.health.heal_or_harm(
                 -1 * damage, cause=f"the fins of {util.a(attacker.name)}")
 
+    if not (is_player or defender.alive):
+        G.just_died = True
+
 
 def _get_present_actor(actor_name):
     return (
@@ -244,6 +249,8 @@ def attack(actor):
     # menu when attacking.
     _resolve_attack(G.player, ai.Attack(target=defender, method=None))
     for character in G.player.current_room.npcs:
+        if G.just_died:
+            return
         assert character.ai is not None
         action = character.ai.choose_action(G.player.current_room, impulse="attack")
         if action.attack is not None:
@@ -259,15 +266,15 @@ def talk(actor):
     interlocutor = _get_present_actor(actor_name)
     if interlocutor is None:
         if _find_available_item(actor_name) is not None:
-            if _G.player.insanity > 30:
+            if G.player.insanity > 30:
                 say.insayne(
                         f"You talk to {actor_name} at length. In response, "
                         "it expatiates on the nature of reality. It's making "
                         f"a lot of sense, that talking {actor_name}.")
-                _G.player.insanity.modify(15)
+                G.player.insanity.modify(15)
             else:
                 say.insayne(f"Why are you talking to {actor_name}, crazy?")
-                _G.player.insanity.modify(5)
+                G.player.insanity.modify(5)
         else:
             say.insayne(f"There is no {actor_name} here to talk to.")
         return
@@ -431,6 +438,8 @@ def loot(item, corpse):
             message += " All enemies attack as your clumsy pickpocketing attempt fails."
         say.insayne(message)
         for character in G.player.current_room.npcs:
+            if G.just_died:
+                return
             assert character.ai is not None
             action = character.ai.choose_action(G.player.current_room)
             if action.attack is not None:
