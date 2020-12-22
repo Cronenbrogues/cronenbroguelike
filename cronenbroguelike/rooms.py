@@ -45,7 +45,7 @@ class _BoilerHeatEvent(_Event):
     def execute(self):
         if self._counter % 3 == 0:
             say.insayne("The heat is too much for you.")
-            G.player.health.heal_or_harm(-1 * dice.roll("1d2"))
+            G.player.health.heal_or_harm(-1 * dice.roll("1d2"), cause="sweating in the boiler room")
         self._counter += 1
 
 
@@ -147,7 +147,7 @@ class _AltarEvent(_Event):
                 "and falls open, smashing the altar beneath to shards. ")
             say.insayne("All beings present are pelted with debris.")
             for character in self.room.characters:
-                character.health.heal_or_harm(-1)
+                character.health.heal_or_harm(-1, cause="pelting with stone fragments")
             say.insayne(
                 "In the idol's lax jaws can be seen a passage "
                 "winding downard.")
@@ -217,7 +217,7 @@ class _AcidDropEvent(_Event):
     def execute(self):
         if dice.roll("1d100") > 90:
             say.insayne("A drop of acid falls on your head.")
-            G.player.health.heal_or_harm(-1 * dice.roll("1d2"))
+            G.player.health.heal_or_harm(-1 * dice.roll("1d2"), cause="being scalded with acid")
 
 
 class _AcidRoom(_Room):

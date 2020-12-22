@@ -66,7 +66,7 @@ class CigaretteStub(_Consumable):
                     f"You take a furtive puff on the {self.name}. It tastes foul "
                     "and acrid. You do not feel like you are wearing a leather "
                     "jacket at all.")
-            consumer.health.heal_or_harm(- dice.roll("2d2"))
+            consumer.health.heal_or_harm(- dice.roll("2d2"), cause="smoking half a cig")
         else:
             name = consumer.name[0].upper() + consumer.name[1:]
             say.insayne(f"{name} puffs furtively on a {self.name}.")
@@ -98,7 +98,7 @@ class Cigarette(_Consumable):
                     "to mellow; all activity nearby slows. Onlookers watch as you "
                     "draw measured, pensive little puffs from the delicious "
                     f"{aliases[1]}. You look very cool.")
-            consumer.health.heal_or_harm(- dice.roll("1d2"))
+            consumer.health.heal_or_harm(- dice.roll("1d2"), cause="being cool")
         else:
             name = consumer.name[0].upper() + consumer.name[1:]
             say.insayne(f"{name} puffs mellowly on a {self.name}, looking extremely fly.")
