@@ -54,6 +54,11 @@ class _GameState:
     def set_flag(self, flag):
         logging.debug('set_flag called')
 
+    def clear_queues(self):
+        self._pre_events.clear()
+        self._post_events.clear()
+        self._text_queue.clear()
+
 
 G = _GameState()
 
