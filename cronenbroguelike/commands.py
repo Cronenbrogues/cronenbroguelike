@@ -13,6 +13,7 @@ from engine import when
 def enter_room(room):
     """Convenience function called at game start and when entering a room."""
     room.on_enter()
+    G.player.psyche.heal_or_harm(1, do_log=False)
     _look()
 
 
@@ -185,7 +186,8 @@ def _resolve_attack(attacker, attack):
         # TODO: How to organize messages better? Death also creates text, so
         # there should be a way to make sure the messages are ordered.
         say.insayne(f"{subj.title()} {hit} {obj} for {damage} damage!")
-        defender.health.heal_or_harm(-1 * damage)
+        defender.health.heal_or_harm(
+                -1 * damage, cause=f"being hit by {attacker.name}")
 
 
 def _get_present_actor(actor_name):
@@ -214,7 +216,7 @@ def suicide():
     say.insayne(
         "Realizing the futility of continuing, you resign yourself to death. You lie on the floor and await oblivion."
     )
-    G.player.health.heal_or_harm(-G.player.health.value, cause="ennui")
+    G.player.health.heal_or_harm(-G.player.health.value, cause="succumbing to ennui")
 
 
 @when.when("attack ACTOR")

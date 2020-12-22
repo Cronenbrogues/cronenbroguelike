@@ -60,14 +60,14 @@ class _VariableStatistic(_Statistic):
     def __init__(self, value):
         self._value = value
         self._current_value = value
-        self._last_cause = None
+        self.last_cause = None  # Fully modifiable.
 
     @property
     def current_value(self):
         return self._current_value
 
-    def heal_or_harm(self, delta, cause=None):
-        self._last_cause = None
+    def heal_or_harm(self, delta, cause=None, do_log=True):
+        self.last_cause = cause 
         # TODO: This logic is crazy. Just do away with all the min/max value
         # stuff.
         surface_value = self._value
@@ -80,7 +80,7 @@ class _VariableStatistic(_Statistic):
         self._current_value = min(self._current_value, self._value)
         new_value = self._current_value
         delta = new_value - old_value
-        if self.owner.log_stats:
+        if self.owner.log_stats and do_log:
             say.sayne(
                 f"{self._NAME.title()} "
                 f"{'restored' if delta >= 0 else 'damaged'} by {abs(delta)}."
@@ -90,10 +90,10 @@ class _VariableStatistic(_Statistic):
 class Health(_VariableStatistic):
     _NAME = "health"
 
-    def heal_or_harm(self, delta, cause=None):
-        super().heal_or_harm(delta, cause)
+    def heal_or_harm(self, *args, **kwargs):
+        super().heal_or_harm(*args, **kwargs)
         if self._current_value <= 0:
-            self._owner.die(cause=cause)
+            self._owner.die(cause=self.last_cause)
 
 
 class Psyche(_VariableStatistic):
@@ -222,6 +222,7 @@ class Actor:
         return [self._statistics[stat_name] for stat_name in stat_order]
 
     def die(self, cause=None):
+        cause = cause or self.health.last_cause
         if self is G.player:
             G.cause_of_death = cause
             say.insayne("You die.")
