@@ -83,12 +83,16 @@ class Room(adventurelib.Room):
         if event.will_execute:
             self._events.append(event)
 
-    def on_enter(self):
-        self.add_character(_G.player)
+    def on_enter(self, character=None):
+        if character is None:
+            character = _G.player
+        self.add_character(character)
 
-    def on_exit(self):
-        _G.player.current_room = None
-        self._characters.remove(_G.player)
+    def on_exit(self, character=None):
+        if character is None:
+            character = _G.player
+        character.current_room = None
+        self._characters.remove(character)
 
     def add_event(self, event):
         # TODO: This is probably bad.

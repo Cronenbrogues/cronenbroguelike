@@ -10,6 +10,7 @@ from . import rooms
 from engine import actor
 from engine import ai
 from engine import directions
+from engine.event import Event as _Event
 from engine.globals import G as _G
 from engine.globals import poll_events as _poll_events
 from engine import say
@@ -49,6 +50,13 @@ def _get_random_start():
         say.insayne(text)
 
 
+class _ResetDiedFlag(_Event):
+
+    def execute(self):
+        _G.just_died = False
+        self.kill()
+
+
 def _start_game(_, config):
 
     def _restart(unused_actor):
@@ -69,6 +77,9 @@ def _start_game(_, config):
         # Removes all events from global queue.
         _G.clear_queues()
 
+        # Resets just_died flag.
+        _G.add_event(_ResetDiedFlag(), "pre")
+
         # Creates a small dungeon.
         level = floor.Floor.generate("cathedral", number_rooms=config["num_rooms"])
 
@@ -88,7 +99,7 @@ def _start_game(_, config):
         _get_random_start()
         adventurelib.set_context("start_game")
         adventurelib.set_context(None)
-        with _poll_events(poll_after=True):
+        with _poll_events(poll_before=True, poll_after=True):
             commands.enter_room(_G.player.current_room)
 
     _restart(None)
