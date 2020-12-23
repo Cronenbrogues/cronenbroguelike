@@ -109,6 +109,13 @@ def main():
     game_config = _load_config()
     if game_config.get("extra_commands"):
         from . import extra_commands
-    _start_game(None, game_config)
     adventurelib.say("")  # Necessary for space before first prompt.
+    adventurelib.say(
+            "Alex, you made it. I am glad you did. I am sorry you did. You will "
+            "lose so, so much of yourself before you can leave again. I am glad "
+            "you are here. I am sorry you are here.")
+    adventurelib.say("")
+    adventurelib.say("...")
+    _start_game(None, game_config)
+    adventurelib.say("")
     adventurelib.start()
