@@ -18,7 +18,7 @@ from engine import when
 
 
 def _load_config():
-    game_config = {"num_rooms": 15}
+    game_config = {"num_rooms": 15, "extra_commands": False}
     try:
         with open("game_config.json", "r") as inp:
             additional_config = json.load(inp)
@@ -107,6 +107,8 @@ def _start_game(_, config):
 
 def main():
     game_config = _load_config()
+    if game_config.get("extra_commands"):
+        from . import extra_commands
     _start_game(None, game_config)
     adventurelib.say("")  # Necessary for space before first prompt.
     adventurelib.start()

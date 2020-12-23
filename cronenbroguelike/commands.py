@@ -1,5 +1,3 @@
-import re
-
 import adventurelib
 
 from cronenbroguelike import util
@@ -31,9 +29,7 @@ def _look():
     say.insayne(f'Exits are {", ".join(G.player.current_room.display_exits)}.')
 
 
-@adventurelib.when("exit DIRECTION")
 @adventurelib.when("go DIRECTION")
-@adventurelib.when("proceed DIRECTION")
 @adventurelib.when("north", direction="north")
 @adventurelib.when("south", direction="south")
 @adventurelib.when("east", direction="east")
@@ -100,68 +96,6 @@ def inventory():
         say.insayne(item.description, add_newline=False)
 
 
-class _CheatException(Exception):
-    pass
-
-
-_STAT_PATTERN = re.compile(r"(\w+)\s+(\-?\d+)")
-
-
-def _cheat_stat(stat, delta):
-    stat = stat.lower()
-    delta = int(delta)
-    if stat == "heal":
-        G.player.health.heal_or_harm(delta, cause="CHEATING")
-    else:
-        try:
-            the_stat = getattr(G.player, stat)
-        except:
-            raise _CheatException
-        else:
-            the_stat.modify(delta)
-
-
-_ABILITY_PATTERN = re.compile(r"add ability (\w+)")
-
-
-def _cheat_ability(ability_name):
-    from cronenbroguelike import ability
-
-    try:
-        to_add = getattr(ability, ability_name)
-    except AttributeError:
-        raise _CheatException
-    else:
-        G.player.add_ability(to_add())
-
-
-@adventurelib.when("cheat CODE")
-def cheat(code):
-    # TODO: Make healing more general.
-    matches = []
-    match = _STAT_PATTERN.search(code)
-    if match is not None:
-        matches.append((_cheat_stat, match))
-
-    match = _ABILITY_PATTERN.search(code)
-    if match is not None:
-        matches.append((_cheat_ability, match))
-
-    for function, match in matches:
-        try:
-            function(*match.groups())
-            break
-        except _CheatException:
-            pass
-
-    else:
-        say.insayne(
-            "You attempt to pry open cosmic mysteries but fail. Your "
-            "pitiful mind reels with the effort."
-        )
-        G.player.insanity.modify(15)
-
-
 def _resolve_attack(attacker, attack):
     # TODO: Add equipment, different damage dice, etc.
     # TODO: Respect attack.method.
@@ -209,12 +143,7 @@ def ability(ability):
         the_ability.activate()
 
 
-@adventurelib.when("suicide")
-@adventurelib.when("commit suicide")
-@adventurelib.when("die")
-@adventurelib.when("just die")
-@adventurelib.when("hold breath forever")
-@when.when("sit there and starve")
+@when.when("suicide")
 def suicide():
     say.insayne(
         "Realizing the futility of continuing, you resign yourself to death. You lie on the floor and await oblivion."
@@ -374,10 +303,7 @@ def _move_item(old_inventory, new_inventory, item):
 # TODO: Could create a @when decorator in the item subclasses
 # themselves that automatically registers a command.
 # TODO: Refactor items; let items have "verb" objects which map to events.
-@adventurelib.when("use ITEM", verb="use")
-@adventurelib.when("eat ITEM", verb="eat")
-@adventurelib.when("smoke ITEM", verb="smoke")
-@when.when("consume ITEM", verb="consume")
+@when.when("use ITEM", verb="use")
 def use(item, verb):
     item_name = item
     item = G.player.inventory.find(item_name)
@@ -387,7 +313,7 @@ def use(item, verb):
     try:
         item.consume(G.player)
     except AttributeError:
-        say.insayne(f"You can't use the {item_name}.")
+        say.insayne(f"You can't {verb} the {item_name}.")
         raise
 
 
