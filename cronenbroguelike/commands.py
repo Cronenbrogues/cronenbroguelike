@@ -266,7 +266,7 @@ def talk(actor):
     interlocutor = _get_present_actor(actor_name)
     if interlocutor is None:
         if _find_available_item(actor_name) is not None:
-            if G.player.insanity > 30:
+            if G.player.insanity.value > 30:
                 say.insayne(
                         f"You talk to {actor_name} at length. In response, "
                         "it expatiates on the nature of reality. It's making "
