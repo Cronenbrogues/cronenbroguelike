@@ -149,8 +149,26 @@ class _AltarEvent(_Event):
             for character in self.room.characters:
                 character.health.heal_or_harm(-1, cause="pelting with stone fragments")
             say.insayne(
-                "In the idol's lax jaws can be seen a passage "
-                "winding downard.")
+                "In the idol's lax jaws can be seen a passage, like a pulsing "
+                "throat, winding downward. From the throat you hear a voice "
+                "like wet cloth dragged over stone: ")
+            say.insayne(
+                "'You have practiced the first mortification")
+            say.insayne(
+                "and shown you lack attachment to your health.", False)
+            say.insayne(
+                "Through me you will find the way to the second.", False)
+            say.insayne(
+                "Through me you will see your flesh as loathsome.'", False)
+            say.insayne(
+                "These things will come to pass in their own time.", False)
+            say.insayne(
+                "They may not now. The stars are not aligned.'", False)
+            say.insayne(
+                "Soon, this idol will lead you to horrors and blasphemies. "
+                "For now, you must roam without succor and without end in this "
+                "cathedral. Perhaps enjoy a cigarette with the enviably cool "
+                "gentleman.")
             self.room.description = (
                 "An idol with ruby eyes and a soot-stained maw yawns at you. "
                 "Its throat, of an almost irritated red color, is large enough "
