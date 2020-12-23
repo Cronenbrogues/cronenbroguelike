@@ -1,5 +1,5 @@
 # cronenbroguelike
-A body horror roguelike text adventure.
+Hi, Alex! Do not enjoy this body horror roguelike text adventure.
 
 ## Play
 
