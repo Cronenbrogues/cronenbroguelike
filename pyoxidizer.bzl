@@ -1,3 +1,13 @@
+"""Creates a standalone binary of the game.
+
+# To create the binary:
+> pyoxidizer.run
+
+# To generate the .tar.gz zip archive:
+> tar -cvpf cronenbroguelike.tar <here>/build/x86_64-unknown-linux-gnu/debug/install/cronenbroguelike
+> gzip -c cronenbroguelike.tar > cronenbroguelike.tar.gz
+"""
+
 def make_dist():
     return default_python_distribution()
 
