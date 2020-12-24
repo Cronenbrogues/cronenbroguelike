@@ -353,6 +353,7 @@ def loot(item, corpse):
 
     if character is None:
         say.insayne(f"There is no {corpse_name} here.")
+        return
 
     # TODO: Really need some abstraction around combat turns to avoid this
     # duplication.
