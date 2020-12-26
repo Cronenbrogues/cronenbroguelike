@@ -1,0 +1,33 @@
+name: Build binaries
+
+on: 
+  workflow_dispatch:
+  push:
+    branches:
+    - main
+
+jobs:
+  package:
+    name: Package game binaries 
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+        - ubuntu-latest
+        - macOS-latest
+        - windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+    - uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: pyoxidizer
+    - name: Package binary
+      run: pyoxidizer build
+    - uses: actions/upload-artifact@v2
+      with:
+        name: cronenbroguelike-${{ matrix.os }}
+        path: build/x86_64-unknown-linux-gnu/debug/install/*
