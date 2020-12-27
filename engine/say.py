@@ -40,7 +40,7 @@ def _hear_voices(text, insanity):
     breakpoints = []
     if num_breaks > 0:
         breaks = [0]
-        breaks.extend(sorted(random.sample(range(len(text)), num_breaks)))
+        breaks.extend(sorted(random.sample(range(len(text)), min(num_breaks, len(text)))))
         breaks.append(len(text))
         breakpoints.extend(zip(breaks[:-1], breaks[1:]))
     else:

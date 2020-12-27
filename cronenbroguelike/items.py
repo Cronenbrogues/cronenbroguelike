@@ -32,7 +32,7 @@ class MeditationBook(_Book):
             )
 
         else:
-            actor.add_ability(ability.meditation)
+            actor.add_ability(ability.meditation())
             actor.set_has_read(self)
 
     @classmethod
