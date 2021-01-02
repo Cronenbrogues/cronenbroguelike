@@ -1,5 +1,4 @@
 import adventurelib
-import copy
 import logging
 import random
 
