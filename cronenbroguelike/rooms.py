@@ -13,26 +13,29 @@ from engine import say
 # TODO: Devise a way to load rooms (and maybe events?) from a config file.
 # TODO: Create "locations" within each room to find items in, for enemies to
 # hang out in, etc.
-# TODO: Allow multiple themes.
-cathedral_pews = _Room.create(
+_CathedralPews = _Room.create_room_type(
+    'CathedralPews',
     "You are in the pews of a maddening cathedral. The benches stretch on "
     "all sides and seem to creep up the walls. A murmuring sound suggests "
     "either wind or the prayers of an unseen petitioner.",
-    theme="cathedral",
+    themes=["cathedral"],
 )
-cathedral_catacombs = _Room.create(
+_CathedralCatacombs = _Room.create_room_type(
+    'CathedralCatacombs',
     "You descend slick stairs into catacombs. Time-smooth placards adorn "
     "niches. The thick air smells of stone and moisture.",
-    theme="cathedral",
+    themes=["cathedral"],
 )
-cathedral_library = _Room.create(
+_CathedralLibrary = _Room.create_room_type(
+    'CathedralLibrary',
     "A crumbling library. Tomes of thick vellum stand open on tables. The "
     "chairs are askew. Distant laughter can be heard.",
-    theme="cathedral",
+    themes=["cathedral"],
 )
-cathedral_office = _Room.create(
+_CathedralOffice = _Room.create_room_type(
+    'CathedralOffice',
     "A desk is strewn with sheaves of paper. Little of sense is written there.",
-    theme="cathedral",
+    themes=["cathedral"],
 )
 
 
@@ -45,11 +48,19 @@ class _BoilerHeatEvent(_Event):
     def execute(self):
         if self._counter % 3 == 0:
             say.insayne("The heat is too much for you.")
-            G.player.health.heal_or_harm(-1 * dice.roll("1d2"), cause="sweating in the boiler room")
+            G.player.health.heal_or_harm(
+                    -1 * dice.roll("1d2"),
+                    cause="sweating in the boiler room")
         self._counter += 1
 
 
 class _BoilerRoom(_Room):
+
+    _DESCRIPTION = (
+            "A boiler sits in the center of this room. Its grate glows red. "
+            "The air is intolerably hot.")
+    _THEMES = ["cathedral"]
+
     def on_enter(self):
         super().on_enter()
         self._event = _BoilerHeatEvent()
@@ -58,13 +69,6 @@ class _BoilerRoom(_Room):
     def on_exit(self):
         super().on_exit()
         self._event.kill()
-
-
-cathedral_boiler = _BoilerRoom.create(
-    "A boiler sits in the center of this room. Its grate glows red. The air is "
-    "intolerably hot.",
-    theme="cathedral",
-)
 
 
 class _SongInHeadEvent(_Event):
@@ -106,6 +110,13 @@ class _BelfryEvent(_Event):
 
 class _BelfryRoom(_Room):
 
+    _DESCRIPTION = (
+            "A disquieting array of bells hangs from the ceiling here. "
+            "The clappers swing low, nearly grazing the top of your head. "
+            "An unseen motive force sweeps through the bells at random, "
+            "causing them to chime.")
+    _THEMES = ["cathedral"]
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._event = None
@@ -119,14 +130,6 @@ class _BelfryRoom(_Room):
 
     def on_exit(self):
         super().on_exit()
-
-
-cathedral_belfry = _BelfryRoom.create(
-    "A disquieting array of bells hangs from the ceiling here. The clappers "
-    "swing low, nearly grazing the top of your head. An unseen motive force "
-    "sweeps through the bells at random, causing them to chime.",
-    theme="cathedral",
-)
 
 
 class _AltarEvent(_Event):
@@ -182,7 +185,18 @@ class _AltarEvent(_Event):
             self.kill()
 
 
+# TODO: Add a battle with a wrathful being if the smoker is slain.
 class _AltarRoom(_Room):
+
+    _DESCRIPTION = (
+            "An idol with ruby eyes and a soot-stained maw sneers at you, showing "
+            "carven fangs. Directly beneath its chin sits an altar, resting atop a "
+            "stone plinth. Its sides are embellished with bas-relief ivory friezes "
+            "depicting various acts both lewd and violent. On one side is depicted "
+            "the apparent sacrifice of a man bearing a sprig of leaves, overseen by an angry "
+            "beast. On another is shown a burnt offering of the same leaves. The smoke "
+            "rises up toward a face, whose mouth gapes in a slack-jawed smile.")
+    _THEMES = ["cathedral"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -192,7 +206,8 @@ class _AltarRoom(_Room):
         super().on_enter()
         if self._event is None:
             self._event = _AltarEvent()
-            # TODO: Use add_event here and elsewhere; omit _maybe_append_event from Room.add_event.
+            # TODO: Use add_event here and elsewhere;
+            # omit _maybe_append_event from Room.add_event.
             self._event.room = self
             G.add_event(self._event, "post")
         adventurelib.set_context("altar")
@@ -202,32 +217,30 @@ class _AltarRoom(_Room):
         adventurelib.set_context(None)
 
 
-# TODO: Add a battle with a wrathful being if the smoker is slain.
-cathedral_altar = _AltarRoom.create(
-    "An idol with ruby eyes and a soot-stained maw sneers at you, showing "
-    "carven fangs. Directly beneath its chin sits an altar, resting atop a "
-    "stone plinth. Its sides are embellished with bas-relief ivory friezes "
-    "depicting various acts both lewd and violent. On one side is depicted "
-    "the apparent sacrifice of a man bearing a sprig of leaves, overseen by an angry "
-    "beast. On another is shown a burnt offering of the same leaves. The smoke "
-    "rises up toward a face, whose mouth gapes in a slack-jawed smile.",
-    theme="cathedral",
-)
-
-
-blank = _Room.create(
+_Blank = _Room.create_room_type(
+    "Blank",
     "A featureless room. The air tastes stale here. The walls and "
     "floor are sallow."
 )
-sitting_room = _Room.create(
+_SittingRoom = _Room.create_room_type(
+    'SittingRoom',
     "A gloomy expanse filled with furniture. You feel you are perhaps "
     "outdoors, though you see no sky or stars."
 )
 
 
-iron_womb = _Room.create(
+_IronWomb = _Room.create_room_type(
+    'IronWomb',
     "You are squatting in a humid, low-ceilinged room made of rusted iron.",
-    theme="biopunk",
+    themes=["biopunk"],
+)
+
+
+_RibRoom = _Room.create_room_type(
+    'RibRoom',
+    "You are standing on a slick, wet floor. The walls are a ribcage palisade. "
+    "The room expands and contracts rhythmically.",
+    themes=["behemoth"],
 )
 
 
@@ -239,6 +252,13 @@ class _AcidDropEvent(_Event):
 
 
 class _AcidRoom(_Room):
+    
+    _DESCRIPTION = (
+            "You are in a large chamber. Its center is dominated by a reeking, acidic "
+            "sump. The walls around are like gristle. On the ceiling, an aperture "
+            "occasionally drips pale liquid into the fetid pool.")
+    _THEMES = ["behemoth"]
+
     def on_enter(self):
         super().on_enter()
         self._event = _AcidDropEvent()
@@ -248,14 +268,6 @@ class _AcidRoom(_Room):
         super().on_exit()
         logging.debug(f"Killing event {self._event}.")
         self._event.kill()
-
-
-acid_room = _AcidRoom.create(
-    "You are in a large chamber. Its center is dominated by a reeking, acidic "
-    "sump. The walls around are like gristle. On the ceiling, an aperture "
-    "occasionally drips pale liquid into the fetid pool.",
-    theme="behemoth",
-)
 
 
 # TODO: Attach events to the global queue, rather than to individual rooms.
@@ -278,6 +290,10 @@ class _IntestineRoomEvent(_Event):
 
 
 class _IntestineRoom(_Room):
+
+    _DESCRIPTION = ""
+    _THEMES = "behemoth"
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._entered = False
@@ -289,25 +305,18 @@ class _IntestineRoom(_Room):
             self._entered = True
 
 
-intestine_room = _IntestineRoom.create("", theme="behemoth")
-rib_room = _Room.create(
-    "You are standing on a slick, wet floor. The walls are a ribcage palisade. "
-    "The room expands and contracts rhythmically.",
-    theme="behemoth",
-)
-
-
 def _rooms_for_theme(theme=None):
     if theme is None:
         return _Room.ALL_ROOMS
     return _Room.THEME_TO_ROOMS[theme] + _Room.THEME_TO_ROOMS[_Room.DEFAULT_THEME]
 
 
-def all_rooms(theme=None):
-    # TODO: Don't do this via copies. Maybe use getter functions. Maybe just
-    # use inheritance.
-    return copy.deepcopy(_rooms_for_theme(theme))
+def get_rooms(theme=None, number=None):
+    room_types = _rooms_for_theme(theme)
+    if number is not None:
+        room_types = random.sample(room_types, number)
+    return [room() for room in room_types]
 
 
 def get_room(theme=None):
-    return random.choice(all_rooms(theme))
+    return random.choice(_rooms_for_theme(theme))()
