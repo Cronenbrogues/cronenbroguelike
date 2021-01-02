@@ -106,7 +106,7 @@ class Room:
     @description.setter
     def description(self, new_description):
         """Getter will consult the class-level object until this is called.
-        
+
         Thereafter, getter will consult the instance-level description.
         TODO: Use metaclasses to avoid this workaround.
         """
@@ -122,10 +122,14 @@ class Room:
         if not themes:
             themes = [cls.DEFAULT_THEME]
 
-        result = type(name, (cls,), {
-            'description': property(lambda _: description),
-            '_THEMES': themes,
-        })
+        result = type(
+            name,
+            (cls,),
+            {
+                "description": property(lambda _: description),
+                "_THEMES": themes,
+            },
+        )
         return result
 
     @classmethod

@@ -28,10 +28,6 @@ def _load_config():
     return game_config
 
 
-def _create_rooms(number_of_rooms):
-    return random.sample(rooms.all_rooms(), number_of_rooms)
-
-
 def _get_random_start():
     # TODO: Condition this on how the last death actually occurred.
     death_text = _G.cause_of_death or random.choice(
@@ -51,14 +47,12 @@ def _get_random_start():
 
 
 class _ResetDiedFlag(_Event):
-
     def execute(self):
         _G.just_died = False
         self.kill()
 
 
 def _start_game(_, config):
-
     def _restart(unused_actor):
         # Creates the player character and ensures game will restart upon death.
         _G.player = actor.create_actor(
