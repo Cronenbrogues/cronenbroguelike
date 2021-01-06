@@ -49,6 +49,10 @@ def go(direction):
 
 @when.when("look")
 def look():
+    # _look() before processing npc actions;
+    # see https://github.com/flosincapite/cronenbroguelike/issues/69 (nice)
+    _look()
+
     for character in G.player.current_room.npcs:
         if G.just_died:
             return
@@ -59,7 +63,6 @@ def look():
         elif action.event is not None:
             if action.event.event is not None:
                 action.event.event.execute()
-    _look()
 
 
 @adventurelib.when("stats")
