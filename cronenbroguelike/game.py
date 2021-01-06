@@ -19,7 +19,7 @@ from engine import when
 
 
 def _load_config():
-    game_config = {"num_rooms": 15, "extra_commands": False}
+    game_config = {"num_rooms": 15, "extra_commands": False, "random_run": False}
     try:
         with open("game_config.json", "r") as inp:
             additional_config = json.load(inp)
@@ -108,6 +108,9 @@ def main():
         try:
             _start_game(game_config)
             adventurelib.say("")  # Necessary for space before first prompt.
+            if game_config.get("random_run"):
+                while True:
+                    adventurelib._handle_command("random")
             adventurelib.start()
         except KeyboardInterrupt:
             adventurelib.say("☠ Farewell☠")
