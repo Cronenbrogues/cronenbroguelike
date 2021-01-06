@@ -38,7 +38,7 @@ def _add_exit(room, next_room, direction_hint):
 
 def _room_generator(theme):
     while True:
-        room_list = rooms.all_rooms(theme)
+        room_list = rooms.get_rooms(theme)
         random.shuffle(room_list)
         for room in room_list:
             yield room
