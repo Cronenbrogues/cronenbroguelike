@@ -2,6 +2,11 @@
 
 A body horror roguelike text adventure game
 
+## Play
+
+Releases for MacOS, Windows and Linux can be found on the [releases page](https://github.com/flosincapite/cronenbroguelike/releases).
+
+
 ## Develop
 
 ```
@@ -11,6 +16,10 @@ pip install -r requirements.txt
 python -m cronenbroguelike
 ```
 
-## Play
+## Release
 
-Releases for MacOS, Windows and Linux can be found on the [releases page](https://github.com/flosincapite/cronenbroguelike/releases).
+Simply push a new annotated tag, and the configured Github Actions will trigger a new build + package + release cycle.
+
+```
+git tag -a v2 -m "Awesome new feature!"
+```
