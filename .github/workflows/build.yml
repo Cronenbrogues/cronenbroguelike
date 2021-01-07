@@ -1,10 +1,9 @@
-name: Build binaries
+name: Create Release
 
 on:
   push:
     tags:
       - '*'
-  workflow_dispatch:
 
 jobs:
   package:
@@ -30,7 +29,22 @@ jobs:
         args: pyoxidizer
     - name: Package binary
       run: pyoxidizer build
-    - uses: actions/upload-artifact@v2
+    - name: Zip release contents
+      run: tar -czvf release.tar.gz build/${{ matrix.path }}/debug/install/*
+    - uses: actions/create-release@v1
+      id: create_release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        name: cronenbroguelike-${{ matrix.os }}
-        path: build/${{ matrix.path }}/debug/install/*
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+    - uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./release.tar.gz
+        asset_name: cronenbroguelike-${{ matrix.os }}.tar.gz
+        asset_content_type: application/gzip
