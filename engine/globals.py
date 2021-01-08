@@ -6,13 +6,19 @@ import logging
 
 class _GameState:
     def __init__(self):
+        self._pre_events = collections.deque()
+        self._post_events = collections.deque()
+        self._text_queue = collections.deque()
+        self.reset()
+
+    def reset(self):
         self.current_room = None
         self.player = None
         self.cause_of_death = None
         self.just_died = False
-        self._pre_events = collections.deque()
-        self._post_events = collections.deque()
-        self._text_queue = collections.deque()
+        self._pre_events.clear()
+        self._post_events.clear()
+        self._text_queue.clear()
 
     @classmethod
     def _maybe_append_event(cls, event, queue):

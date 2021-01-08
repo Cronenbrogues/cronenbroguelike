@@ -232,19 +232,17 @@ class Actor:
         return [self._statistics[stat_name] for stat_name in stat_order]
 
     def die(self, cause=None):
-        cause = cause or self.health.last_cause
-        self.alive = False
-        is_player = self is G.player
-        if is_player:
+        if self is G.player:
+            cause = cause or self.health.last_cause
             G.cause_of_death = cause
             say.insayne("You die.")
             say.insayne("...")
             raise tartarus.RaptureException("")
-        self._death_throes(self)
-        if is_player:
-            return
-        self.current_room.characters.remove(self)
-        self.current_room.corpses.add(self)
+        else:
+            self.alive = False
+            self._death_throes(self)
+            self.current_room.characters.remove(self)
+            self.current_room.corpses.add(self)
 
     def upon_death(self, callback):
         self._death_throes = callback
