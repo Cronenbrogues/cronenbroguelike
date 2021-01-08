@@ -4,6 +4,7 @@ from engine import bag
 from engine.globals import G
 from engine import item
 from engine import say
+from engine import tartarus
 
 from cronenbroguelike import util
 
@@ -235,10 +236,10 @@ class Actor:
         self.alive = False
         is_player = self is G.player
         if is_player:
-            G.player.current_room.on_exit()
             G.cause_of_death = cause
             say.insayne("You die.")
             say.insayne("...")
+            raise tartarus.RaptureException("")
         self._death_throes(self)
         if is_player:
             return

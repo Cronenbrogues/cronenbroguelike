@@ -14,6 +14,7 @@ from engine.event import Event as _Event
 from engine.globals import G as _G
 from engine.globals import poll_events as _poll_events
 from engine import say
+from engine import tartarus
 from engine import when
 
 
@@ -66,7 +67,6 @@ def _start_game(_, config):
             name="player",
         )
         _G.player.log_stats = True
-        _G.player.upon_death(_restart)
 
         # Removes all events from global queue.
         _G.clear_queues()
@@ -103,6 +103,10 @@ def main():
     game_config = _load_config()
     if game_config.get("extra_commands"):
         from . import extra_commands
-    _start_game(None, game_config)
-    adventurelib.say("")  # Necessary for space before first prompt.
-    adventurelib.start()
+    while True:
+        try:
+            _start_game(None, game_config)
+            adventurelib.say("")  # Necessary for space before first prompt.
+            adventurelib.start()
+        except tartarus.RaptureException:
+            continue
