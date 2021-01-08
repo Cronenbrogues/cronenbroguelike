@@ -10,7 +10,6 @@ jobs:
   package:
     name: Package game binaries
     runs-on: ${{ matrix.os }}
-    requires: create_release
     strategy:
       matrix:
         include:
