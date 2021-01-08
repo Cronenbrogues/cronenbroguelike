@@ -53,8 +53,12 @@ class _ResetDiedFlag(_Event):
         self.kill()
 
 
-def _start_game(_, config):
+def _start_game(config):
     def _restart(unused_actor):
+
+        # Resets all global state (clears event queues, etc.).
+        _G.reset()
+
         # Creates the player character and ensures game will restart upon death.
         _G.player = actor.create_actor(
             health=10,
@@ -67,9 +71,6 @@ def _start_game(_, config):
             name="player",
         )
         _G.player.log_stats = True
-
-        # Removes all events from global queue.
-        _G.clear_queues()
 
         # Resets just_died flag.
         _G.add_event(_ResetDiedFlag(), "pre")
@@ -105,8 +106,8 @@ def main():
         from . import extra_commands
     while True:
         try:
-            _start_game(None, game_config)
+            _start_game(game_config)
             adventurelib.say("")  # Necessary for space before first prompt.
             adventurelib.start()
         except tartarus.RaptureException:
-            continue
+            pass
