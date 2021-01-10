@@ -30,8 +30,8 @@ jobs:
           args: pyoxidizer
       - name: Package binary
         run: pyoxidizer build
-      - name: Zip release contents
-        run: tar -czvf release.tar.gz build/${{ matrix.path }}/debug/install/*
+      - name: Archive release contents
+        run: tar -czvf release.tar.gz build/${{ matrix.path }}/debug/install/* -C build/${{ matrix.path }}/debug/install
       - uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
