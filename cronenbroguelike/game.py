@@ -109,5 +109,8 @@ def main():
             _start_game(game_config)
             adventurelib.say("")  # Necessary for space before first prompt.
             adventurelib.start()
+        except KeyboardInterrupt:
+            adventurelib.say("☠ Farewell☠")
+            return
         except tartarus.RaptureException:
             pass
