@@ -2,7 +2,7 @@ name: Run Tests
 on:
   push:
     branches:
-      - '*'
+      - 'main'
   pull_request:
     branches:
       - '*'
@@ -21,4 +21,4 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
       - name: Test It
-        run: python -m unittest discover . -p "*_test.py"
+        run: python -m unittest discover testing -p "*_test.py"
