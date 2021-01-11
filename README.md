@@ -4,7 +4,7 @@ A body horror roguelike text adventure game
 
 ## Play
 
-Releases for MacOS, Windows and Linux can be found on the [releases page](https://github.com/flosincapite/cronenbroguelike/releases).
+Releases for MacOS, Windows and Linux can be found on the [releases page](https://github.com/Cronenbrogues/cronenbroguelike/releases).
 
 
 ## Develop
