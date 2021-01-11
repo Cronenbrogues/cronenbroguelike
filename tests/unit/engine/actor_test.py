@@ -6,10 +6,10 @@ from engine import actor
 from engine.globals import G
 from engine import room
 from engine import tartarus
-from testing import test_util
+from tests import common
 
 
-class ActorTest(test_util.EngineTest):
+class ActorTest(common.EngineTest):
 
     @patch('engine.actor.say.insayne')
     def test_player_dies(self, mock_say):
