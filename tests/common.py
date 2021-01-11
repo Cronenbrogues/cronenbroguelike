@@ -5,7 +5,6 @@ from engine.globals import G
 
 
 class EngineTest(unittest.TestCase):
-
     def setUp(self):
         # G.player must always exist.
-        G.player = actor.create_actor(10, 10, 10, 10, 10, 10, 10, 'player')
+        G.player = actor.create_actor(10, 10, 10, 10, 10, 10, 10, "player")
