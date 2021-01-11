@@ -21,4 +21,4 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
       - name: Test It
-        run: python -m unittest discover testing -p "*_test.py"
+        run: pytest tests/
