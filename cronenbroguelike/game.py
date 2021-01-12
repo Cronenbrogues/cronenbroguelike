@@ -102,7 +102,7 @@ def _start_game(config):
 
 def main():
     game_config = _load_config()
-    if game_config.get("extra_commands"):
+    if game_config.get("extra_commands") or game_config.get("random_run"):
         from . import extra_commands
     while True:
         try:
