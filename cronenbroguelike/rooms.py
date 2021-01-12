@@ -149,7 +149,7 @@ class _AltarEvent(_Event):
                 "and falls open, smashing the altar beneath to shards. "
             )
             say.insayne("All beings present are pelted with debris.")
-            for character in self.room.characters:
+            for character in reversed(list(self.room.characters)):
                 character.health.heal_or_harm(-1, cause="pelting with stone fragments")
             say.insayne(
                 "In the idol's lax jaws can be seen a passage, like a pulsing "
