@@ -1,5 +1,4 @@
 import adventurelib
-import random
 
 from cronenbroguelike import util
 from engine.item import Book
@@ -65,31 +64,6 @@ def look():
         elif action.event is not None:
             if action.event.event is not None:
                 action.event.event.execute()
-
-
-@when.when("random")
-def random_action():
-    skip = ['?', 'help', 'quit', 'random', 'suicide',
-            'north', 'south', 'east', 'west']
-    filtered_commands = [c for c in adventurelib.commands if " ".join(c[0].prefix) not in skip]
-    random_command = random.choice(filtered_commands)
-    command_pattern = random_command[0]
-
-    entity_names = (
-        [npc.name for npc in G.player.current_room.npcs] +
-        [corpse.name for corpse in G.player.current_room.corpses] +
-        [item.name for item in G.player.inventory] +
-        [item.name for item in G.player.current_room.items] +
-        list(G.player.current_room._exits)
-    )
-
-    args = [random.choice(entity_names) for i in range(len(command_pattern.argnames))]
-    final_command = f"{' '.join(command_pattern.prefix)} {' '.join(args)}"
-    say.insayne(f"random command: {final_command}", insanity=0)
-
-    # Pass through adventurelib rather than calling directly to avoid some
-    # complexity with multiple-argument commands, like loot.
-    adventurelib._handle_command(final_command)
 
 
 @adventurelib.when("stats")
