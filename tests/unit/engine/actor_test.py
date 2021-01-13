@@ -10,6 +10,7 @@ from tests import common
 
 
 class ActorTest(common.EngineTest):
+
     @patch("engine.actor.say.insayne")
     def test_player_dies(self, mock_say):
         abattoir = room.Room.create()
@@ -27,6 +28,9 @@ class ActorTest(common.EngineTest):
         # Put Lou Dobbs in a skeezy hotel.
         hotel_room = room.Room.create()
         hotel_room.add_character(lou_dobbs)
+
+        # TODO: Add a fixture for adding characters to a room.
+        # Or find another way to enshrine preconditions in tests.
         assert lou_dobbs in hotel_room.characters
         assert lou_dobbs not in hotel_room.corpses
 
