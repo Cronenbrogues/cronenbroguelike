@@ -11,33 +11,12 @@ from cronenbroguelike import util
 
 class _Statistic:
 
-    _MIN_VALUE = None
-    _MAX_VALUE = None
-
     def __init__(self, value, owner=None):
+        self.owner = owner  # Fully modifiable data member.
         self._value = value
-        # TODO: Rethink this; it's an indication of poor design.
-        self._owner = owner
-
-    @property
-    def owner(self):
-        return self._owner
-
-    @owner.setter
-    def owner(self, new_owner):
-        self._owner = new_owner
 
     def modify(self, delta):
-        # TODO: Maybe all this nonsense with a latent value that is between
-        # _MIN and _MAX is overkill.
-        old_value = self.value
         self._value += delta
-
-        # This line singlehandedly eliminates the nonsense but in a tortuous
-        # fashion.
-        self._value = self.value
-        new_value = self.value
-        delta = new_value - old_value
         if self.owner.log_stats:
             if delta:
                 message = f"{'in' if delta >= 0 else 'de'}creased by {abs(delta)}"
@@ -47,12 +26,7 @@ class _Statistic:
 
     @property
     def value(self):
-        surface_value = self._value
-        if self._MIN_VALUE is not None:
-            surface_value = max(self._MIN_VALUE, surface_value)
-        if self._MAX_VALUE is not None:
-            surface_value = min(self._MAX_VALUE, surface_value)
-        return surface_value
+        return self._value
 
     @property
     def name(self):
@@ -60,29 +34,26 @@ class _Statistic:
 
 
 class _VariableStatistic(_Statistic):
-    def __init__(self, value):
-        self._value = value
-        self._current_value = value
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._current_value = self._value
         self.last_cause = None  # Fully modifiable.
 
     @property
     def current_value(self):
         return self._current_value
 
+    def modify(self, delta, cause=None):
+        super().modify(delta)
+        last_cause = self.last_cause
+        self.heal_or_harm(0)
+        self.last_cause = cause or last_cause
+
     def heal_or_harm(self, delta, cause=None, do_log=True):
         self.last_cause = cause 
-        # TODO: This logic is crazy. Just do away with all the min/max value
-        # stuff.
-        surface_value = self._value
-        if self._MIN_VALUE is not None:
-            surface_value = max(self._MIN_VALUE, surface_value)
-        if self._MAX_VALUE is not None:
-            surface_value = min(self._MAX_VALUE, surface_value)
-        old_value = self._current_value
         self._current_value += delta
-        self._current_value = min(self._current_value, self._value)
-        new_value = self._current_value
-        delta = new_value - old_value
+        self._current_value = min(self._value, self._current_value)
         if self.owner.log_stats and do_log:
             say.sayne(
                 f"{util.capitalized(self._NAME)} "
