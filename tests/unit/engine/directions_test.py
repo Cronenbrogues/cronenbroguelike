@@ -2,7 +2,6 @@ import unittest
 from unittest.mock import patch
 
 from engine import directions
-from engine.globals import G
 from tests import common
 
 
