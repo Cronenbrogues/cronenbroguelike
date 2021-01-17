@@ -34,9 +34,9 @@ class AiTest(common.EngineTest):
         chill.add_default_event(default)
 
         # TODO: .event.event is obnoxious; make a pass-through method?
-        self.assertEquals(
+        self.assertEqual(
             on_aesthetic_bliss,
             chill.choose_action(G.player.current_room, 'aesthetic_bliss').event.event)
-        self.assertEquals(
+        self.assertEqual(
             default,
             chill.choose_action(G.player.current_room, 'ennui').event.event)

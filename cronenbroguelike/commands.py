@@ -19,6 +19,8 @@ def enter_room(room):
 def _look():
     if G.player.current_room.description:
         say.insayne(G.player.current_room.description)
+    else:
+        say.insayne("nooo")
 
     # TODO: Bespoke descriptions for all items and characters.
     for item in G.player.current_room.items:
