@@ -11,7 +11,6 @@ from tests import common
 
 
 class ActorTest(common.EngineTest):
-
     @patch("engine.actor.say.insayne")
     def test_player_dies(self, mock_say):
         abattoir = room.Room.create()
@@ -19,7 +18,9 @@ class ActorTest(common.EngineTest):
 
         with self.assertRaises(tartarus.RaptureException):
             G.player.die(cause="misadventure")
-        mock_say.assert_has_calls([call.say("You die."), call.say("...")], any_order=False)
+        mock_say.assert_has_calls(
+            [call.say("You die."), call.say("...")], any_order=False
+        )
         self.assertEqual("misadventure", G.cause_of_death)
 
     def test_npc_dies(self):

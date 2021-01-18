@@ -6,7 +6,6 @@ from tests import common
 
 
 class _MockEvent:
-    
     def __init__(self, tag):
         self._tag = tag
 
@@ -18,7 +17,6 @@ class _MockEvent:
 
 
 class AiTest(common.EngineTest):
-
     def test_hates_player(self):
         hateful = ai.HatesPlayer()
         action = hateful.choose_action(G.player.current_room)
@@ -28,15 +26,16 @@ class AiTest(common.EngineTest):
 
     def test_chill(self):
         chill = ai.Chill()
-        on_aesthetic_bliss = _MockEvent('bliss')
-        default = _MockEvent('default')
-        chill.add_event(on_aesthetic_bliss, 'aesthetic_bliss')
+        on_aesthetic_bliss = _MockEvent("bliss")
+        default = _MockEvent("default")
+        chill.add_event(on_aesthetic_bliss, "aesthetic_bliss")
         chill.add_default_event(default)
 
         # TODO: .event.event is obnoxious; make a pass-through method?
         self.assertEqual(
             on_aesthetic_bliss,
-            chill.choose_action(G.player.current_room, 'aesthetic_bliss').event.event)
+            chill.choose_action(G.player.current_room, "aesthetic_bliss").event.event,
+        )
         self.assertEqual(
-            default,
-            chill.choose_action(G.player.current_room, 'ennui').event.event)
+            default, chill.choose_action(G.player.current_room, "ennui").event.event
+        )

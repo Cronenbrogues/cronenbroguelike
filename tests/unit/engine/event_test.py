@@ -6,7 +6,6 @@ from tests import common
 
 
 class EventTest(common.EngineTest):
-    
     def test_will_execute(self):
         occurrence = event.Event()
         self.assertTrue(occurrence.will_execute)

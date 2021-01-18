@@ -48,25 +48,27 @@ def _sifted_edits(original, augmented):
 
     # Captures any remaining characters.
     edits.extend(aug_gen)
-    return ''.join(reconstructed), ''.join(edits)
+    return "".join(reconstructed), "".join(edits)
 
 
 class InsayneTest(common.EngineTest):
-
     @patch("adventurelib.say")
     def test_add_newline(self, mock_say):
         say.insayne("nasty pervy voices", add_newline=True, insanity=0)
-        mock_say.assert_has_calls([call.say(""), call.say("nasty pervy voices")], any_order=False)
+        mock_say.assert_has_calls(
+            [call.say(""), call.say("nasty pervy voices")], any_order=False
+        )
 
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_output_reconstructable(self, mock_stdout):
         original_text = (
             "When Gregor Samsa awoke one morning from unsettling dreams, "
-            "he found himself changed in his bed into a monstrous vermin.")
+            "he found himself changed in his bed into a monstrous vermin."
+        )
         say.insayne(original_text, insanity=100)
         augmented = mock_stdout.getvalue()
         # adventurelib.say freely introduces newlines.
-        augmented = re.sub(r'\n', r' ', augmented)
+        augmented = re.sub(r"\n", r" ", augmented)
         reconstructed, _ = _sifted_edits(original_text, augmented)
         self.assertEqual(original_text, reconstructed)
 
@@ -76,10 +78,10 @@ class InsayneTest(common.EngineTest):
         say.insayne(original_text, insanity=0)
         augmented = mock_stdout.getvalue()
         # adventurelib.say freely introduces newlines.
-        augmented = re.sub(r'\n', r' ', augmented)
+        augmented = re.sub(r"\n", r" ", augmented)
         _, edits = _sifted_edits(original_text, augmented)
-        edited_edits = re.sub(r'\s*', r'', edits)
-        self.assertEqual('', edited_edits)
+        edited_edits = re.sub(r"\s*", r"", edits)
+        self.assertEqual("", edited_edits)
 
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_sets_zalgochance_when_insanity_high(self, mock_stdout):
@@ -88,10 +90,10 @@ class InsayneTest(common.EngineTest):
         say.insayne(original_text, insanity=100)
         augmented = mock_stdout.getvalue()
         # adventurelib.say freely introduces newlines.
-        augmented = re.sub(r'\n', r' ', augmented)
+        augmented = re.sub(r"\n", r" ", augmented)
         _, edits = _sifted_edits(original_text, augmented)
-        edited_edits = re.sub(r'[A-Z]*', r'', edits)
-        self.assertNotEqual('', edited_edits)
+        edited_edits = re.sub(r"[A-Z]*", r"", edits)
+        self.assertNotEqual("", edited_edits)
 
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_sets_zalgochance_when_insanity_high(self, mock_stdout):
@@ -100,10 +102,10 @@ class InsayneTest(common.EngineTest):
         say.insayne(original_text, insanity=100)
         augmented = mock_stdout.getvalue()
         # adventurelib.say freely introduces newlines.
-        augmented = re.sub(r'\n', r' ', augmented)
+        augmented = re.sub(r"\n", r" ", augmented)
         _, edits = _sifted_edits(original_text, augmented)
-        edited_edits = re.sub(r'[A-Z]*', r'', edits)
-        self.assertNotEqual(edits, '')
+        edited_edits = re.sub(r"[A-Z]*", r"", edits)
+        self.assertNotEqual(edits, "")
 
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_interpolates_voices_when_insanity_high(self, mock_stdout):
@@ -112,17 +114,22 @@ class InsayneTest(common.EngineTest):
         say.insayne(original_text, insanity=100)
         augmented = mock_stdout.getvalue()
         # adventurelib.say freely introduces newlines.
-        augmented = re.sub(r'\n', r' ', augmented)
+        augmented = re.sub(r"\n", r" ", augmented)
         _, edits = _sifted_edits(original_text, augmented)
-        edited_edits = re.sub(r'[^A-Z]*', r'', edits)
-        with open('/tmp/output.txt', 'w') as outp:
+        edited_edits = re.sub(r"[^A-Z]*", r"", edits)
+        with open("/tmp/output.txt", "w") as outp:
             outp.write(mock_stdout.getvalue())
-        self.assertIsNotNone(re.search(
+        self.assertIsNotNone(
+            re.search(
                 r"^(HEEEHEHEHEHEHE|THEREISNOHOPE|DIDYOUHEARTHAT?"
-                "|IPROMISEYOUKNOWLEDGE)+$", edited_edits))
+                "|IPROMISEYOUKNOWLEDGE)+$",
+                edited_edits,
+            )
+        )
 
     @patch("adventurelib.say")
     @patch("engine.say._hear_voices")
+    # TODO: Refactor say module to avoid having to inspect this private function.
     def test_player_insanity_used_by_default(self, mock_hear_voices, _):
         G.player.insanity.modify(20)
         self.assertEqual(20, G.player.insanity.value)
