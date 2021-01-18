@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import call
 from unittest.mock import Mock
 from unittest.mock import patch
 
@@ -18,8 +19,7 @@ class ActorTest(common.EngineTest):
 
         with self.assertRaises(tartarus.RaptureException):
             G.player.die(cause="misadventure")
-            mock_say.assert_called_once_with("You die.")
-            mock_say.assert_called_once_with("...")
+        mock_say.assert_has_calls([call.say("You die."), call.say("...")], any_order=False)
         self.assertEqual("misadventure", G.cause_of_death)
 
     def test_npc_dies(self):
