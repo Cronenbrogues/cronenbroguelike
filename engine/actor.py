@@ -37,8 +37,19 @@ class _VariableStatistic(_Statistic):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._current_value = self._value
+        self._current_value = self._default_value
         self.last_cause = None  # Fully modifiable.
+
+    @property
+    def _default_value(self):
+        return self._value
+
+    def _log(self, delta, do_log):
+        if self.owner.log_stats and do_log:
+            say.sayne(
+                f"{util.capitalized(self._NAME)} "
+                f"{'restored' if delta >= 0 else 'damaged'} by {abs(delta)}."
+            )
 
     @property
     def current_value(self):
@@ -54,11 +65,8 @@ class _VariableStatistic(_Statistic):
         self.last_cause = cause 
         self._current_value += delta
         self._current_value = min(self._value, self._current_value)
-        if self.owner.log_stats and do_log:
-            say.sayne(
-                f"{util.capitalized(self._NAME)} "
-                f"{'restored' if delta >= 0 else 'damaged'} by {abs(delta)}."
-            )
+        self._current_value = max(0, self._current_value)
+        self._log(delta, do_log)
 
 
 class Health(_VariableStatistic):
@@ -72,6 +80,21 @@ class Health(_VariableStatistic):
 
 class Psyche(_VariableStatistic):
     _NAME = "psyche"
+
+
+class Insanity(_VariableStatistic):
+    _NAME = "insanity"
+
+    @property
+    def _default_value(self):
+        return 0
+
+    def _log(self, delta, do_log):
+        if self.owner.log_stats and do_log:
+            say.sayne(
+                f"{util.capitalized(self._NAME)} "
+                f"{'increased' if delta >= 0 else 'assuaged'} by {abs(delta)}."
+            )
 
 
 class _BaseStatistic(_Statistic):
@@ -100,12 +123,6 @@ class Wisdom(_BaseStatistic):
     _NAME = "wisdom"
 
 
-class Insanity(_Statistic):
-    _MIN_VALUE = 0
-    _MAX_VALUE = 100
-    _NAME = "insanity"
-
-
 # TODO: Make a Player class whose death ends (or restarts) the game.
 # TODO: If any other Actor dies, there should be an `alive` flag to reflect
 # that. Actors that are not alive should be removed from the room's
@@ -116,11 +133,11 @@ class Actor:
     _CANONICAL_STAT_ORDER = [
         "health",
         "psyche",
+        "insanity",
         "strength",
         "stamina",
         "will",
         "wisdom",
-        "insanity",
     ]
 
     def __init__(self, actor_item, *statistics, **kwargs):
@@ -221,11 +238,11 @@ class Actor:
 
 # TODO: Make this a classmethod of Actor.
 def create_actor(
-    health, psyche, strength, stamina, will, wisdom, insanity, name, *aliases, **kwargs
+    health, psyche, strength, stamina, will, wisdom, name, *aliases, **kwargs
 ):
     """Convenience function to create actors with canonical stats."""
     actor_item = item.Item(name, *aliases)
-    return Actor(
+    newborn = Actor(
         actor_item,
         Health(health),
         Psyche(psyche),
@@ -233,6 +250,7 @@ def create_actor(
         Stamina(stamina),
         Will(will),
         Wisdom(wisdom),
-        Insanity(insanity),
+        Insanity(100),
         **kwargs,
     )
+    return newborn
