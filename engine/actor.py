@@ -67,7 +67,7 @@ class Health(_VariableStatistic):
     def heal_or_harm(self, *args, **kwargs):
         super().heal_or_harm(*args, **kwargs)
         if self._current_value <= 0:
-            self._owner.die(cause=self.last_cause)
+            self.owner.die(cause=self.last_cause)
 
 
 class Psyche(_VariableStatistic):

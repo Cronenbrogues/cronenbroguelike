@@ -43,7 +43,7 @@ def go(direction):
         # TODO: Replace enqueue_text with text events.
         say.insayne(f"You proceed {the_direction.display_description}.")
         G.player.current_room.on_exit()
-        enter_room(G.player.current_room)
+        enter_room(next_room)
 
 
 @when.when("look")
