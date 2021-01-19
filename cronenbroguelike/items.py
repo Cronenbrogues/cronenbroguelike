@@ -47,7 +47,7 @@ class CigaretteButt(_Consumable):
     def consume(self, consumer):
         # TODO: Customize text based on whether consumer is player.
         say.insayne(f"You eat the {self.name}. What is wrong with you?")
-        consumer.insanity.modify(10)
+        consumer.insanity.heal_or_harm(10)
         consumer.inventory.remove(self)
 
     @classmethod
@@ -74,7 +74,7 @@ class CigaretteStub(_Consumable):
                     "jacket at all.")
             consumer.psyche.heal_or_harm(dice.roll("1d2"))
             # TODO: Make insanity a variable statistic?
-            consumer.insanity.modify(- dice.roll("1d2"))
+            consumer.insanity.heal_or_harm(- dice.roll("1d2"))
             # TODO: Interesting problem with how this is implemented:
             # because text is not queued but printed directly, if this line
             # precedes anything else in this function and player dies,
@@ -120,7 +120,7 @@ class Cigarette(_Consumable):
             consumer.health.heal_or_harm(- dice.roll("1d2"), cause="being cool")
             consumer.psyche.heal_or_harm(dice.roll("2d2"))
             # TODO: Make insanity a variable statistic?
-            consumer.insanity.modify(- dice.roll("2d2"))
+            consumer.insanity.heal_or_harm(- dice.roll("2d2"))
         else:
             name = util.capitalized(consumer.name)
             say.insayne(f"{name} puffs mellowly on a {self.name}, looking extremely fly.")

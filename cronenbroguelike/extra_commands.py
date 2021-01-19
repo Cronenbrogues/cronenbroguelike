@@ -99,7 +99,7 @@ def cheat(code):
             "You attempt to pry open cosmic mysteries but fail. Your "
             "pitiful mind reels with the effort."
         )
-        G.player.insanity.modify(15)
+        G.player.insanity.heal_or_harm(15)
 
 
 ###

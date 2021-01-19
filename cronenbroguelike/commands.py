@@ -172,7 +172,7 @@ def attack(actor):
         say.insayne(
             f"In a blind fury, you hack uselessly at the {defender.name}'s corpse."
         )
-        G.player.insanity.modify(10)
+        G.player.insanity.heal_or_harm(10)
         return
 
     # TODO: Move this to player AI. Use defender as a "hint."
@@ -203,10 +203,10 @@ def talk(actor):
                         f"You talk to {actor_name} at length. In response, "
                         "it expatiates on the nature of reality. It's making "
                         f"a lot of sense, that talking {actor_name}.")
-                G.player.insanity.modify(15)
+                G.player.insanity.heal_or_harm(15)
             else:
                 say.insayne(f"Why are you talking to {actor_name}, crazy?")
-                G.player.insanity.modify(5)
+                G.player.insanity.heal_or_harm(5)
         else:
             say.insayne(f"There is no {actor_name} here to talk to.")
         return

@@ -40,7 +40,7 @@ class Meditation(_Ability):
         _say.insayne(
             "The stillness soothes your mind and steels your will.", add_newline=False
         )
-        self.owner.insanity.modify(-20)
+        self.owner.insanity.heal_or_harm(-20)
 
 
 # Makes all registered abilities importable by name.
