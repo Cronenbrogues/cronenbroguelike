@@ -20,11 +20,11 @@ def fish_man():
         stamina=10,
         will=10,
         wisdom=10,
-        insanity=100,
         name="fish man",
         idle_text="There is a fish man slobbering in the corner.",
         ai=ai.HatesPlayer(),
     )
+    monster.insanity.heal_or_harm(100)
 
     # TODO: Make a Monster class (or component) that encapsulates this behavior.
     # TODO: Store location as a member of Actors and Items. That way, monsters can
@@ -53,13 +53,13 @@ def mad_librarian():
         10,
         10,
         10,
-        100,
         "mad librarian",
         "librarian",
         # TODO: How to deal with intro text? "The librarian leans in ..."
         idle_text="A mad librarian, clad in rags, hunches over a musty book.",
         ai=ai.Chill(),
     )
+    npc.insanity.heal_or_harm(100)
 
     class _LibrarianEvent(event.Event):
         def execute(self):
@@ -101,7 +101,6 @@ def smokes_man():
         10,
         10,
         10,
-        100,
         "smoker",
         "smokes man",
         "dude",

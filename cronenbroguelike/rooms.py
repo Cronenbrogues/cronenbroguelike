@@ -103,7 +103,7 @@ class _BelfryEvent(_Event):
                 "realize the song is stuck in your head, threatening the "
                 "sinews of your very sanity."
             )
-            G.player.insanity.modify(15)
+            G.player.insanity.heal_or_harm(15)
             G.add_event(_SongInHeadEvent(), "pre")
 
 
@@ -281,7 +281,7 @@ class _IntestineRoomEvent(_Event):
             "You are in a dark tube. The walls and floor quiver at your touch, "
             "and you realize this is the intestine of a vast behemoth."
         )
-        G.player.insanity.modify(10)
+        G.player.insanity.heal_or_harm(10)
         # TODO: change to self.room.description
         G.player.current_room.description = (
             "The walls and floor of the intestine room shudder at your step."

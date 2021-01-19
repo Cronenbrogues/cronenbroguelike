@@ -64,7 +64,7 @@ def insayne(text, add_newline=True, insanity=None):
     if add_newline:
         adventurelib.say("")
     if insanity is None:
-        insanity = G.player.insanity.value
+        insanity = G.player.insanity.current_value
     text = _hear_voices(text, insanity)
     adventurelib.say(text)
 
