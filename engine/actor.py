@@ -39,6 +39,14 @@ class _VariableStatistic(_Statistic):
         super().__init__(*args, **kwargs)
         self._current_value = self._default_value
         self.last_cause = None  # Fully modifiable.
+        
+    @property
+    def maximum(self):
+        return self._value
+        
+    @property
+    def current_value(self):
+        return self._current_value
 
     @property
     def _default_value(self):
@@ -51,10 +59,6 @@ class _VariableStatistic(_Statistic):
                 f"{'restored' if delta >= 0 else 'damaged'} by {abs(delta)}."
             )
 
-    @property
-    def current_value(self):
-        return self._current_value
-
     def modify(self, delta, cause=None):
         super().modify(delta)
         last_cause = self.last_cause
@@ -64,7 +68,7 @@ class _VariableStatistic(_Statistic):
     def heal_or_harm(self, delta, cause=None, do_log=True):
         self.last_cause = cause 
         self._current_value += delta
-        self._current_value = min(self._value, self._current_value)
+        self._current_value = min(self.maximum, self._current_value)
         self._current_value = max(0, self._current_value)
         self._log(delta, do_log)
 
