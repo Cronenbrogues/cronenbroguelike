@@ -1,3 +1,4 @@
+import logging
 import random
 import re
 
@@ -44,24 +45,44 @@ class _CheatException(Exception):
     pass
 
 
-_STAT_PATTERN = re.compile(r"(\w+)\s+(\-?\d+)")
+def _get_stat(actor, stat_name):
+    try:
+        return getattr(actor, stat_name)
+    except AttributeError:
+        raise _CheatException
 
 
-def _cheat_stat(stat, delta):
-    stat = stat.lower()
+def _modify_stat(stat, delta):
+    stat = stat.strip().lower()
     delta = int(delta)
-    if stat == "heal":
-        G.player.health.heal_or_harm(delta, cause="CHEATING")
+    stat = _get_stat(G.player, stat)
+    if hasattr(stat, "modify"):
+        stat.modify(delta)
+    elif hasattr(stat, "modify_maximum"):
+        stat.modify_maximum(delta)
     else:
-        try:
-            the_stat = getattr(G.player, stat)
-        except:
-            raise _CheatException
-        else:
-            the_stat.modify(delta)
+        raise _CheatException
 
 
-_ABILITY_PATTERN = re.compile(r"add ability (\w+)")
+def _heal_stat(stat, delta):
+    if not stat:
+        stat = "health"
+    stat = stat.strip().lower()
+    delta = int(delta)
+    stat = _get_stat(G.player, stat)
+    if hasattr(stat, "heal_or_harm"):
+        stat.heal_or_harm(delta)
+    else:
+        raise _CheatException
+
+
+_HEAL_PATTERN = re.compile(r"^\s*heal\s+(?:(\w+)\s+)?(\-?\d+)\s*$", re.IGNORECASE)
+
+
+_STAT_PATTERN = re.compile(r"^\s*(\w+)\s+(\-?\d+)\s*$")
+
+
+_ABILITY_PATTERN = re.compile(r"^\s*add\s+ability\s+(\w+)\s*$", re.IGNORECASE)
 
 
 def _cheat_ability(ability_name):
@@ -79,15 +100,19 @@ def _cheat_ability(ability_name):
 def cheat(code):
     # TODO: Make healing more general.
     matches = []
-    match = _STAT_PATTERN.search(code)
-    if match is not None:
-        matches.append((_cheat_stat, match))
 
-    match = _ABILITY_PATTERN.search(code)
-    if match is not None:
-        matches.append((_cheat_ability, match))
+    for pattern, function in [
+            (_HEAL_PATTERN, _heal_stat),
+            (_STAT_PATTERN, _modify_stat),
+            (_ABILITY_PATTERN, _cheat_ability)]:
+        match = pattern.search(code)
+        if match is not None:
+            matches.append((function, match))
+            break
 
     for function, match in matches:
+        logging.debug(f"function is {function}")
+        logging.debug(f"match.groups is {match.groups()}")
         try:
             function(*match.groups())
             break

@@ -5,35 +5,54 @@ from engine.globals import G
 from engine import item
 from engine import say
 from engine import tartarus
-
 from cronenbroguelike import util
 
 
 class _Statistic:
 
+    _MINIMUM_VALUE = 0
+
     def __init__(self, value, owner=None):
         self.owner = owner  # Fully modifiable data member.
         self._value = value
 
-    def modify(self, delta):
-        self._value += delta
-        if self.owner.log_stats:
-            if delta:
-                message = f"{'in' if delta >= 0 else 'de'}creased by {abs(delta)}"
-            else:
-                message = "does not change"
-            say.sayne(f"{util.capitalized(self._NAME)} {message}.")
+    def _log_modify(self, delta):
+        if delta:
+            message = f"{'in' if delta >= 0 else 'de'}creased by {abs(delta)}"
+        else:
+            message = "does not change"
+        say.sayne(f"{util.capitalized(self._NAME)} {message}.")
 
-    @property
-    def value(self):
-        return self._value
+    def _modify(self, delta, do_log=True):
+        self._value += delta
+        self._value = max(self._MINIMUM_VALUE, self._value)
+        if self.owner.log_stats and do_log:
+            self._log_modify(delta)
 
     @property
     def name(self):
         return self._NAME
 
 
+class _StaticStatistic(_Statistic):
+    
+    _NAME = None
+    
+    def modify(self, *args, **kwargs):
+        self._modify(*args, **kwargs)
+
+    @property
+    def value(self):
+        return self._value
+
+    def __init_subclass__(cls):
+        if cls._NAME is None:
+            cls._NAME = cls.__name__.lower()
+
+
 class _VariableStatistic(_Statistic):
+
+    _NAME = None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -52,79 +71,69 @@ class _VariableStatistic(_Statistic):
     def _default_value(self):
         return self._value
 
-    def _log(self, delta, do_log):
-        if self.owner.log_stats and do_log:
-            say.sayne(
-                f"{util.capitalized(self._NAME)} "
-                f"{'restored' if delta >= 0 else 'damaged'} by {abs(delta)}."
-            )
+    def _log_current(self, delta):
+        say.sayne(
+            f"{util.capitalized(self._NAME)} "
+            f"{'restored' if delta >= 0 else 'damaged'} by {abs(delta)}."
+        )
 
-    def modify(self, delta, cause=None):
-        super().modify(delta)
-        last_cause = self.last_cause
-        self.heal_or_harm(0)
-        self.last_cause = cause or last_cause
+    def modify_maximum(self, delta, cause=None, do_log=True):
+        old_value = self.maximum
+        cause = self.last_cause or cause
+        self._modify(delta)
+        actual_delta = self.maximum - old_value
+        self.heal_or_harm(actual_delta, cause, do_log=False)
 
     def heal_or_harm(self, delta, cause=None, do_log=True):
         self.last_cause = cause 
         self._current_value += delta
         self._current_value = min(self.maximum, self._current_value)
-        self._current_value = max(0, self._current_value)
-        self._log(delta, do_log)
+        self._current_value = max(self._MINIMUM_VALUE, self._current_value)
+        if self.owner.log_stats and do_log:
+            self._log_current(delta)
+
+    def __init_subclass__(cls):
+        if cls._NAME is None:
+            cls._NAME = cls.__name__.lower()
 
 
 class Health(_VariableStatistic):
-    _NAME = "health"
-
     def heal_or_harm(self, *args, **kwargs):
         super().heal_or_harm(*args, **kwargs)
-        if self._current_value <= 0:
+        if self.current_value <= 0:
             self.owner.die(cause=self.last_cause)
 
 
 class Psyche(_VariableStatistic):
-    _NAME = "psyche"
+    pass
 
 
 class Insanity(_VariableStatistic):
-    _NAME = "insanity"
-
     @property
     def _default_value(self):
-        return 0
+        return self._MINIMUM_VALUE
 
-    def _log(self, delta, do_log):
-        if self.owner.log_stats and do_log:
-            say.sayne(
-                f"{util.capitalized(self._NAME)} "
-                f"{'increased' if delta >= 0 else 'assuaged'} by {abs(delta)}."
-            )
-
-
-class _BaseStatistic(_Statistic):
-    # This is a really weird way to do things. _Statistic is not currently
-    # an abstract class but should be. Maybe statistics don't need to be
-    # this complicated.
-    # Also, what if I want to make Strength variable but not display that in
-    # the `stats` command?
-    _MIN_VALUE = 0
-    _MAX_VALUE = 30
+    def _log_current(self, delta):
+        say.sayne(
+            f"{util.capitalized(self._NAME)} "
+            f"{'increased' if delta >= 0 else 'assuaged'} by {abs(delta)}."
+        )
 
 
-class Strength(_BaseStatistic):
-    _NAME = "strength"
+class Strength(_StaticStatistic):
+    pass
 
 
-class Stamina(_BaseStatistic):
-    _NAME = "stamina"
+class Stamina(_StaticStatistic):
+    pass
 
 
-class Will(_BaseStatistic):
-    _NAME = "will"
+class Will(_StaticStatistic):
+    pass
 
 
-class Wisdom(_BaseStatistic):
-    _NAME = "wisdom"
+class Wisdom(_StaticStatistic):
+    pass
 
 
 # TODO: Make a Player class whose death ends (or restarts) the game.
@@ -246,15 +255,14 @@ def create_actor(
 ):
     """Convenience function to create actors with canonical stats."""
     actor_item = item.Item(name, *aliases)
-    newborn = Actor(
+    return Actor(
         actor_item,
         Health(health),
         Psyche(psyche),
+        Insanity(100),  # Insanity is always between 0 and 100.
         Strength(strength),
         Stamina(stamina),
         Will(will),
         Wisdom(wisdom),
-        Insanity(100),
         **kwargs,
     )
-    return newborn
