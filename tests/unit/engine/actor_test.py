@@ -23,7 +23,7 @@ class ActorTest(common.EngineTest):
         self.assertEqual("misadventure", G.cause_of_death)
 
     def test_npc_dies(self):
-        lou_dobbs = actor.create_actor(10, 10, 10, 10, 10, 10, "Lou Dobbs")
+        lou_dobbs = actor.create_actor(10, 10, 10, 10, "Lou Dobbs")
 
         # Put Lou Dobbs in a skeezy hotel.
         hotel_room = room.Room.create()
