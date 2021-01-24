@@ -73,8 +73,8 @@ def stats():
     # TODO: Unfuck this for zalgo.
     lines.append("".join("-" for _ in name_str))
     for stat in G.player.all_stats():
-        if hasattr(stat, "current_value"):
-            lines.append(f"{stat.name:10}: {stat.current_value}/{stat.maximum}")
+        if hasattr(stat, "maximum"):
+            lines.append(f"{stat.name:10}: {stat.value}/{stat.maximum}")
         else:
             lines.append(f"{stat.name:10}: {stat.value}")
     lines.append("".join("-" for _ in name_str))
@@ -151,7 +151,7 @@ def suicide():
     say.insayne(
         "Realizing the futility of continuing, you resign yourself to death. You lie on the floor and await oblivion."
     )
-    G.player.health.heal_or_harm(-G.player.health.maximum, cause="succumbing to ennui")
+    G.player.health.heal_or_harm(-G.player.health.value, cause="succumbing to ennui")
 
 
 @when.when("attack ACTOR")
@@ -198,7 +198,7 @@ def talk(actor):
     interlocutor = _get_present_actor(actor_name)
     if interlocutor is None:
         if _find_available_item(actor_name) is not None:
-            if G.player.insanity.current_value > 30:
+            if G.player.insanity.value > 30:
                 say.insayne(
                         f"You talk to {actor_name} at length. In response, "
                         "it expatiates on the nature of reality. It's making "

@@ -14,7 +14,7 @@ class _Statistic:
 
     def __init__(self, value, owner=None):
         self.owner = owner  # Fully modifiable data member.
-        self._value = value
+        self._static_value = value
 
     def _log_modify(self, delta):
         if delta:
@@ -24,8 +24,8 @@ class _Statistic:
         say.sayne(f"{util.capitalized(self._NAME)} {message}.")
 
     def _modify(self, delta, do_log=True):
-        self._value += delta
-        self._value = max(self._MINIMUM_VALUE, self._value)
+        self._static_value += delta
+        self._static_value = max(self._MINIMUM_VALUE, self._static_value)
         if self.owner.log_stats and do_log:
             self._log_modify(delta)
 
@@ -37,17 +37,17 @@ class _Statistic:
 class _StaticStatistic(_Statistic):
     
     _NAME = None
+
+    def __init_subclass__(cls):
+        if cls._NAME is None:
+            cls._NAME = cls.__name__.lower()
     
     def modify(self, *args, **kwargs):
         self._modify(*args, **kwargs)
 
     @property
     def value(self):
-        return self._value
-
-    def __init_subclass__(cls):
-        if cls._NAME is None:
-            cls._NAME = cls.__name__.lower()
+        return self._static_value
 
 
 class _VariableStatistic(_Statistic):
@@ -56,20 +56,24 @@ class _VariableStatistic(_Statistic):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._current_value = self._default_value
+        self._variable_value = self._default_value
         self.last_cause = None  # Fully modifiable.
+
+    def __init_subclass__(cls):
+        if cls._NAME is None:
+            cls._NAME = cls.__name__.lower()
         
     @property
     def maximum(self):
-        return self._value
+        return self._static_value
         
     @property
-    def current_value(self):
-        return self._current_value
+    def value(self):
+        return self._variable_value
 
     @property
     def _default_value(self):
-        return self._value
+        return self._static_value
 
     def _log_current(self, delta):
         say.sayne(
@@ -86,21 +90,17 @@ class _VariableStatistic(_Statistic):
 
     def heal_or_harm(self, delta, cause=None, do_log=True):
         self.last_cause = cause 
-        self._current_value += delta
-        self._current_value = min(self.maximum, self._current_value)
-        self._current_value = max(self._MINIMUM_VALUE, self._current_value)
+        self._variable_value += delta
+        self._variable_value = min(self.maximum, self._variable_value)
+        self._variable_value = max(self._MINIMUM_VALUE, self._variable_value)
         if self.owner.log_stats and do_log:
             self._log_current(delta)
-
-    def __init_subclass__(cls):
-        if cls._NAME is None:
-            cls._NAME = cls.__name__.lower()
 
 
 class Health(_VariableStatistic):
     def heal_or_harm(self, *args, **kwargs):
         super().heal_or_harm(*args, **kwargs)
-        if self.current_value <= 0:
+        if self.value <= 0:
             self.owner.die(cause=self.last_cause)
 
 
