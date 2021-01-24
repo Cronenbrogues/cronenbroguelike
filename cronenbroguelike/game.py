@@ -65,8 +65,6 @@ def _start_game(config):
             psyche=10,
             strength=10,
             stamina=10,
-            will=10,
-            wisdom=10,
             insanity=0,
             name="player",
         )
