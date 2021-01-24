@@ -128,14 +128,6 @@ class Stamina(_StaticStatistic):
     pass
 
 
-class Will(_StaticStatistic):
-    pass
-
-
-class Wisdom(_StaticStatistic):
-    pass
-
-
 # TODO: Make a Player class whose death ends (or restarts) the game.
 # TODO: If any other Actor dies, there should be an `alive` flag to reflect
 # that. Actors that are not alive should be removed from the room's
@@ -149,8 +141,6 @@ class Actor:
         "insanity",
         "strength",
         "stamina",
-        "will",
-        "wisdom",
     ]
 
     def __init__(self, actor_item, *statistics, **kwargs):
@@ -251,7 +241,7 @@ class Actor:
 
 # TODO: Make this a classmethod of Actor.
 def create_actor(
-    health, psyche, strength, stamina, will, wisdom, name, *aliases, **kwargs
+    health, psyche, strength, stamina, name, *aliases, **kwargs
 ):
     """Convenience function to create actors with canonical stats."""
     actor_item = item.Item(name, *aliases)
@@ -262,7 +252,5 @@ def create_actor(
         Insanity(100),  # Insanity is always between 0 and 100.
         Strength(strength),
         Stamina(stamina),
-        Will(will),
-        Wisdom(wisdom),
         **kwargs,
     )

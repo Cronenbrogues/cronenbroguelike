@@ -18,8 +18,6 @@ def fish_man():
         psyche=10,
         strength=10,
         stamina=10,
-        will=10,
-        wisdom=10,
         name="fish man",
         idle_text="There is a fish man slobbering in the corner.",
         ai=ai.HatesPlayer(),
@@ -47,8 +45,6 @@ def fish_man():
 
 def mad_librarian():
     npc = actor.create_actor(
-        10,
-        10,
         10,
         10,
         10,
@@ -95,8 +91,6 @@ def mad_librarian():
 
 def smokes_man():
     npc = actor.create_actor(
-        10,
-        10,
         10,
         10,
         10,
