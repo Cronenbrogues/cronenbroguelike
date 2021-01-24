@@ -303,9 +303,15 @@ def read(book):
         book.read(G.player)
 
 
-def _move_item(old_inventory, new_inventory, item):
-    old_inventory.remove(item)
-    new_inventory.add(item)
+def _move_item(
+    loser_inventory,
+    winner_inventory,
+    item,
+    relinquishment_message=None,
+    acquisition_message=None,
+):
+    loser_inventory.remove(item, message=relinquishment_message)
+    winner_inventory.add(item, message=acquisition_message)
 
 
 # TODO: Collapse with read?
@@ -349,8 +355,12 @@ def drop(item):
     if item is None:
         say.insayne(f"You don't have {util.a(item_name)} to drop.")
     else:
-        say.insayne(f"You drop the {item_name} on the ground.")
-        _move_item(G.player.inventory, G.player.current_room.items, item)
+        _move_item(
+            G.player.inventory,
+            G.player.current_room.items,
+            item,
+            relinquishment_message=f"You drop the {item_name} on the ground.",
+        )
 
 
 @adventurelib.when("loot CORPSE", item="everything")
@@ -390,5 +400,9 @@ def loot(item, corpse):
             if item is None:
                 say.insayne(f"There is no {name} on the corpse.")
             else:
-                say.insayne(f"You liberate {item.name} from the corpse.")
-                _move_item(character.inventory, G.player.inventory, item)
+                _move_item(
+                    character.inventory,
+                    G.player.inventory,
+                    item,
+                    acquisition_message=f"You liberate {item.name} from the corpse.",
+                )
