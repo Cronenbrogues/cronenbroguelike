@@ -10,6 +10,7 @@ from cronenbroguelike import util
 
 class _Statistic:
 
+    _NAME = None
     _MINIMUM_VALUE = 0
 
     def __init__(self, value, owner=None):
