@@ -65,7 +65,6 @@ def _start_game(config):
             psyche=10,
             strength=10,
             stamina=10,
-            insanity=0,
             name="player",
         )
         _G.player.log_stats = True
