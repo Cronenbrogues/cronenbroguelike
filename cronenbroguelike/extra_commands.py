@@ -54,21 +54,22 @@ def _get_stat(actor, stat_name):
 
 def _modify_stat(stat, delta):
     stat = stat.strip().lower()
-    delta = int(delta)
-    stat = _get_stat(G.player, stat)
-    if hasattr(stat, "modify"):
-        stat.modify(delta)
-    elif hasattr(stat, "modify_maximum"):
-        stat.modify_maximum(delta)
-    else:
+    try:
+        delta = int(delta)
+    except ValueError:
         raise _CheatException
+    stat = _get_stat(G.player, stat)
+    stat.modify(delta)
 
 
 def _heal_stat(stat, delta):
     if not stat:
         stat = "health"
     stat = stat.strip().lower()
-    delta = int(delta)
+    try:
+        delta = int(delta)
+    except ValueError:
+        raise _CheatException
     stat = _get_stat(G.player, stat)
     if hasattr(stat, "heal_or_harm"):
         stat.heal_or_harm(delta)

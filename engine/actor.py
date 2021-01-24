@@ -81,7 +81,7 @@ class _VariableStatistic(_Statistic):
             f"{'restored' if delta >= 0 else 'damaged'} by {abs(delta)}."
         )
 
-    def modify_maximum(self, delta, cause=None, do_log=True):
+    def modify(self, delta, cause=None, do_log=True):
         old_value = self.maximum
         cause = self.last_cause or cause
         self._modify(delta)
