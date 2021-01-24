@@ -29,6 +29,9 @@ class _Statistic:
         if self.owner.log_stats and do_log:
             self._log_modify(delta)
 
+    def modify(self, delta, **kwargs):
+        return NotImplemented
+
     @property
     def name(self):
         return self._NAME
@@ -42,8 +45,8 @@ class _StaticStatistic(_Statistic):
         if cls._NAME is None:
             cls._NAME = cls.__name__.lower()
 
-    def modify(self, *args, **kwargs):
-        self._modify(*args, **kwargs)
+    def modify(self, delta, **kwargs):
+        self._modify(delta, **kwargs)
 
     @property
     def value(self):
@@ -84,7 +87,7 @@ class _VariableStatistic(_Statistic):
     def modify(self, delta, cause=None, do_log=True):
         old_value = self.maximum
         cause = self.last_cause or cause
-        self._modify(delta)
+        self._modify(delta, do_log)
         actual_delta = self.maximum - old_value
         self.heal_or_harm(actual_delta, cause, do_log=False)
 
