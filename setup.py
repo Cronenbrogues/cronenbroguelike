@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.0.4",
     author="The Arch Cronenbrogues",
     author_email="cronenbrogues@googlegroups.com",
-    description="A text-based-body-horror-rogue-like game.",
+    description="Â̳ tͥ͞e̅̊x̂ͅtͤ͟-b̝͒à͉s͌͜e̮̓d͚̦-b̨͞o̟ͣdͣyͧ͘-h̛͞o̵ͅr̷͍r̺͡ơ̎r̡̞-r͉̉o͇g̦̏u̦̞e͌͘-l͖̃i̇̈́ḱͅe͢͡ gͧ͜a̜̽mͭ͛e̷͍.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Cronenbrogues/cronenbroguelike",
