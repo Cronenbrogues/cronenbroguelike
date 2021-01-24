@@ -7,10 +7,9 @@ from engine import say
 
 
 class Bag(_Bag):
-    
     def _add_aliases(self, item):
         super()._add_aliases(item)
-        logging.debug(f'_add_aliases called with {item}')
+        logging.debug(f"_add_aliases called with {item}")
         item.holder = self
         if self is _G.player.inventory:
             say.insayne(f"You acquire {item.name}.")

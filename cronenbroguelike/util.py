@@ -15,6 +15,6 @@ def capitalized(text):
 
 
 def a(text):
-    if re.search(r'^[aeiou]', text):
-        return f'an {text}'
-    return f'a {text}'
+    if re.search(r"^[aeiou]", text):
+        return f"an {text}"
+    return f"a {text}"

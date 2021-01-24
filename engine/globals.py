@@ -38,18 +38,18 @@ class _GameState:
         self._maybe_append_event(event, queue)
 
     def events(self, where):
-        logging.debug(f'Events called with where={where}')
+        logging.debug(f"Events called with where={where}")
         queue = self._queue_for(where)
         new_queue = []
         new_queue.extend(queue)
         queue.clear()
-        logging.debug(f'Queue is {queue}')
-        logging.debug(f'new_queue is {new_queue}')
+        logging.debug(f"Queue is {queue}")
+        logging.debug(f"new_queue is {new_queue}")
         # TODO: Rename this method.
         # TODO: Remove this method from Room.
         # TODO: Make Event.execute a generator to avoid this will_execute stuff.
         for next_event in new_queue:
-            logging.debug(f'next_event is {next_event}')
+            logging.debug(f"next_event is {next_event}")
             if next_event.will_execute:
                 yield next_event
             self._maybe_append_event(next_event, queue)
@@ -62,10 +62,10 @@ class _GameState:
             yield self._text_queue.popleft()
 
     def set_flag(self, flag):
-        logging.debug('set_flag called')
+        logging.debug("set_flag called")
 
     def clear_queues(self):
-        logging.debug('Killing all events.')
+        logging.debug("Killing all events.")
         for queue in [self._pre_events, self._post_events]:
             for event in queue:
                 if event is not None:

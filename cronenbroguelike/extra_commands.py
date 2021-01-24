@@ -102,9 +102,10 @@ def cheat(code):
     matches = []
 
     for pattern, function in [
-            (_HEAL_PATTERN, _heal_stat),
-            (_STAT_PATTERN, _modify_stat),
-            (_ABILITY_PATTERN, _cheat_ability)]:
+        (_HEAL_PATTERN, _heal_stat),
+        (_STAT_PATTERN, _modify_stat),
+        (_ABILITY_PATTERN, _cheat_ability),
+    ]:
         match = pattern.search(code)
         if match is not None:
             matches.append((function, match))
@@ -134,18 +135,19 @@ def cheat(code):
 
 @adventurelib.when("random")
 def random_action():
-    skip = ['?', 'help', 'quit', 'random', 'suicide',
-            'north', 'south', 'east', 'west']
-    filtered_commands = [c for c in adventurelib.commands if " ".join(c[0].prefix) not in skip]
+    skip = ["?", "help", "quit", "random", "suicide", "north", "south", "east", "west"]
+    filtered_commands = [
+        c for c in adventurelib.commands if " ".join(c[0].prefix) not in skip
+    ]
     random_command = random.choice(filtered_commands)
     command_pattern = random_command[0]
 
     entity_names = (
-        [npc.name for npc in G.player.current_room.npcs] +
-        [corpse.name for corpse in G.player.current_room.corpses] +
-        [item.name for item in G.player.inventory] +
-        [item.name for item in G.player.current_room.items] +
-        list(G.player.current_room._exits)
+        [npc.name for npc in G.player.current_room.npcs]
+        + [corpse.name for corpse in G.player.current_room.corpses]
+        + [item.name for item in G.player.inventory]
+        + [item.name for item in G.player.current_room.items]
+        + list(G.player.current_room._exits)
     )
 
     args = [random.choice(entity_names) for i in range(len(command_pattern.argnames))]

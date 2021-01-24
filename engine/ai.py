@@ -64,7 +64,7 @@ class Chill(AI):
 
     def add_default_event(self, event):
         # TODO: All of this owner stuff could be avoided by passing a context
-        # to Event.execute() ... 
+        # to Event.execute() ...
         self._default_event = event
 
     def choose_action(self, unused_room, impulse=None):

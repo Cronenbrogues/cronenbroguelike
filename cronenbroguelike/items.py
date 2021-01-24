@@ -15,21 +15,17 @@ from cronenbroguelike import util
 
 # TODO: Make this equippable.
 class CeremonialKnife(_Item):
-
     @classmethod
     def create(cls):
         return cls("ceremonial knife", "knife", "kris")
 
 
 class MeditationBook(_Book):
-
     def read(self, actor):
         if actor.has_read(self):
             # TODO: Condition pronoun/verb agreement on whether actor is
             # player or not. Make a utility function for this.
-            say.insayne(
-                "You have already tasted the wisdom distilled in this book."
-            )
+            say.insayne("You have already tasted the wisdom distilled in this book.")
 
         else:
             actor.add_ability(ability.meditation())
@@ -43,7 +39,6 @@ class MeditationBook(_Book):
 
 
 class CigaretteButt(_Consumable):
-
     def consume(self, consumer):
         # TODO: Customize text based on whether consumer is player.
         say.insayne(f"You eat the {self.name}. What is wrong with you?")
@@ -56,11 +51,10 @@ class CigaretteButt(_Consumable):
 
 
 class CigaretteStub(_Consumable):
-
     def consume(self, consumer):
-        if not consumer.inventory.find('lighter'):
+        if not consumer.inventory.find("lighter"):
             if consumer is _G.player:
-                say.insayne(f'You have no way to light the {self.name}.')
+                say.insayne(f"You have no way to light the {self.name}.")
                 return
         consumer.inventory.remove(self)
         cigarette_butt = CigaretteButt.create()
@@ -69,17 +63,18 @@ class CigaretteStub(_Consumable):
 
         if consumer is _G.player:
             say.insayne(
-                    f"You take a furtive puff on the {self.name}. It tastes foul "
-                    "and acrid. You do not feel like you are wearing a leather "
-                    "jacket at all.")
+                f"You take a furtive puff on the {self.name}. It tastes foul "
+                "and acrid. You do not feel like you are wearing a leather "
+                "jacket at all."
+            )
             consumer.psyche.heal_or_harm(dice.roll("1d2"))
             # TODO: Make insanity a variable statistic?
-            consumer.insanity.heal_or_harm(- dice.roll("1d2"))
+            consumer.insanity.heal_or_harm(-dice.roll("1d2"))
             # TODO: Interesting problem with how this is implemented:
             # because text is not queued but printed directly, if this line
             # precedes anything else in this function and player dies,
             # weird stuff will ensue.
-            consumer.health.heal_or_harm(- dice.roll("2d2"), cause="smoking half a cig")
+            consumer.health.heal_or_harm(-dice.roll("2d2"), cause="smoking half a cig")
         else:
             name = util.capitalized(consumer.name)
             say.insayne(f"{name} puffs furtively on a {self.name}.")
@@ -90,11 +85,10 @@ class CigaretteStub(_Consumable):
 
 
 class Cigarette(_Consumable):
-
     def consume(self, consumer):
-        if not consumer.inventory.find('lighter'):
+        if not consumer.inventory.find("lighter"):
             if consumer is _G.player:
-                say.insayne(f'You have no way to light the {self.name}.')
+                say.insayne(f"You have no way to light the {self.name}.")
                 return
 
         # TODO: Buff strength for a little bit.
@@ -113,17 +107,20 @@ class Cigarette(_Consumable):
         aliases = random.sample(self.aliases, 2)
         if consumer is _G.player:
             say.insayne(
-                    f"You take a long, smooth drag on the {aliases[0]}. Time seems "
-                    "to mellow; all activity nearby slows. Onlookers watch as you "
-                    "draw measured, pensive little puffs from the delicious "
-                    f"{aliases[1]}. You look very cool.")
-            consumer.health.heal_or_harm(- dice.roll("1d2"), cause="being cool")
+                f"You take a long, smooth drag on the {aliases[0]}. Time seems "
+                "to mellow; all activity nearby slows. Onlookers watch as you "
+                "draw measured, pensive little puffs from the delicious "
+                f"{aliases[1]}. You look very cool."
+            )
+            consumer.health.heal_or_harm(-dice.roll("1d2"), cause="being cool")
             consumer.psyche.heal_or_harm(dice.roll("2d2"))
             # TODO: Make insanity a variable statistic?
-            consumer.insanity.heal_or_harm(- dice.roll("2d2"))
+            consumer.insanity.heal_or_harm(-dice.roll("2d2"))
         else:
             name = util.capitalized(consumer.name)
-            say.insayne(f"{name} puffs mellowly on a {self.name}, looking extremely fly.")
+            say.insayne(
+                f"{name} puffs mellowly on a {self.name}, looking extremely fly."
+            )
 
     @classmethod
     def create(cls):
@@ -131,14 +128,12 @@ class Cigarette(_Consumable):
 
 
 class Lighter(_Item):
-    
     @classmethod
     def create(cls):
         return cls("lighter")
 
 
 class _FadingSmokeEvent(_Event):
-
     def execute(self):
         logging.debug("FadingSmokeEvent executing.")
         to_remove = []
@@ -163,7 +158,6 @@ class _FadingSmokeEvent(_Event):
 # TODO: Maybe make ephemeral items and have a global event that polls for them,
 # changing their state?
 class Smoke(_Item):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.turns = 2
@@ -174,14 +168,17 @@ class Smoke(_Item):
         room.add_event(event)
         _G.add_event(event, "post")
         return cls(
-                "smoke", description="plumes of smoke",
-                idle_description="Thick wreaths of acrid smoke hang in the air.")
+            "smoke",
+            description="plumes of smoke",
+            idle_description="Thick wreaths of acrid smoke hang in the air.",
+        )
 
 
 class FadingSmoke(_Item):
-
     @classmethod
     def create(cls):
         return cls(
-                "fading smoke", description="plumes of smoke",
-                idle_description="A thin haze of smoke remains here.")
+            "fading smoke",
+            description="plumes of smoke",
+            idle_description="A thin haze of smoke remains here.",
+        )
