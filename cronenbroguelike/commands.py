@@ -124,16 +124,17 @@ def _resolve_attack(attacker, attack):
         say.insayne(f"{subj} {hit} {obj} for {damage} damage!")
         # TODO: Attack should have associated text which is consulted here.
         defender.health.heal_or_harm(
-                -1 * damage, cause=f"the fins of {util.a(attacker.name)}")
+            -1 * damage, cause=f"the fins of {util.a(attacker.name)}"
+        )
 
     if not (is_player or defender.alive):
         G.just_died = True
 
 
 def _get_present_actor(actor_name):
-    return (
-        G.player.current_room.npcs.find(actor_name) or
-        G.player.current_room.corpses.find(actor_name))
+    return G.player.current_room.npcs.find(
+        actor_name
+    ) or G.player.current_room.corpses.find(actor_name)
 
 
 @when.when("ability ABILITY")
@@ -200,9 +201,10 @@ def talk(actor):
         if _find_available_item(actor_name) is not None:
             if G.player.insanity.value > 30:
                 say.insayne(
-                        f"You talk to {actor_name} at length. In response, "
-                        "it expatiates on the nature of reality. It's making "
-                        f"a lot of sense, that talking {actor_name}.")
+                    f"You talk to {actor_name} at length. In response, "
+                    "it expatiates on the nature of reality. It's making "
+                    f"a lot of sense, that talking {actor_name}."
+                )
                 G.player.insanity.heal_or_harm(15)
             else:
                 say.insayne(f"Why are you talking to {actor_name}, crazy?")
@@ -294,7 +296,9 @@ def read(book):
     if book is None:
         say.insayne(f"There is no {book_name} here to read.")
     elif not isinstance(book, Book):
-        say.insayne(f"You stare intently at the {book_name} but, alas, fail to read it.")
+        say.insayne(
+            f"You stare intently at the {book_name} but, alas, fail to read it."
+        )
     else:
         book.read(G.player)
 

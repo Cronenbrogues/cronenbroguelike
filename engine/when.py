@@ -57,7 +57,6 @@ def _build_arg_strings(func):
 
 
 def when(command, context=None, **kwargs):
-
     def wear_my_args_like_a_nasty_skin_mask(func):
         arg_string, call_string = _build_arg_strings(func)
         logging.debug(f"arg_string: {arg_string}")

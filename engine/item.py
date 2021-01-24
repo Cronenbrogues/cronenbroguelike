@@ -6,10 +6,9 @@ from adventurelib import Item as _Item
 # TODO: Inheritance was a bad move here. Composition would be better: each
 # item can have a consumable, a readable, an ephemeral, etc. as members.
 class Item(_Item):
-
     def __init__(
-            self, *aliases, description=None, idle_description=None,
-            obtainable=True):
+        self, *aliases, description=None, idle_description=None, obtainable=True
+    ):
         """Throws ValueError if no aliases are provided."""
         name, *aliases = aliases
         super().__init__(name, *aliases)
@@ -28,12 +27,10 @@ class Item(_Item):
 
 
 class Consumable(Item):
-
     def consume(self, consumer):
         return NotImplemented
 
 
 class Book(Item):
-
     def read(self, actor):
         return NotImplemented

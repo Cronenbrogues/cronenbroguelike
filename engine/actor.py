@@ -35,13 +35,13 @@ class _Statistic:
 
 
 class _StaticStatistic(_Statistic):
-    
+
     _NAME = None
 
     def __init_subclass__(cls):
         if cls._NAME is None:
             cls._NAME = cls.__name__.lower()
-    
+
     def modify(self, *args, **kwargs):
         self._modify(*args, **kwargs)
 
@@ -62,11 +62,11 @@ class _VariableStatistic(_Statistic):
     def __init_subclass__(cls):
         if cls._NAME is None:
             cls._NAME = cls.__name__.lower()
-        
+
     @property
     def maximum(self):
         return self._static_value
-        
+
     @property
     def value(self):
         return self._variable_value
@@ -89,7 +89,7 @@ class _VariableStatistic(_Statistic):
         self.heal_or_harm(actual_delta, cause, do_log=False)
 
     def heal_or_harm(self, delta, cause=None, do_log=True):
-        self.last_cause = cause 
+        self.last_cause = cause
         self._variable_value += delta
         self._variable_value = min(self.maximum, self._variable_value)
         self._variable_value = max(self._MINIMUM_VALUE, self._variable_value)
@@ -181,7 +181,7 @@ class Actor:
 
     @property
     def idle_text(self):
-        return self._idle_text        
+        return self._idle_text
 
     def add_ability(self, ability):
         # TODO: "You" vs. name problem as always.
@@ -240,9 +240,7 @@ class Actor:
 
 
 # TODO: Make this a classmethod of Actor.
-def create_actor(
-    health, psyche, strength, stamina, name, *aliases, **kwargs
-):
+def create_actor(health, psyche, strength, stamina, name, *aliases, **kwargs):
     """Convenience function to create actors with canonical stats."""
     actor_item = item.Item(name, *aliases)
     return Actor(
