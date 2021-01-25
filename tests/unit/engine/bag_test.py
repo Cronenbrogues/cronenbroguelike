@@ -55,7 +55,11 @@ class BagTest(common.EngineTest):
         actual = sequined_clutch.items_by_name()
         expected = {
             "chapstick": [_Chapstick.create(), _BurtsBees.create()],
-            "chicken wing": [_ChickenWing.create(), _ChickenWing.create(), _ChickenWing.create()],
+            "chicken wing": [
+                _ChickenWing.create(),
+                _ChickenWing.create(),
+                _ChickenWing.create(),
+            ],
         }
 
         # Converts items to alias tuples; otherwise, list comparison is hard
