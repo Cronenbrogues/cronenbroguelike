@@ -69,6 +69,3 @@ def insayne(text, add_newline=True, insanity=None):
         insanity = G.player.insanity.value
     text = _hear_voices(text, insanity)
     adventurelib.say(text)
-
-
-sayne = functools.partial(insayne, insanity=0)
