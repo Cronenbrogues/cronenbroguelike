@@ -22,6 +22,6 @@ To enable various gameplay tweaks, modify `game_config.json` in the root `cronen
 
 `num_rooms` can be helpful to restrict the size of randomly generated floors when testing. `extra_commands`'s primary utility lies in the [cheat](#cheat) command, which allows the player to alter the player character's statistics and abilities. `random_run` is mostly for fun.
 
-## <a id="cheat">Cheats</a>
+## Cheats
 
 Those that would seek arcana must be inducted into the esoteric circle. Petition @flosincapite for initiation.
