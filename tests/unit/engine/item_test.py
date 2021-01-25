@@ -1,6 +1,3 @@
-import unittest
-
-from engine import actor
 from engine import item
 from tests import common
 

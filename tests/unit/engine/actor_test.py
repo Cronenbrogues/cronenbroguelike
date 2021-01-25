@@ -1,4 +1,3 @@
-import unittest
 from unittest.mock import call
 from unittest.mock import Mock
 from unittest.mock import patch

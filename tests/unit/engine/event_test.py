@@ -1,6 +1,3 @@
-import unittest
-from unittest.mock import patch
-
 from engine import event
 from tests import common
 

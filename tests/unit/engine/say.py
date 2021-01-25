@@ -1,6 +1,5 @@
 import io
 import re
-import unittest
 from unittest.mock import call
 from unittest.mock import patch
 
@@ -40,9 +39,9 @@ def _sifted_edits(original, augmented):
                 next_aug = next(aug_gen)
             except StopIteration:
                 break
+
             if oc == next_aug:
                 reconstructed.append(next_aug)
-                break
             else:
                 edits.append(next_aug)
 
@@ -94,18 +93,6 @@ class InsayneTest(common.EngineTest):
         _, edits = _sifted_edits(original_text, augmented)
         edited_edits = re.sub(r"[A-Z]*", r"", edits)
         self.assertNotEqual("", edited_edits)
-
-    @patch("sys.stdout", new_callable=io.StringIO)
-    def test_sets_zalgochance_when_insanity_high(self, mock_stdout):
-        # TODO: Refactor the zalgotext library to be more testable.
-        original_text = "some text"
-        say.insayne(original_text, insanity=100)
-        augmented = mock_stdout.getvalue()
-        # adventurelib.say freely introduces newlines.
-        augmented = re.sub(r"\n", r" ", augmented)
-        _, edits = _sifted_edits(original_text, augmented)
-        edited_edits = re.sub(r"[A-Z]*", r"", edits)
-        self.assertNotEqual(edits, "")
 
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_interpolates_voices_when_insanity_high(self, mock_stdout):
