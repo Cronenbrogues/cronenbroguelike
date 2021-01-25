@@ -313,17 +313,28 @@ def _move_item(old_inventory, new_inventory, item):
 # TODO: Could create a @when decorator in the item subclasses
 # themselves that automatically registers a command.
 # TODO: Refactor items; let items have "verb" objects which map to events.
-@when.when("use ITEM", verb="use")
-def use(item, verb):
+@when.when("use ITEM", actor=None, verb="use")
+@when.when("use ITEM on ACTOR", verb="use")
+@when.when("give ITEM to ACTOR", verb="use")
+def use(item, actor, verb):
     item_name = item
+    actor_name = actor
 
     # Inventory item case
     item = G.player.inventory.find(item_name)
     if item:
-        try:
-            item.consume(G.player)
-        except AttributeError:
-            say.insayne(f"You can't {verb} the {item_name}.")
+        if actor_name:
+            actor = _get_present_actor(actor_name)
+            if actor:
+                try:
+                    item.consume(actor)
+                except AttributeError:
+                    say.insayne(f"You can't {verb} the {item_name} on {actor_name}.")
+        else:
+            try:
+                item.consume(G.player)
+            except AttributeError:
+                say.insayne(f"You can't {verb} the {item_name}.")
         return
 
     # NPC case

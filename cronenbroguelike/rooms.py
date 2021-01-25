@@ -347,7 +347,7 @@ class _BreakRoom(_Room):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # self.add_character(npcs.coffee_machine())
+        self.add_character(npcs.coffee_machine())
         self.add_character(npcs.gary())
 
     def on_enter(self):
@@ -473,9 +473,13 @@ ok, TODOs
 - [X] add "use" action for computer
 - [X] make "gary" actor
 - [X] make gary tell bad jokes
+- [X] use coffee machine -> get coffee
+- [X] use coffee on gary -> he drinks it
+- [ ] use coffee on gary -> get ending if at 30 insanity
 - [ ] hook up other strings
 ...
 - [ ] make "enter gary" action
+- [ ] make gary drink his own coffee
 
 gary's jokes should turn to pleading
 as they get darker and darker he should get grosser - "Gary laughs uproariously, spittle flying all over you."

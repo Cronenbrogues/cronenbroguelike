@@ -43,7 +43,7 @@ gary_descriptions = [
     (5, "Gary vibrates garrulously in the corner."),
     (10, "Gary vibrates in the corner."),
     (20, "Gary vibrates ominously in the corner."),
-    (30, "The vague outline of Gary hums ominously in the corner."),
+    (30, "The liminal blur of Gary hums ominously in the corner."),
 ]
 
 coffee_machine_descriptions = [
@@ -63,7 +63,7 @@ coffee_descriptions = [
     (10, 'A nice, warm cup of shitty black coffee'),
     (20, 'Good ol\' coffee. Nothing weird about that!'),
     (29, 'Coffee. There\'s something a bit off about it...'),
-    (30, 'Bubbling ichor'),
+    (30, 'Steaming ichor'),
 ]
 
 breakroom_descriptions = [

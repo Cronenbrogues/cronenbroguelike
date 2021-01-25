@@ -270,7 +270,9 @@ def coffee_machine():
     # npc.inventory.add(items.MeditationBook.create())
 
     def use_coffee_machine(consumer):
-        say.insayne("using coffee machine")
+        # say.insayne("using coffee machine")
+        # TODO: add text?
+        _G.player.inventory.add(items.Coffee.create())
 
     npc.consume = use_coffee_machine
 

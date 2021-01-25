@@ -9,6 +9,8 @@ from engine.item import Item as _Item
 from engine import dice
 from engine import say
 
+from . import extra_description
+
 from cronenbroguelike import ability
 from cronenbroguelike import util
 
@@ -131,7 +133,7 @@ class Cigarette(_Consumable):
 
 
 class Lighter(_Item):
-    
+
     @classmethod
     def create(cls):
         return cls("lighter")
@@ -185,3 +187,45 @@ class FadingSmoke(_Item):
         return cls(
                 "fading smoke", description="plumes of smoke",
                 idle_description="A thin haze of smoke remains here.")
+
+
+class _CoffeeTick(_Event):
+
+    def __init__(self, coffee, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.coffee = coffee
+
+    def execute(self):
+        print("coffee tick!")
+        insanity = _G.player.insanity.value
+        desc = extra_description.get_interval(insanity, extra_description.gary_descriptions)
+        self.coffee.description = "woof woof"
+
+
+class Coffee(_Consumable):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        _G.add_event(_CoffeeTick(self), "pre")
+
+    def consume(self, consumer):
+        if consumer is _G.player:
+            say.insayne(f"You drink the coffee.")
+            consumer.insanity.modify(-5)  # TODO
+        elif consumer.name is "gary":
+            _G.player.insanity.modify(30)
+            insanity = _G.player.insanity.value
+            if insanity >= 30:
+                print("TODO: trigger ending")
+                consumer.die()
+            else:
+                say.insayne('Gary loudly slurps the coffee. "Well thanks, pal!"')
+        else:
+            say.insayne("Nothing happens.")
+
+        _G.player.inventory.remove(self)
+        # TODO: allow gary to have his own coffee
+
+    @classmethod
+    def create(cls):
+        return cls("coffee")
