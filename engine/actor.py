@@ -22,7 +22,7 @@ class _Statistic:
             message = f"{'in' if delta >= 0 else 'de'}creased by {abs(delta)}"
         else:
             message = "does not change"
-        say.sayne(f"{util.capitalized(self._NAME)} {message}.")
+        say.insayne(f"{util.capitalized(self._NAME)} {message}.")
 
     def _modify(self, delta, do_log=True):
         self._static_value += delta
@@ -80,7 +80,7 @@ class _VariableStatistic(_Statistic):
         return self._static_value
 
     def _log_current(self, delta):
-        say.sayne(
+        say.insayne(
             f"{util.capitalized(self._NAME)} "
             f"{'restored' if delta >= 0 else 'damaged'} by {abs(delta)}."
         )
@@ -118,7 +118,7 @@ class Insanity(_VariableStatistic):
         return self._MINIMUM_VALUE
 
     def _log_current(self, delta):
-        say.sayne(
+        say.insayne(
             f"{util.capitalized(self._NAME)} "
             f"{'increased' if delta >= 0 else 'assuaged'} by {abs(delta)}."
         )
