@@ -11,6 +11,7 @@ from whimsylib import when
 def enter_room(room):
     """Convenience function called at game start and when entering a room."""
     room.on_enter()
+    # TODO: Heal psyche more slowly. Peg this to turns (also not yet implemented).
     G.player.psyche.heal_or_harm(1, do_log=False)
     _look()
 
