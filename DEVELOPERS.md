@@ -17,7 +17,7 @@ Set `log_level` to "DEBUG" to see log output. An example `logging_config.json` l
 To enable various gameplay tweaks, modify `game_config.json` in the root `cronenbroguelike` directory. This file recognizes the following parameters:
 
 - `num_rooms`: an integer specifying how many rooms to place in the floor.
-- `extra_commands`: a Boolean specifying whether to add various extra commands, including [cheat](#cheat).
+- `extra_commands`: a Boolean specifying whether to add various extra commands, including [cheat](#cheats).
 - `random_run`: a Boolean specifying whether to let the game play itself by producing random commands.
 
 `num_rooms` can be helpful to restrict the size of randomly generated floors when testing. `extra_commands`'s primary utility lies in the [cheat](#cheats) command, which allows the player to alter the player character's statistics and abilities. `random_run` is mostly for fun.
