@@ -1,6 +1,3 @@
-import unittest
-from unittest.mock import patch
-
 from engine import directions
 from tests import common
 

@@ -1,5 +1,3 @@
-import unittest
-
 from engine import ai
 from engine.globals import G
 from tests import common

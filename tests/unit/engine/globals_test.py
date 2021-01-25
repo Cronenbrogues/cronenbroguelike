@@ -2,9 +2,8 @@ import unittest
 from unittest.mock import Mock
 from unittest.mock import patch
 
-from engine import event
+from engine import event as _event
 from engine import globals as _globals
-from tests import common
 
 
 class _FakeQueue:
@@ -20,7 +19,7 @@ class _FakeQueue:
             yield self.post
 
 
-class MoribundEvent(event.Event):
+class MoribundEvent(_event.Event):
     def __init__(self, to_live):
         super().__init__()
         self._to_live = to_live

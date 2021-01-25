@@ -1,6 +1,7 @@
-from cronenbroguelike import rooms
 from unittest.mock import patch
 import pytest
+
+from cronenbroguelike import rooms
 
 # TODO: introduce some room test fixtures
 
@@ -30,4 +31,4 @@ def test_get_rooms_more_than_total(rooms_patch):
 def test_get_rooms_more_required_than_requested(rooms_patch):
     rooms_patch.return_value = [rooms._AltarRoom] * 2
     with pytest.raises(Exception):
-        room_list = rooms.get_rooms(number=1)
+        rooms.get_rooms(number=1)
