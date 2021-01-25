@@ -7,7 +7,25 @@ from engine import item
 from tests import common
 
 
-class BagAddAliasesTest(common.EngineTest):
+class _Chapstick(item.Item):
+    @classmethod
+    def create(cls):
+        return cls("chapstick")
+
+
+class _BurtsBees(item.Item):
+    @classmethod
+    def create(cls):
+        return cls("chapstick", "Burt's bees")
+
+
+class _ChickenWing(item.Item):
+    @classmethod
+    def create(cls):
+        return cls("chicken wing")
+
+
+class BagTest(common.EngineTest):
     def test_add_aliases_adds_holder(self):
         backpack = bag.Bag()
         pamphlet = item.Item("sycophantic propaganda pamphlet")
@@ -27,6 +45,27 @@ class BagAddAliasesTest(common.EngineTest):
         pamphlet = item.Item("sycophantic propaganda pamphlet")
         backpack.add(pamphlet)
         mock_say.assert_not_called()
+
+    def test_items_by_name(self):
+        sequined_clutch = bag.Bag()
+        for _ in range(3):
+            sequined_clutch.add(_ChickenWing.create())
+        sequined_clutch.add(_Chapstick.create())
+        sequined_clutch.add(_BurtsBees.create())
+        actual = sequined_clutch.items_by_name()
+        expected = {
+            "chapstick": [_Chapstick.create(), _BurtsBees.create()],
+            "chicken wing": [_ChickenWing.create(), _ChickenWing.create(), _ChickenWing.create()],
+        }
+
+        # Converts items to alias tuples; otherwise, list comparison is hard
+        # because Items are not hashable (meaning they hash on identity).
+        for key, value in actual.items():
+            actual[key] = sorted(item.aliases for item in value)
+        for key, value in expected.items():
+            expected[key] = sorted(item.aliases for item in value)
+
+        self.assertEqual(expected, actual)
 
 
 class BagDiscardAliasesTest(common.EngineTest):

@@ -34,3 +34,15 @@ class Bag(_Bag):
     def remove(self, item, message=None):
         set.remove(self, item)
         self._discard_aliases(item, message)
+
+    def items_by_name(self):
+        """Convenience function mapping item names to item lists.
+
+        This is the preferred way to get a name-to-item(s) mapping for a Bag.
+        Naive attempts to do so may result in abstruse bugs when multiple items
+        have the same name.
+        """
+        items = {}
+        for item in self:
+            items.setdefault(item.name, []).append(item)
+        return items
