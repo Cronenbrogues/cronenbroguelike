@@ -6,6 +6,9 @@ from engine import dice
 from engine import event
 from engine.globals import G as _G
 from engine import say
+from engine import when
+
+from . import extra_description
 
 from cronenbroguelike import items
 from cronenbroguelike import util
@@ -167,11 +170,172 @@ def smokes_man():
 
     npc.upon_death(smoker_death_throes)
     number_butts = random.choice(range(4, 7))
-    for _ in range(number_butts):
+    for _ in range(number_butts):  # add myriad butts
         npc.inventory.add(items.CigaretteButt.create())
     npc.inventory.add(items.CigaretteStub.create())
     npc.inventory.add(items.CigaretteStub.create())
     npc.inventory.add(items.Cigarette.create())
     npc.inventory.add(items.Lighter.create())
 
+    return npc
+
+
+def office_computer():
+    npc = actor.create_actor(
+        10,
+        10,
+        999999,  # strength
+        10,
+        10,
+        10,
+        100,
+        "your computer",
+        "computer",
+        idle_text="Your computer hums gently on your desk.",
+        ai=ai.Chill(),
+    )
+
+    class _ComputerGetsMad(event.Event):
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            # self.owner = None
+            # self._timer = -1
+
+        def execute(self):
+            insanity = _G.player.insanity.value
+            if insanity > 20:
+                print("setting ai to hate")
+                npc.ai = ai.HatesPlayer()
+
+            # self._timer += 1
+            # if self._timer % 3 != 0:
+            #     return
+            # roll = dice.roll('1d10')
+            # if roll <= 4:
+            #     return
+            # cig = items.Cigarette.create()
+            # self.owner.inventory.add(cig)
+            # cig.consume(self.owner)
+
+
+    # npc.ai.add_event(_SmokesManEvent(), "talk")
+    npc.ai.add_default_event(_ComputerGetsMad())
+
+    def computer_death_throes(librarian):
+        say.insayne(
+            "The librarian grins impossibly wide. A thin rivulet of blood "
+            "appears between his teeth. His eyes roll back and, with a giggle, "
+            "he falls backward onto the ground as though reclining on a divan."
+        )
+        say.insayne("The edge of a hidebound book peeks from his rags.")
+
+    npc.upon_death(computer_death_throes)
+    # npc.inventory.add(items.MeditationBook.create())
+
+    def use_computer(consumer):
+        say.insayne("using computer")
+
+    npc.consume = use_computer
+
+    return npc
+
+
+def coffee_machine():
+    npc = actor.create_actor(
+        10,
+        10,
+        10,  # strength
+        10,
+        10,
+        10,
+        100,
+        "coffee machine",
+        idle_text="A coffee machine gurgles pleasantly on the counter.",
+        ai=ai.Chill(),
+    )
+
+    # npc.ai.add_event(_SmokesManEvent(), "talk")
+    # npc.ai.add_default_event(_ComputerGetsMad())
+
+    def coffee_machine_death_throes(librarian):
+        say.insayne(
+            "The librarian grins impossibly wide. A thin rivulet of blood "
+            "appears between his teeth. His eyes roll back and, with a giggle, "
+            "he falls backward onto the ground as though reclining on a divan."
+        )
+        say.insayne("The edge of a hidebound book peeks from his rags.")
+
+    npc.upon_death(coffee_machine_death_throes)
+    # npc.inventory.add(items.MeditationBook.create())
+
+    def use_coffee_machine(consumer):
+        say.insayne("using coffee machine")
+
+    npc.consume = use_coffee_machine
+
+    return npc
+
+
+def gary():
+    npc = actor.create_actor(
+        1000,
+        10,
+        1000,
+        10,
+        10,
+        10,
+        100,
+        "gary",
+        ai=ai.Chill(),
+    )
+
+    class _GaryJoke(event.Event):
+
+        def execute(self):
+            insanity = _G.player.insanity.value
+            jokes = extra_description.get_interval(insanity, extra_description.gary_jokes)
+            if insanity <= 10:
+                say.insayne("Gary starts to tell a joke...")
+            elif insanity <= 20:
+                say.insayne("Gary sneers...")
+            for line in random.choice(jokes).split("\n"):
+                say.insayne(line)
+            if insanity <= 10:
+                say.insayne("You groan.")
+                insanity = _G.player.insanity.modify(1)
+            elif insanity <= 20:
+                say.insayne("You cringe.")
+
+    class _GaryHit(event.Event):
+
+        def execute(self):
+            say.insayne("Gary smiles.")
+            say.insayne('"I\'ve been waiting so long for this..."')
+            npc.ai = ai.HatesPlayer()
+
+    class _GaryTick(event.Event):
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+        def execute(self):
+            insanity = _G.player.insanity.value
+            desc = extra_description.get_interval(insanity, extra_description.gary_descriptions)
+            npc.idle_text = desc
+
+    npc.ai.add_event(_GaryJoke(), "talk")
+    npc.ai.add_event(_GaryHit(), "attack")
+    _G.add_event(_GaryTick(), "pre")
+
+    def librarian_death_throes(librarian):
+        say.insayne(
+            "The librarian grins impossibly wide. A thin rivulet of blood "
+            "appears between his teeth. His eyes roll back and, with a giggle, "
+            "he falls backward onto the ground as though reclining on a divan."
+        )
+        say.insayne("The edge of a hidebound book peeks from his rags.")
+
+    npc.upon_death(librarian_death_throes)
+    # npc.inventory.add(items.MeditationBook.create())
     return npc

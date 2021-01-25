@@ -2,6 +2,7 @@ import adventurelib
 import logging
 import random
 
+from . import npcs
 from engine import dice
 from engine.event import Event as _Event
 from engine.globals import G
@@ -36,6 +37,33 @@ _CathedralOffice = _Room.create_room_type(
     "A desk is strewn with sheaves of paper. Little of sense is written there.",
     themes=["cathedral"],
 )
+# also have probabilities!
+# and probabilities of nodes spawning too?
+# cathedral_office.add_allowed_successor(cathedral_library, probability=0.25)
+# cathedral_office.add_disallowed_successor(cathedral_catacombs)
+
+# by default, a Room will connect with every other room of the same theme with equal probability
+# maybe worth adding max_exits and min_exits params?
+
+# how exactly do these probabilities work? if have 10 edges coming out, each with .25 chance of being created...
+# do you not want them? or normalize?
+# lets say each edge defaults to having a value of "1"
+# then when choosing a new edge you sum up and choose
+# also want a "no edge" thing? just None?
+
+# so two rounds
+# first, generate a set of nodes (Rooms) according to their probabilities and max/min values
+# then, link rooms together according to their probabilties and min/max values
+# but how to describe the edges?
+# defaults:
+# actually a bit complicated - want to be able to go "north, south, east, or west" to anything within the same theme
+# and if have an edge going "north" somewhere, only want "south" coming back
+
+# ok you're kind of making a graph with probabilistic edges, which then gets turned into a real graph?
+
+# does this gain you much?
+# maybe simpler to just allow rooms to add extra edges *on top* of the grid thing?
+# like add_special_edge(room, probability, bidirectional)
 
 
 class _BoilerHeatEvent(_Event):
@@ -305,10 +333,173 @@ class _IntestineRoom(_Room):
             self._entered = True
 
 
+# intestine_room = _IntestineRoom.create("", theme="behemoth")
+# rib_room = _Room.create(
+#     "You are standing on a slick, wet floor. The walls are a ribcage palisade. "
+#     "The room expands and contracts rhythmically.",
+#     theme="behemoth",
+# )
+
+class _BreakRoom(_Room):
+    _DESCRIPTION = ""
+    _THEMES = ["office"]
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # self.add_character(npcs.coffee_machine())
+        self.add_character(npcs.gary())
+
+    def on_enter(self):
+        super().on_enter()
+        # G.player.insanity.modify(10)
+        insanity = G.player.insanity.value
+        if insanity == 100:
+            say.insayne("You are totally insane")
+        elif insanity > 75:
+            say.insayne("You are very insane")
+        elif insanity > 50:
+            say.insayne("You are quite insane")
+        elif insanity > 25:
+            say.insayne("You are a bit insane")
+        elif insanity > 10:
+            say.insayne("You are a bit eccentric")
+        # say.insayne(f"insanity is currently {G.player.insanity.value}")
+        # if not self._entered:
+        #     G.add_event(_IntestineRoomEvent(), "post")
+        #     self._entered = True
+
+
+
+class _YourDesk(_Room):
+    _DESCRIPTION = ""
+    _THEMES = ["office"]
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.add_character(npcs.office_computer())
+
+    def on_enter(self):
+        super().on_enter()
+        # G.player.insanity.modify(10)
+        insanity = G.player.insanity.value
+        if insanity == 100:
+            say.insayne("You are totally insane")
+        elif insanity > 75:
+            say.insayne("You are very insane")
+        elif insanity > 50:
+            say.insayne("You are quite insane")
+        elif insanity > 25:
+            say.insayne("You are a bit insane")
+        elif insanity > 10:
+            say.insayne("You are a bit eccentric")
+        # say.insayne(f"insanity is currently {G.player.insanity.value}")
+        # if not self._entered:
+        #     G.add_event(_IntestineRoomEvent(), "post")
+        #     self._entered = True
+
+# your_desk = _YourDesk.create("", themes=["office"])
+
+
+# class _AssortedOfficeRoom(_Room):
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+
+#     def on_enter(self):
+#         super().on_enter()
+#         G.player.insanity.modify(10)
+#         insanity = G.player.insanity.value
+#         if insanity == 100:
+#             say.insayne("You are totally insane")
+#         elif insanity > 75:
+#             say.insayne("You are very insane")
+#         elif insanity > 50:
+#             say.insayne("You are quite insane")
+#         elif insanity > 25:
+#             say.insayne("You are a bit insane")
+#         elif insanity > 10:
+#             say.insayne("You are a bit eccentric")
+#         # say.insayne(f"insanity is currently {G.player.insanity.value}")
+#         # if not self._entered:
+#         #     G.add_event(_IntestineRoomEvent(), "post")
+#         #     self._entered = True
+
+# intestine_room = _OfficeRoom.create("", theme="office")
+
+""" "office" theme ideas
+- perfectly normal to start with
+- things change when you walk by them multiple times
+- after a while they start to increase insanity
+- once insanity is high enough then you start seeing exits
+- entities
+  computer
+  fax machine
+  Gary
+- items
+  stapler
+what if the entities (especially Gary) became exits themselves?
+and then it becomes clear that you were inside some strange creature?
+
+ok, maybe decrease will and increase insanity
+think should go to 30 insanity max
+that could mean three different "stages" - 0, 15, 30
+or 4
+4 seems good?
+can you just add an exit when you want? think so
+
+Gary could tell increasingly surreal dad jokes
+should there be more Garys over time?
+
+what if you added a "laugh" action that's only available in the office
+and at first it just makes Gary tell you another joke
+eventually Gary becomes some pitiful creature and you have to laugh at it to destroy it
+
+rooms
+- your desk
+- copy room
+- break room
+- meeting room
+- reception area
+
+computer should become aggressive once insane enough
+maybe if attack computer early on things get really weird?
+
+ok, TODOs
+- [X] add a few options of each thing! don't get too fancy yet, can flesh out later
+- [X] add "your desk"
+- [X] add "break room"
+- [X] make "computer" actor and spawn it at your desk
+- [X] add "use" action for computer
+- [X] make "gary" actor
+- [X] make gary tell bad jokes
+- [ ] hook up other strings
+...
+- [ ] make "enter gary" action
+
+gary's jokes should turn to pleading
+as they get darker and darker he should get grosser - "Gary laughs uproariously, spittle flying all over you."
+change gary to larry?
+
+what's the ending?
+have to get ichor from coffee machine, use it in room with gary to "melt" him into a portal to the next floor?
+if you use it on yourself it kills you
+and you "jerk awake" at your desk
+or maybe you have to use it on the computer?
+or if you do something bad happens?
+
+want copy machine?
+"""
+
+# can make tunnel when triggered
+
+# could "wake up" in the office when transitioning there
+
+
 def _rooms_for_theme(theme=None):
     if theme is None:
         return _Room.ALL_ROOMS
-    return _Room.THEME_TO_ROOMS[theme] + _Room.THEME_TO_ROOMS[_Room.DEFAULT_THEME]
+    return _Room.THEME_TO_ROOMS[theme]# + _Room.THEME_TO_ROOMS[_Room.DEFAULT_THEME]
 
 
 def get_rooms(theme=None, number=None):

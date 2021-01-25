@@ -10,7 +10,7 @@ class Attack(collections.namedtuple("Attack", ["target", "method"])):
     pass
 
 
-class Speak(collections.namedtuple("Attack", ["target", "message"])):
+class Speak(collections.namedtuple("Speak", ["target", "message"])):
     pass
 
 
