@@ -24,4 +24,4 @@ To enable various gameplay tweaks, create a file called `game_config.json` in th
 
 ## <a id="cheat">Cheats</a>
 
-Those that would seek arcana, must be inducted into the esoteric circle. Petition @flosincapite for initiation.
+Those that would seek arcana must be inducted into the esoteric circle. Petition @flosincapite for initiation.
