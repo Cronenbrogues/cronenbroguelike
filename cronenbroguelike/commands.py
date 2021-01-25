@@ -188,6 +188,10 @@ def attack(actor):
         action = character.ai.choose_action(G.player.current_room, impulse="attack")
         if action.attack is not None:
             _resolve_attack(character, action.attack)
+        elif action.speak is not None:
+            say.insayne(action.speak.message)
+        elif action.event is not None:
+            action.event.event.execute()
         else:
             say.insayne(f"{util.capitalized(character.name)} makes no hostile motion.")
 
