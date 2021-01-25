@@ -316,14 +316,26 @@ def _move_item(old_inventory, new_inventory, item):
 @when.when("use ITEM", verb="use")
 def use(item, verb):
     item_name = item
+
+    # Inventory item case
     item = G.player.inventory.find(item_name)
-    if item is None:
-        say.insayne(f"You don't have {util.a(item_name)}.")
+    if item:
+        try:
+            item.consume(G.player)
+        except AttributeError:
+            say.insayne(f"You can't {verb} the {item_name}.")
         return
-    try:
-        item.consume(G.player)
-    except AttributeError:
-        say.insayne(f"You can't {verb} the {item_name}.")
+
+    # NPC case
+    item = G.player.current_room.npcs.find(item_name)
+    if item:
+        try:
+            item.consume(G.player)
+        except AttributeError:
+            say.insayne(f"You can't {verb} the {item_name}.")
+        return
+
+    say.insayne(f"You don't have {util.a(item_name)}.")
 
 
 @adventurelib.when("take ITEM")
