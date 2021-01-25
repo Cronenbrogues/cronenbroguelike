@@ -20,7 +20,7 @@ To enable various gameplay tweaks, modify `game_config.json` in the root `cronen
 - `extra_commands`: a Boolean specifying whether to add various extra commands, including [cheat](#cheat).
 - `random_run`: a Boolean specifying whether to let the game play itself by producing random commands.
 
-`num_rooms` can be helpful to restrict the size of randomly generated floors when testing. `extra_commands`'s primary utility lies in the [cheat](#cheat) command, which allows the player to alter the player character's statistics and abilities. `random_run` is mostly for fun.
+`num_rooms` can be helpful to restrict the size of randomly generated floors when testing. `extra_commands`'s primary utility lies in the [cheat](#cheats) command, which allows the player to alter the player character's statistics and abilities. `random_run` is mostly for fun.
 
 ## Cheats
 
