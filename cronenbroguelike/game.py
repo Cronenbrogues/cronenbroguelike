@@ -19,14 +19,8 @@ from engine import when
 
 
 def _load_config():
-    game_config = {"num_rooms": 15, "extra_commands": False, "random_run": False}
-    try:
-        with open("game_config.json", "r") as inp:
-            additional_config = json.load(inp)
-    except FileNotFoundError:
-        additional_config = {}
-    game_config.update(additional_config)
-    return game_config
+    with open("game_config.json", "r") as inp:
+        return json.load(inp)
 
 
 def _get_random_start():
