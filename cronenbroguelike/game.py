@@ -15,7 +15,7 @@ from . import npcs
 from . import util
 
 
-def _get_random_start():
+def _get_random_start(theme):
     # TODO: Condition this on how the last death actually occurred.
     death_text = _G.cause_of_death or random.choice(
         [
@@ -23,14 +23,17 @@ def _get_random_start():
             "slowly suffocating as a glabrous tentacle horror looks on",
         ]
     )
-    for text in [
-        f"You recall your death by {death_text}. The memory fades away.",
-        "You know only that you have been here for interminable years, "
-        "that you have died innumerable times, and that someone once told "
-        "you there was a way out. You were told this an eon ago, or maybe "
-        "a day, but the stubborn hope of escape glisters in your mind.",
-    ]:
-        say.insayne(text)
+    if theme == "office":
+        say.insayne("You jerk awake at your desk. Ugh, you need to get more sleep.")
+    else:
+        for text in [
+            f"You recall your death by {death_text}. The memory fades away.",
+            "You know only that you have been here for interminable years, "
+            "that you have died innumerable times, and that someone once told "
+            "you there was a way out. You were told this an eon ago, or maybe "
+            "a day, but the stubborn hope of escape glisters in your mind.",
+        ]:
+            say.insayne(text)
 
 
 class _ResetDiedFlag(_Event):
@@ -42,6 +45,10 @@ class _ResetDiedFlag(_Event):
 def _restart(config):
     # Resets all global state (clears event queues, etc.).
     _G.reset()
+
+    theme = "cathedral"
+
+    npcs_by_theme = {"cathedral": [npcs.fish_man, npcs.mad_librarian, npcs.smokes_man]}
 
     # Creates the player character and ensures game will restart upon death.
     _G.player = actor.create_actor(
@@ -57,22 +64,16 @@ def _restart(config):
     _G.add_event(_ResetDiedFlag(), "pre")
 
     # Creates a small dungeon.
-    level = floor.Floor.generate("cathedral", config["num_rooms"])
+    level = floor.Floor.generate(theme, number_rooms=config["num_rooms"])
 
-    # Places a monster in a random room.
-    level.random_room().add_character(npcs.fish_man())
-
-    # Places an NPC in a random room.
-    level.random_room().add_character(npcs.mad_librarian())
-
-    # Places a cool NPC in a random room.
-    level.random_room().add_character(npcs.smokes_man())
+    for npc in npcs_by_theme.get(theme, []):
+        level.random_room().add_character(npc())
 
     # Places the player.
     level.random_room().add_character(_G.player)
 
     # Starts it up.
-    _get_random_start()
+    _get_random_start(theme)
     with _poll_events(poll_before=True, poll_after=True):
         commands.enter_room(_G.player.current_room)
 

@@ -17,7 +17,7 @@ from whimsylib import when
 @when.when("eat ITEM", verb="eat")
 @when.when("smoke ITEM", verb="smoke")
 def consume(item, verb):
-    commands.use(item, verb)
+    commands.use(item, None, verb)
 
 
 @when.when("exit DIRECTION")

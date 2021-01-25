@@ -241,6 +241,9 @@ def talk(actor):
     elif action.event is not None:
         action.event.event.execute()
 
+    else:
+        say.insayne("Nothing happens.")
+
 
 @when.when("inspect ITEM")
 def inspect(item):
@@ -249,6 +252,8 @@ def inspect(item):
     if room_item is not None:
         say.insayne(room_item.description)
         return
+
+    # why not also do inventory?
 
     character = G.player.current_room.corpses.find(item_name)
     if character is not None:
@@ -325,18 +330,41 @@ def _move_item(
 # TODO: Could create a @when decorator in the item subclasses
 # themselves that automatically registers a command.
 # TODO: Refactor items; let items have "verb" objects which map to events.
-@when.when("use ITEM", verb="use")
+@when.when("use ITEM", actor=None, verb="use")
+@when.when("use ITEM on ACTOR", verb="use")
+@when.when("give ITEM to ACTOR", verb="use")
 @when.poll()
-def use(item, verb):
+def use(item, actor, verb):
     item_name = item
+    actor_name = actor
+
+    # Inventory item case
     item = G.player.inventory.find(item_name)
-    if item is None:
-        say.insayne(f"You don't have {say.a(item_name)}.")
+    if item:
+        if actor_name:
+            actor = _get_present_actor(actor_name)
+            if actor:
+                try:
+                    item.consume(actor)
+                except AttributeError:
+                    say.insayne(f"You can't {verb} the {item_name} on {actor_name}.")
+        else:
+            try:
+                item.consume(G.player)
+            except AttributeError:
+                say.insayne(f"You can't {verb} the {item_name}.")
         return
-    try:
-        item.consume(G.player)
-    except AttributeError:
-        say.insayne(f"You can't {verb} the {item_name}.")
+
+    # NPC case
+    item = G.player.current_room.npcs.find(item_name)
+    if item:
+        try:
+            item.consume(G.player)
+        except AttributeError:
+            say.insayne(f"You can't {verb} the {item_name}.")
+        return
+
+    say.insayne(f"You don't have {say.a(item_name)}.")
 
 
 @when.when("take ITEM")
