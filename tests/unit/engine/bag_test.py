@@ -16,7 +16,7 @@ class _Chapstick(item.Item):
 class _BurtsBees(item.Item):
     @classmethod
     def create(cls):
-        return cls("chapstick", "Burt's bees")
+        return cls("chapstick", "burt's bees")
 
 
 class _ChickenWing(item.Item):
@@ -54,20 +54,18 @@ class BagTest(common.EngineTest):
         sequined_clutch.add(_BurtsBees.create())
         actual = sequined_clutch.items_by_name()
         expected = {
-            "chapstick": [_Chapstick.create(), _BurtsBees.create()],
+            "chapstick": [("chapstick",), ("chapstick", "burt's bees")],
             "chicken wing": [
-                _ChickenWing.create(),
-                _ChickenWing.create(),
-                _ChickenWing.create(),
+                ("chicken wing",),
+                ("chicken wing",),
+                ("chicken wing",),
             ],
         }
 
         # Converts items to alias tuples; otherwise, list comparison is hard
-        # because Items are not hashable (meaning they hash on identity).
+        # because Items hash by identity.
         for key, value in actual.items():
             actual[key] = sorted(item.aliases for item in value)
-        for key, value in expected.items():
-            expected[key] = sorted(item.aliases for item in value)
 
         self.assertEqual(expected, actual)
 
