@@ -76,16 +76,16 @@ def _start_game(config):
         _G.add_event(_ResetDiedFlag(), "pre")
 
         # Creates a small dungeon.
-        level = floor.Floor.generate("cathedral", number_rooms=config["num_rooms"])
+        level = floor.Floor.generate("office", number_rooms=config["num_rooms"])
 
         # Places a monster in a random room.
-        level.random_room().add_character(npcs.fish_man())
+        # level.random_room().add_character(npcs.fish_man())
 
         # Places an NPC in a random room.
-        level.random_room().add_character(npcs.mad_librarian())
+        # level.random_room().add_character(npcs.mad_librarian())
 
         # Places a cool NPC in a random room.
-        level.random_room().add_character(npcs.smokes_man())
+        # level.random_room().add_character(npcs.smokes_man())
 
         # Places the player.
         level.random_room().add_character(_G.player)

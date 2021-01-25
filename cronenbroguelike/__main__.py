@@ -4,6 +4,7 @@ import logging
 
 def _configure_logging():
     logging_config = {"log_level": "INFO"}
+    # logging_config = {"log_level": "DEBUG"}
     try:
         with open("logging_config.json", "r") as inp:
             additional_config = json.load(inp)
