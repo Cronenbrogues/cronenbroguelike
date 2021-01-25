@@ -2,6 +2,7 @@ from cronenbroguelike import rooms
 from unittest.mock import patch
 import pytest
 
+# TODO: introduce some room test fixtures
 
 @patch("cronenbroguelike.rooms._rooms_for_theme")
 def test_get_rooms_default_number(rooms_patch):
