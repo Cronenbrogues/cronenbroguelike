@@ -36,14 +36,6 @@ def _add_exit(room, next_room, direction_hint):
     room.add_exit(getattr(directions, direction_hint), next_room)
 
 
-def _room_generator(theme):
-    while True:
-        room_list = rooms.get_rooms(theme)
-        random.shuffle(room_list)
-        for room in room_list:
-            yield room
-
-
 class Floor:
     def __init__(self, room_dict):
         self._rooms = room_dict
@@ -55,24 +47,23 @@ class Floor:
         return random.choice(list(self._rooms.values()))
 
     @classmethod
-    def generate(cls, theme, number_rooms=None):
+    def generate(cls, theme, number_rooms):
         room_dict = {}
-        room_generator = _room_generator(theme)
+        room_list = rooms.get_rooms(number=number_rooms, theme=theme)
         start_coordinate = _Coordinate(10, 10)
         coordinate_queue = collections.deque()
         coordinate_queue.append(start_coordinate)
 
-        while True:
+        for room in room_list:
             if not coordinate_queue:
                 break
-            if number_rooms is not None and len(room_dict) >= number_rooms:
+            if len(room_dict) >= number_rooms:
                 break
             coordinate = coordinate_queue.popleft()
             if room_dict.get(coordinate) is not None:
                 continue
 
             # Creates a new room in that location.
-            room = next(room_generator)
             room_dict[coordinate] = room
 
             for direction in ["north", "south", "east", "west"]:

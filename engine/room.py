@@ -10,6 +10,7 @@ from engine import say
 class Room:
 
     DEFAULT_THEME = "neutral"
+    REQUIRED = False
     THEME_TO_ROOMS = {}
     ALL_ROOMS = []
 
