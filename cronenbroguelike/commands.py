@@ -397,16 +397,17 @@ def loot(item, corpse):
 
     else:
         if item_name in {"all", "everything"}:
-            items = {item.name: item for item in character.inventory}
+            items = character.inventory.items_by_name()
         else:
-            items = {item_name: character.inventory.find(item_name)}
-        for name, item in items.items():
-            if item is None:
-                say.insayne(f"There is no {name} on the corpse.")
-            else:
-                _move_item(
-                    character.inventory,
-                    G.player.inventory,
-                    item,
-                    acquisition_message=f"You liberate {item.name} from the corpse.",
-                )
+            items = {item_name: [character.inventory.find(item_name)]}
+        for name, item_list in items.items():
+            for item in item_list:
+                if item is None:
+                    say.insayne(f"There is no {name} on the corpse.")
+                else:
+                    _move_item(
+                        character.inventory,
+                        G.player.inventory,
+                        item,
+                        acquisition_message=f"You liberate {item.name} from the corpse.",
+                    )
