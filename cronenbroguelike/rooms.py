@@ -117,8 +117,8 @@ class _BelfryRoom(_Room):
     )
     _THEMES = ["cathedral"]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self._event = None
 
     def on_enter(self):
@@ -133,9 +133,6 @@ class _BelfryRoom(_Room):
 
 
 class _AltarEvent(_Event):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     def execute(self):
         smoke = self.room.items.find("smoke") or self.room.items.find("fading smoke")
         if smoke is not None:
@@ -196,8 +193,10 @@ class _AltarRoom(_Room):
     )
     _THEMES = ["cathedral"]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    REQUIRED = True
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self._event = None
 
     def on_enter(self):
@@ -311,12 +310,27 @@ def _rooms_for_theme(theme=None):
     return _Room.THEME_TO_ROOMS[theme] + _Room.THEME_TO_ROOMS[_Room.DEFAULT_THEME]
 
 
-def get_rooms(theme=None, number=None):
+def get_rooms(number=None, theme=None):
     room_types = _rooms_for_theme(theme)
-    if number is not None:
-        room_types = random.sample(room_types, number)
-    return [room() for room in room_types]
+    if number is None:
+        rooms = [room() for room in room_types]
+    else:
+        rooms = []
+        other_rooms = []
+        # ensure required rooms are present in room list
+        for room in room_types:
+            if room.REQUIRED:
+                rooms.append(room())
+            else:
+                other_rooms.append(room)
 
+        if len(rooms) > number:
+            raise Exception(
+                f"The number of required rooms ({len(rooms)}) exceeds numbers of rooms instructed to generate({number})."
+            )
 
-def get_room(theme=None):
-    return random.choice(_rooms_for_theme(theme))()
+        for _ in range(number - len(rooms)):
+            rooms.append(random.choice(other_rooms)())
+
+    random.shuffle(rooms)
+    return rooms
