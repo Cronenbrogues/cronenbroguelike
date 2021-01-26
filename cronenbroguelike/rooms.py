@@ -174,7 +174,6 @@ class _AltarEvent(_Event):
                 "piece of ivory appears to depict the idol itself, its mouth "
                 "cavernous, the red gold of its eyes showing contentment."
             )
-            G.set_flag("IDOL_MOUTH_OPEN")
             self.room.items.remove(smoke)
             self.kill()
 
