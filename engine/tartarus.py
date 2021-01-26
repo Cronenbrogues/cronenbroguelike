@@ -3,5 +3,3 @@ class RaptureException(Exception):
 
     When this exception is raised, your stack trace will flash before your eyes.
     """
-
-    pass

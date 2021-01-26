@@ -12,7 +12,7 @@ class Bag(_Bag):
 
     def _add_aliases(self, item, message=None):
         super()._add_aliases(item)
-        logging.debug(f"_add_aliases called with {item}")
+        logging.debug("_add_aliases called with %s", item)
         item.holder = self
         if self is _G.player.inventory:
             message = message or f"You acquire {item.name}."

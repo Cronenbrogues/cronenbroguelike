@@ -1,10 +1,8 @@
 import collections
 
-import adventurelib
 
 from engine import bag
 from engine.globals import G as _G
-from engine import say
 
 
 class Room:

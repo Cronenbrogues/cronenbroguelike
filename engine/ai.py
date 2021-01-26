@@ -42,7 +42,7 @@ class AI:
     def __init__(self):
         self.owner = None  # Fully mutable member.
 
-    def choose_action(self, room, impulse=None):
+    def choose_action(self, unused_room, impulse=None):
         return NotImplemented
 
 

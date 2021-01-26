@@ -6,7 +6,6 @@ A body horror roguelike text adventure game
 
 Releases for MacOS, Windows and Linux can be found on the [releases page](https://github.com/Cronenbrogues/cronenbroguelike/releases).
 
-
 ## Develop
 
 ```
@@ -15,6 +14,8 @@ source venv/bin/activate
 pip install -r requirements.txt
 python -m cronenbroguelike
 ```
+
+See [DEVELOPERS.md](DEVELOPERS.md) for more details.
 
 ## Release
 
