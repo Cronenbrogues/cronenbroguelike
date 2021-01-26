@@ -4,7 +4,7 @@ Here are a few features which are useful when manually testing the game.
 
 ## Logging
 
-To enable logging, modify `logging_config.json` in the root `cronenbroguelike` directory (i.e., sibling to this file). This file recognizes the following parameters:
+To configure logging, `cp logging_config.json.example logging_config.json` in the root `cronenbroguelike` directory (i.e., sibling to this file). This file recognizes the following parameters:
 
 - `log_level`: a string identifying one of the Python `logging` module's log levels ("INFO," "DEBUG," etc.).
 
@@ -14,7 +14,7 @@ Set `log_level` to "DEBUG" to see log output. An example `logging_config.json` l
 
 ## Game Config
 
-To enable various gameplay tweaks, modify `game_config.json` in the root `cronenbroguelike` directory. This file recognizes the following parameters:
+To enable various gameplay tweaks, `cp game_config.json.example game_config.json` in the root `cronenbroguelike` directory. This file recognizes the following parameters:
 
 - `num_rooms`: an integer specifying how many rooms to place in the floor.
 - `extra_commands`: a Boolean specifying whether to add various extra commands, including [cheat](#cheats).
@@ -25,3 +25,7 @@ To enable various gameplay tweaks, modify `game_config.json` in the root `cronen
 ## Cheats
 
 Those that would seek arcana must be inducted into the esoteric circle. Petition @flosincapite for initiation.
+
+## Contact
+
+Join us on [Discord](https://discord.gg/fTsr5EfeQf) or shoot an email to cronenbrogues@googlegroups.com.

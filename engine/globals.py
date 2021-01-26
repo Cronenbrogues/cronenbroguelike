@@ -1,6 +1,5 @@
 import collections
 import contextlib
-import inspect
 import logging
 
 
@@ -23,10 +22,10 @@ class _GameState:
     @classmethod
     def _maybe_append_event(cls, event, queue):
         if event.will_execute:
-            logging.debug(f"Added event {event} to global queue.")
+            logging.debug("Added event %s to global queue.", event)
             queue.append(event)
         else:
-            logging.debug(f"Removing event {event}.")
+            logging.debug("Removing event %s.", event)
 
     def _queue_for(self, where):
         # TODO: Use an enum.
@@ -38,18 +37,18 @@ class _GameState:
         self._maybe_append_event(event, queue)
 
     def events(self, where):
-        logging.debug(f"Events called with where={where}")
+        logging.debug("Events called with where=%s", where)
         queue = self._queue_for(where)
         new_queue = []
         new_queue.extend(queue)
         queue.clear()
-        logging.debug(f"Queue is {queue}")
-        logging.debug(f"new_queue is {new_queue}")
+        logging.debug("Queue is %s", queue)
+        logging.debug("new_queue is %s", new_queue)
         # TODO: Rename this method.
         # TODO: Remove this method from Room.
         # TODO: Make Event.execute a generator to avoid this will_execute stuff.
         for next_event in new_queue:
-            logging.debug(f"next_event is {next_event}")
+            logging.debug("next_event is %s", next_event)
             if next_event.will_execute:
                 yield next_event
             self._maybe_append_event(next_event, queue)
@@ -60,9 +59,6 @@ class _GameState:
     def generate_text(self):
         while self._text_queue:
             yield self._text_queue.popleft()
-
-    def set_flag(self, flag):
-        logging.debug("set_flag called")
 
     def clear_queues(self):
         logging.debug("Killing all events.")

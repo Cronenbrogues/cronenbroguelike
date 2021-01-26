@@ -1,5 +1,3 @@
-import adventurelib
-
 from engine import bag
 from engine.globals import G
 from engine import item
@@ -233,11 +231,11 @@ class Actor:
             say.insayne("You die.")
             say.insayne("...")
             raise tartarus.RaptureException("")
-        else:
-            self.alive = False
-            self._death_throes(self)
-            self.current_room.characters.remove(self)
-            self.current_room.corpses.add(self)
+
+        self.alive = False
+        self._death_throes(self)
+        self.current_room.characters.remove(self)
+        self.current_room.corpses.add(self)
 
     def upon_death(self, callback):
         self._death_throes = callback

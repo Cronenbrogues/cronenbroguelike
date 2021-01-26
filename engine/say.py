@@ -1,4 +1,3 @@
-import functools
 import random
 
 import adventurelib
