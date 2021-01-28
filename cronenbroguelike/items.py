@@ -216,8 +216,13 @@ class Coffee(_Consumable):
             _G.player.insanity.modify(30)
             insanity = _G.player.insanity.value
             if insanity >= 30:
-                print("TODO: trigger ending")
-                consumer.die()
+                # Trigger Office ending
+                # TODO: Cory-ify
+                say.insayne(
+                    "With a horrific tearing sound and a wet pop, Gary vanishes from existence. "
+                    "In his place is a perfectly Gary-shaped hole in space."
+                )
+                consumer.current_room.characters.remove(consumer)
             else:
                 say.insayne('Gary loudly slurps the coffee. "Well thanks, pal!"')
         else:
