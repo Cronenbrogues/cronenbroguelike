@@ -1,4 +1,5 @@
 import json
+import os
 import random
 
 import adventurelib
@@ -19,8 +20,12 @@ from engine import when
 
 
 def _load_config():
-    with open("game_config.json", "r") as inp:
-        return json.load(inp)
+    with open("game_config.default.json", "r") as inp:
+        game_config = json.load(inp)
+    if os.path.exists("game_config.json"):
+        with open("game_config.json", "r") as inp:
+            game_config.update(json.load(inp))
+    return game_config
 
 
 def _get_random_start():
