@@ -56,6 +56,9 @@ class Floor:
 
     @classmethod
     def generate(cls, theme, number_rooms=None):
+        if theme == "office":
+            return _generate_office()
+
         room_dict = {}
         room_generator = _room_generator(theme)
         start_coordinate = _Coordinate(10, 10)
@@ -118,3 +121,20 @@ class Floor:
                         traversal_queue.append(destination_number)
 
         return Floor(room_dict)
+
+
+# Manually generate the office so it is, tediously, always the same (and we also
+# avoid the inappropriately exciting weird transitions).
+#TODO: This is not in the spirit of roguelikes.
+def _generate_office():
+    desk = rooms._YourDesk()
+    desk_coord = _Coordinate(10, 10)
+
+    breakroom = rooms._BreakRoom()
+    breakroom_coord = getattr(desk_coord, "east")
+    _add_exit(desk, breakroom, "east")
+
+    return {
+        desk_coord: desk,
+        breakroom_coord: breakroom,
+    }
