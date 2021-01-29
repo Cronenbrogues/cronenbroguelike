@@ -379,6 +379,7 @@ class _YourDesk(_Room):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.add_character(npcs.office_computer())
+        self.add_character(G.player)
 
     def on_enter(self):
         super().on_enter()
@@ -475,11 +476,14 @@ ok, TODOs
 - [X] make gary tell bad jokes
 - [X] use coffee machine -> get coffee
 - [X] use coffee on gary -> he drinks it
-- [ ] use coffee on gary -> get ending if at 30 insanity
+- [X] use coffee on gary -> get ending if at 30 insanity
+- [X] on restart, wake up at desk
+- [X] make level consistent
 - [ ] hook up other strings
+- [ ] try a playthrough
 ...
 - [ ] make "enter gary" action
-- [ ] make gary drink his own coffee
+- [ ] make gary drink coffee on his own sometimes
 
 gary's jokes should turn to pleading
 as they get darker and darker he should get grosser - "Gary laughs uproariously, spittle flying all over you."
@@ -493,6 +497,8 @@ or maybe you have to use it on the computer?
 or if you do something bad happens?
 
 want copy machine?
+
+
 """
 
 # can make tunnel when triggered

@@ -29,7 +29,7 @@ def _load_config():
     return game_config
 
 
-def _get_random_start():
+def _get_random_start(theme):
     # TODO: Condition this on how the last death actually occurred.
     death_text = _G.cause_of_death or random.choice(
         [
@@ -37,14 +37,17 @@ def _get_random_start():
             "slowly suffocating as a glabrous tentacle horror looks on",
         ]
     )
-    for text in [
-        f"You recall your death by {death_text}. The memory fades away.",
-        "You know only that you have been here for interminable years, "
-        "that you have died innumerable times, and that someone once told "
-        "you there was a way out. You were told this an eon ago, or maybe "
-        "a day, but the stubborn hope of escape glisters in your mind.",
-    ]:
-        say.insayne(text)
+    if theme == "office":
+        say.insayne("You jerk awake at your desk. Ugh, you need to get more sleep.")
+    else:
+        for text in [
+            f"You recall your death by {death_text}. The memory fades away.",
+            "You know only that you have been here for interminable years, "
+            "that you have died innumerable times, and that someone once told "
+            "you there was a way out. You were told this an eon ago, or maybe "
+            "a day, but the stubborn hope of escape glisters in your mind.",
+        ]:
+            say.insayne(text)
 
 
 class _ResetDiedFlag(_Event):
@@ -55,6 +58,7 @@ class _ResetDiedFlag(_Event):
 
 def _start_game(config):
     def _restart(unused_actor):
+        theme = "office"
 
         # Resets all global state (clears event queues, etc.).
         _G.reset()
@@ -76,7 +80,7 @@ def _start_game(config):
         _G.add_event(_ResetDiedFlag(), "pre")
 
         # Creates a small dungeon.
-        level = floor.Floor.generate("office", number_rooms=config["num_rooms"])
+        level = floor.Floor.generate(theme, number_rooms=config["num_rooms"])
 
         # Places a monster in a random room.
         # level.random_room().add_character(npcs.fish_man())
@@ -88,10 +92,10 @@ def _start_game(config):
         # level.random_room().add_character(npcs.smokes_man())
 
         # Places the player.
-        level.random_room().add_character(_G.player)
+        # level.random_room().add_character(_G.player)
 
         # Starts it up.
-        _get_random_start()
+        _get_random_start(theme)
         adventurelib.set_context("start_game")
         adventurelib.set_context(None)
         with _poll_events(poll_before=True, poll_after=True):
