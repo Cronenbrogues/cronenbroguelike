@@ -8,5 +8,6 @@ random_config = {
     "random_run": 10000,
 }
 
+
 def test_random_run():
     game.run_game(random_config)
