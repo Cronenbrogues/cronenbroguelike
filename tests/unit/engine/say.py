@@ -2,6 +2,7 @@ import io
 import re
 from unittest.mock import call
 from unittest.mock import patch
+import unittest
 
 from engine.globals import G
 from engine import say
@@ -122,3 +123,14 @@ class InsayneTest(common.EngineTest):
         self.assertEqual(20, G.player.insanity.value)
         say.insayne("")
         mock_hear_voices.assert_called_once_with("", G.player.insanity.value)
+
+
+class TestNlg(unittest.TestCase):
+    def test_capitalized(self):
+        self.assertEqual("A fish!", say.capitalized("a fish!"))
+
+    def test_a(self):
+        self.assertEqual("a shark", say.a("shark"))
+
+    def test_an(self):
+        self.assertEqual("an octopus", say.a("octopus"))
