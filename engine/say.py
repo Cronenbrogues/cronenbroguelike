@@ -72,10 +72,15 @@ def insayne(text, add_newline=True, insanity=None):
 
 
 def capitalized(text):
+    """Naively capitalizes the first character in some text.
+
+    TODO: Make this function smarter, e.g. when text starts with non-ASCII.
+    """
     return text[0].upper() + text[1:]
 
 
 def a(text):
+    """Naively generates the correct form of the indefinite article."""
     if re.search(r"^[aeiou]", text):
         return f"an {text}"
     return f"a {text}"
