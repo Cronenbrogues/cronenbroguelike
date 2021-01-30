@@ -1,5 +1,3 @@
-import json
-import os
 import random
 
 import adventurelib
@@ -8,6 +6,7 @@ from . import commands
 from . import floor
 from . import npcs
 from . import rooms
+from . import util
 from engine import actor
 from engine import ai
 from engine import directions
@@ -17,15 +16,6 @@ from engine.globals import poll_events as _poll_events
 from engine import say
 from engine import tartarus
 from engine import when
-
-
-def _load_config():
-    with open("game_config.default.json", "r") as inp:
-        game_config = json.load(inp)
-    if os.path.exists("game_config.json"):
-        with open("game_config.json", "r") as inp:
-            game_config.update(json.load(inp))
-    return game_config
 
 
 def _get_random_start():
@@ -97,7 +87,7 @@ def _start_game(config):
 
 
 def main():
-    game_config = _load_config()
+    game_config = util.read_overridable_config("game_config.default.json")
     if game_config.get("extra_commands") or game_config.get("random_run"):
         from . import extra_commands
     while True:
