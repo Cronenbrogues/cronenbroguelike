@@ -1,5 +1,3 @@
-import re
-
 
 from cronenbroguelike.events import EphemeralTextEvent as _EphemeralTextEvent
 from engine.globals import G as _G
