@@ -10,7 +10,6 @@ from engine import dice
 from engine import say
 
 from cronenbroguelike import ability
-from cronenbroguelike import util
 
 
 # TODO: Make this equippable.
@@ -76,7 +75,7 @@ class CigaretteStub(_Consumable):
             # weird stuff will ensue.
             consumer.health.heal_or_harm(-dice.roll("2d2"), cause="smoking half a cig")
         else:
-            name = util.capitalized(consumer.name)
+            name = say.capitalized(consumer.name)
             say.insayne(f"{name} puffs furtively on a {self.name}.")
 
     @classmethod
@@ -117,7 +116,7 @@ class Cigarette(_Consumable):
             # TODO: Make insanity a variable statistic?
             consumer.insanity.heal_or_harm(-dice.roll("2d2"))
         else:
-            name = util.capitalized(consumer.name)
+            name = say.capitalized(consumer.name)
             say.insayne(
                 f"{name} puffs mellowly on a {self.name}, looking extremely fly."
             )

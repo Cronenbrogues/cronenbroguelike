@@ -1,6 +1,5 @@
 import adventurelib
 
-from cronenbroguelike import util
 from engine.item import Book
 from engine import ai
 from engine import dice
@@ -26,7 +25,7 @@ def _look():
     for character in G.player.current_room.npcs:
         say.insayne(character.idle_text)
     for corpse in G.player.current_room.corpses:
-        say.insayne(f"The corpse of {util.a(corpse.name)} molders here.")
+        say.insayne(f"The corpse of {say.a(corpse.name)} molders here.")
     say.insayne(f'Exits are {", ".join(G.player.current_room.display_exits)}.')
 
 
@@ -108,7 +107,7 @@ def _resolve_attack(attacker, attack):
         subj, obj = ["you", defender.name]
     else:
         subj, obj = [attacker.name, "you"]
-    subj = util.capitalized(subj)
+    subj = say.capitalized(subj)
     miss = "miss" if is_player else "misses"
     hit = "hit" if is_player else "hits"
 
@@ -124,7 +123,7 @@ def _resolve_attack(attacker, attack):
         say.insayne(f"{subj} {hit} {obj} for {damage} damage!")
         # TODO: Attack should have associated text which is consulted here.
         defender.health.heal_or_harm(
-            -1 * damage, cause=f"the fins of {util.a(attacker.name)}"
+            -1 * damage, cause=f"the fins of {say.a(attacker.name)}"
         )
 
     if not (is_player or defender.alive):
@@ -193,7 +192,7 @@ def attack(actor):
         elif action.event is not None:
             action.event.event.execute()
         else:
-            say.insayne(f"{util.capitalized(character.name)} makes no hostile motion.")
+            say.insayne(f"{say.capitalized(character.name)} makes no hostile motion.")
 
 
 @when.when("talk ACTOR")
@@ -327,7 +326,7 @@ def use(item, verb):
     item_name = item
     item = G.player.inventory.find(item_name)
     if item is None:
-        say.insayne(f"You don't have {util.a(item_name)}.")
+        say.insayne(f"You don't have {say.a(item_name)}.")
         return
     try:
         item.consume(G.player)
@@ -357,7 +356,7 @@ def drop(item):
     item_name = item
     item = G.player.inventory.find(item_name)
     if item is None:
-        say.insayne(f"You don't have {util.a(item_name)} to drop.")
+        say.insayne(f"You don't have {say.a(item_name)} to drop.")
     else:
         _move_item(
             G.player.inventory,
