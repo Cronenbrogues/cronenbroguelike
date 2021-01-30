@@ -1,4 +1,5 @@
 import random
+import re
 
 import adventurelib
 import zalgo_text
@@ -68,3 +69,13 @@ def insayne(text, add_newline=True, insanity=None):
         insanity = G.player.insanity.value
     text = _hear_voices(text, insanity)
     adventurelib.say(text)
+
+
+def capitalized(text):
+    return text[0].upper() + text[1:]
+
+
+def a(text):
+    if re.search(r"^[aeiou]", text):
+        return f"an {text}"
+    return f"a {text}"
