@@ -42,64 +42,68 @@ class _ResetDiedFlag(_Event):
         self.kill()
 
 
-def _start_game(config):
-    def _restart(unused_actor):
+def _restart(config):
+    # Resets all global state (clears event queues, etc.).
+    _G.reset()
 
-        # Resets all global state (clears event queues, etc.).
-        _G.reset()
+    # Creates the player character and ensures game will restart upon death.
+    _G.player = actor.create_actor(
+        health=10,
+        psyche=10,
+        strength=10,
+        stamina=10,
+        name="player",
+    )
+    _G.player.log_stats = True
 
-        # Creates the player character and ensures game will restart upon death.
-        _G.player = actor.create_actor(
-            health=10,
-            psyche=10,
-            strength=10,
-            stamina=10,
-            name="player",
-        )
-        _G.player.log_stats = True
+    # Resets just_died flag.
+    _G.add_event(_ResetDiedFlag(), "pre")
 
-        # Resets just_died flag.
-        _G.add_event(_ResetDiedFlag(), "pre")
+    # Creates a small dungeon.
+    level = floor.Floor.generate("cathedral", config["num_rooms"])
 
-        # Creates a small dungeon.
-        level = floor.Floor.generate("cathedral", config["num_rooms"])
+    # Places a monster in a random room.
+    level.random_room().add_character(npcs.fish_man())
 
-        # Places a monster in a random room.
-        level.random_room().add_character(npcs.fish_man())
+    # Places an NPC in a random room.
+    level.random_room().add_character(npcs.mad_librarian())
 
-        # Places an NPC in a random room.
-        level.random_room().add_character(npcs.mad_librarian())
+    # Places a cool NPC in a random room.
+    level.random_room().add_character(npcs.smokes_man())
 
-        # Places a cool NPC in a random room.
-        level.random_room().add_character(npcs.smokes_man())
+    # Places the player.
+    level.random_room().add_character(_G.player)
 
-        # Places the player.
-        level.random_room().add_character(_G.player)
-
-        # Starts it up.
-        _get_random_start()
-        adventurelib.set_context("start_game")
-        adventurelib.set_context(None)
-        with _poll_events(poll_before=True, poll_after=True):
-            commands.enter_room(_G.player.current_room)
-
-    _restart(None)
+    # Starts it up.
+    _get_random_start()
+    adventurelib.set_context("start_game")
+    adventurelib.set_context(None)
+    with _poll_events(poll_before=True, poll_after=True):
+        commands.enter_room(_G.player.current_room)
 
 
-def main():
-    game_config = util.read_overridable_config("game_config.default.json")
-    if game_config.get("extra_commands") or game_config.get("random_run"):
+def _run_game(config):
+    num_random_actions = 0
+    if config.get("extra_commands") or config.get("random_run"):
         from . import extra_commands
     while True:
         try:
-            _start_game(game_config)
+            _restart(config)
             adventurelib.say("")  # Necessary for space before first prompt.
-            if game_config.get("random_run"):
-                while True:
+            if config.get("random_run"):
+                while num_random_actions < config.get("random_run"):
                     adventurelib._handle_command("random")
+                    num_random_actions += 1
+                if num_random_actions >= config.get("random_run"):
+                    break
             adventurelib.start()
         except KeyboardInterrupt:
             adventurelib.say("☠ Farewell☠")
             return
         except tartarus.RaptureException:
             pass
+
+
+def main():
+    game_config = util.read_overridable_config("game_config.default.json")
+    _run_game(game_config)

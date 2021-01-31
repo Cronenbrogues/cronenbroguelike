@@ -23,9 +23,9 @@ cp game_config.default.json game_config.json
 
 - `num_rooms`: an integer specifying how many rooms to place in the floor.
 - `extra_commands`: a Boolean specifying whether to add various extra commands, including [cheat](#cheats).
-- `random_run`: a Boolean specifying whether to let the game play itself by producing random commands.
+- `random_run`: an integer specifying the number of rounds the game should randomly play itself, or null to play normally.
 
-`num_rooms` can be helpful to restrict the size of randomly generated floors when testing. `extra_commands`'s primary utility lies in the [cheat](#cheats) command, which allows the player to alter the player character's statistics and abilities. `random_run` is mostly for fun.
+`num_rooms` can be helpful to restrict the size of randomly generated floors when testing. `extra_commands`'s primary utility lies in the [cheat](#cheats) command, which allows the player to alter the player character's statistics and abilities. `random_run` is mostly for fun and fuzzing.
 
 ## Cheats
 
