@@ -82,7 +82,7 @@ def _restart(config):
         commands.enter_room(_G.player.current_room)
 
 
-def run_game(config):
+def _run_game(config):
     num_random_actions = 0
     if config.get("extra_commands") or config.get("random_run"):
         from . import extra_commands
@@ -106,4 +106,4 @@ def run_game(config):
 
 def main():
     game_config = util.read_overridable_config("game_config.default.json")
-    run_game(game_config)
+    _run_game(game_config)
