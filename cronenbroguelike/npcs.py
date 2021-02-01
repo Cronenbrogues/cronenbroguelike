@@ -184,7 +184,7 @@ def office_computer():
     npc = actor.create_actor(
         10,
         10,
-        999999,  # strength
+        1,  # strength
         10,
         10,
         10,
@@ -208,33 +208,22 @@ def office_computer():
                 print("setting ai to hate")
                 npc.ai = ai.HatesPlayer()
 
-            # self._timer += 1
-            # if self._timer % 3 != 0:
-            #     return
-            # roll = dice.roll('1d10')
-            # if roll <= 4:
-            #     return
-            # cig = items.Cigarette.create()
-            # self.owner.inventory.add(cig)
-            # cig.consume(self.owner)
-
-
-    # npc.ai.add_event(_SmokesManEvent(), "talk")
     npc.ai.add_default_event(_ComputerGetsMad())
 
     def computer_death_throes(librarian):
-        say.insayne(
-            "The librarian grins impossibly wide. A thin rivulet of blood "
-            "appears between his teeth. His eyes roll back and, with a giggle, "
-            "he falls backward onto the ground as though reclining on a divan."
-        )
-        say.insayne("The edge of a hidebound book peeks from his rags.")
+        say.insayne("The computer falls to pieces.")
 
     npc.upon_death(computer_death_throes)
-    # npc.inventory.add(items.MeditationBook.create())
 
     def use_computer(consumer):
-        say.insayne("using computer")
+        insanity = _G.player.insanity.value
+        if insanity < 10:
+            say.insayne("You merrily clack away on the keyboard. Ah, blessed productivity!")
+        elif insanity < 20:
+            say.insayne("You press some buttons. Not much happens, but you feel drained.")
+            _G.player.insanity.modify(1)
+        else:
+            say.insayne("This is not the computer you once knew...")
 
     npc.consume = use_computer
 
@@ -305,7 +294,7 @@ def gary():
                 say.insayne(line)
             if insanity <= 10:
                 say.insayne("You groan.")
-                insanity = _G.player.insanity.modify(1)
+                _G.player.insanity.modify(1)
             elif insanity <= 20:
                 say.insayne("You cringe.")
 
