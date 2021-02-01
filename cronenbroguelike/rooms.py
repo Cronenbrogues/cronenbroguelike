@@ -403,6 +403,19 @@ class _YourDesk(_Room):
 # your_desk = _YourDesk.create("", themes=["office"])
 
 
+class _CopierRoom(_Room):
+    _DESCRIPTION = ""
+    _THEMES = ["office"]
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.add_character(npcs.office_copier())
+
+    def on_enter(self):
+        super().on_enter()
+
+
 # class _AssortedOfficeRoom(_Room):
 #     def __init__(self, *args, **kwargs):
 #         super().__init__(*args, **kwargs)
@@ -479,6 +492,8 @@ ok, TODOs
 - [X] use coffee on gary -> get ending if at 30 insanity
 - [X] on restart, wake up at desk
 - [X] make level consistent
+- [X] make "use computer" give a bit of insanity
+- [ ] make copy machine, it can give a bit of insanity
 - [ ] hook up other strings
 - [ ] try a playthrough
 ...
@@ -498,6 +513,12 @@ or if you do something bad happens?
 
 want copy machine?
 
+
+ok, so first gary gives insanity
+then computer
+then copy machine (could give a few)?
+what's a more surreal interaction? copy machine could do gross stuff
+yeah, copy machine could be broken
 
 """
 

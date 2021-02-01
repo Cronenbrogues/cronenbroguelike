@@ -268,6 +268,38 @@ def coffee_machine():
     return npc
 
 
+def office_copier():
+    npc = actor.create_actor(
+        10,
+        10,
+        10,  # strength
+        10,
+        10,
+        10,
+        100,
+        "copier",
+        idle_text="The office's byzantine copier looks to be broken again.",
+        ai=ai.Chill(),
+    )
+
+    def office_copier_death_throes(librarian):
+        say.insayne(
+            "The librarian grins impossibly wide. A thin rivulet of blood "
+            "appears between his teeth. His eyes roll back and, with a giggle, "
+            "he falls backward onto the ground as though reclining on a divan."
+        )
+        say.insayne("The edge of a hidebound book peeks from his rags.")
+
+    npc.upon_death(office_copier_death_throes)
+
+    def use_office_copier(consumer):
+        print("using copier")
+
+    npc.consume = use_office_copier
+
+    return npc
+
+
 def gary():
     npc = actor.create_actor(
         1000,

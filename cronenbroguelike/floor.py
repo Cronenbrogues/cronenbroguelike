@@ -134,7 +134,12 @@ def _generate_office():
     breakroom_coord = getattr(desk_coord, "east")
     _add_exit(desk, breakroom, "east")
 
+    copier_room = rooms._CopierRoom()
+    copier_room_coord = getattr(breakroom_coord, "north")
+    _add_exit(breakroom, copier_room, "north")
+
     return {
         desk_coord: desk,
         breakroom_coord: breakroom,
+        copier_room_coord: copier_room,
     }
