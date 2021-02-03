@@ -1,2 +1,2 @@
-git+https://github.com/Cronenbrogues/adventurelib
-git+https://github.com/Cronenbrogues/zalgo
+https://github.com/Cronenbrogues/adventurelib/tarball/1.3.0
+https://github.com/Cronenbrogues/whimsylib/tarball/0.0.6

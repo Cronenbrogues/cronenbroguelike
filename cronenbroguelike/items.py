@@ -1,13 +1,13 @@
 import logging
 import random
 
-from engine.event import Event as _Event
-from engine.globals import G as _G
-from engine.item import Book as _Book
-from engine.item import Consumable as _Consumable
-from engine.item import Item as _Item
-from engine import dice
-from engine import say
+from whimsylib.event import Event as _Event
+from whimsylib.globals import G as _G
+from whimsylib.item import Book as _Book
+from whimsylib.item import Consumable as _Consumable
+from whimsylib.item import Item as _Item
+from whimsylib import dice
+from whimsylib import say
 
 from cronenbroguelike import ability
 

@@ -1,12 +1,11 @@
-import adventurelib
 import logging
 import random
 
-from engine import dice
-from engine.event import Event as _Event
-from engine.globals import G
-from engine.room import Room as _Room
-from engine import say
+from whimsylib import dice
+from whimsylib.event import Event as _Event
+from whimsylib.globals import G
+from whimsylib.room import Room as _Room
+from whimsylib import say
 
 
 # TODO: Devise a way to load rooms (and maybe events?) from a config file.
@@ -206,11 +205,9 @@ class _AltarRoom(_Room):
             # omit _maybe_append_event from Room.add_event.
             self._event.room = self
             G.add_event(self._event, "post")
-        adventurelib.set_context("altar")
 
     def on_exit(self):
         super().on_exit()
-        adventurelib.set_context(None)
 
 
 _Blank = _Room.create_room_type(

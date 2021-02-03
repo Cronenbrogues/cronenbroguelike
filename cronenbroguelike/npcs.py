@@ -1,11 +1,11 @@
 import random
 
-from engine import actor
-from engine import ai
-from engine import dice
-from engine import event
-from engine.globals import G as _G
-from engine import say
+from whimsylib import actor
+from whimsylib import ai
+from whimsylib import dice
+from whimsylib import event
+from whimsylib.globals import G as _G
+from whimsylib import say
 
 from cronenbroguelike import items
 from cronenbroguelike import util

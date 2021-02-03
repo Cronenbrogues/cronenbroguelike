@@ -5,8 +5,8 @@ import re
 import adventurelib
 
 from cronenbroguelike import commands
-from engine.globals import G
-from engine import say
+from whimsylib.globals import G
+from whimsylib import say
 
 
 ###

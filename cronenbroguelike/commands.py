@@ -1,11 +1,11 @@
 import adventurelib
 
-from engine.item import Book
-from engine import ai
-from engine import dice
-from engine.globals import G
-from engine import say
-from engine import when
+from whimsylib.item import Book
+from whimsylib import ai
+from whimsylib import dice
+from whimsylib.globals import G
+from whimsylib import say
+from whimsylib import when
 
 
 def enter_room(room):
@@ -40,7 +40,6 @@ def go(direction):
     if next_room is None:
         say.insayne(f"It is not possible to proceed {direction}.")
     else:
-        # TODO: Replace enqueue_text with text events.
         say.insayne(f"You proceed {the_direction.display_description}.")
         G.player.current_room.on_exit()
         enter_room(next_room)
