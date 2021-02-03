@@ -3,13 +3,7 @@ import os
 import re
 
 
-from cronenbroguelike.events import EphemeralTextEvent as _EphemeralTextEvent
-from engine.globals import G as _G
-
-
-def enqueue_text(text, where="post"):
-    """Convenience function to add text events to global queue."""
-    _G.add_event(_EphemeralTextEvent(text), where)
+from whimsylib.globals import G as _G
 
 
 def read_overridable_config(default_file_name, override_file_name=None):

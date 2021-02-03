@@ -1,5 +1,4 @@
 import random
-
 import adventurelib
 
 from . import commands
@@ -7,15 +6,15 @@ from . import floor
 from . import npcs
 from . import rooms
 from . import util
-from engine import actor
-from engine import ai
-from engine import directions
-from engine.event import Event as _Event
-from engine.globals import G as _G
-from engine.globals import poll_events as _poll_events
-from engine import say
-from engine import tartarus
-from engine import when
+from whimsylib import actor
+from whimsylib import ai
+from whimsylib import directions
+from whimsylib.event import Event as _Event
+from whimsylib.globals import G as _G
+from whimsylib.globals import poll_events as _poll_events
+from whimsylib import say
+from whimsylib import tartarus
+from whimsylib import when
 
 
 def _get_random_start():
@@ -76,8 +75,6 @@ def _restart(config):
 
     # Starts it up.
     _get_random_start()
-    adventurelib.set_context("start_game")
-    adventurelib.set_context(None)
     with _poll_events(poll_before=True, poll_after=True):
         commands.enter_room(_G.player.current_room)
 

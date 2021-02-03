@@ -3,8 +3,8 @@ import logging
 import random
 
 from cronenbroguelike import rooms
-from engine import dice
-from engine import directions
+from whimsylib import dice
+from whimsylib import directions
 
 
 # TODO: Make these a coordinate attribute?

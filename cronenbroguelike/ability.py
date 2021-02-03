@@ -1,6 +1,6 @@
 import sys as _sys
 
-from engine import say as _say
+from whimsylib import say as _say
 
 
 _REGISTRY = {}

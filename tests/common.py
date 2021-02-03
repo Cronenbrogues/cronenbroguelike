@@ -1,7 +1,7 @@
 import unittest
 
-from engine import actor
-from engine.globals import G
+from whimsylib import actor
+from whimsylib.globals import G
 
 
 class EngineTest(unittest.TestCase):
