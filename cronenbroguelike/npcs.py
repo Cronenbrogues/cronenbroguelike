@@ -293,7 +293,16 @@ def office_copier():
     npc.upon_death(office_copier_death_throes)
 
     def use_office_copier(consumer):
-        print("using copier")
+        insanity = _G.player.insanity.value
+        if insanity < 20:
+            say.insayne("The copier seems to be broken, as usual.")
+        elif insanity < 29:
+            bodyparts = ["finger", "toe", "arm", "leg", "nipple"]
+            say.insayne("The copier gurgles. You feel a numb prickling as an extra "
+                        f"{random.choice(bodyparts)} un-melts itself from your body.")
+            _G.player.insanity.modify(1)
+        else:
+            say.insayne("The copier moans.")
 
     npc.consume = use_office_copier
 
