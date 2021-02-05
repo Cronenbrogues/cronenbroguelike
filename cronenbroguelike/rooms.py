@@ -352,23 +352,6 @@ class _BreakRoom(_Room):
 
     def on_enter(self):
         super().on_enter()
-        # G.player.insanity.modify(10)
-        insanity = G.player.insanity.value
-        if insanity == 100:
-            say.insayne("You are totally insane")
-        elif insanity > 75:
-            say.insayne("You are very insane")
-        elif insanity > 50:
-            say.insayne("You are quite insane")
-        elif insanity > 25:
-            say.insayne("You are a bit insane")
-        elif insanity > 10:
-            say.insayne("You are a bit eccentric")
-        # say.insayne(f"insanity is currently {G.player.insanity.value}")
-        # if not self._entered:
-        #     G.add_event(_IntestineRoomEvent(), "post")
-        #     self._entered = True
-
 
 
 class _YourDesk(_Room):
@@ -384,21 +367,6 @@ class _YourDesk(_Room):
     def on_enter(self):
         super().on_enter()
         # G.player.insanity.modify(10)
-        insanity = G.player.insanity.value
-        if insanity == 100:
-            say.insayne("You are totally insane")
-        elif insanity > 75:
-            say.insayne("You are very insane")
-        elif insanity > 50:
-            say.insayne("You are quite insane")
-        elif insanity > 25:
-            say.insayne("You are a bit insane")
-        elif insanity > 10:
-            say.insayne("You are a bit eccentric")
-        # say.insayne(f"insanity is currently {G.player.insanity.value}")
-        # if not self._entered:
-        #     G.add_event(_IntestineRoomEvent(), "post")
-        #     self._entered = True
 
 # your_desk = _YourDesk.create("", themes=["office"])
 
@@ -414,6 +382,25 @@ class _CopierRoom(_Room):
 
     def on_enter(self):
         super().on_enter()
+
+
+class _MeetingRoom(_Room):
+    _DESCRIPTION = ""
+    _THEMES = ["office"]
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # self.add_character(npcs.office_copier())
+
+    def on_enter(self):
+        super().on_enter()
+        insanity = G.player.insanity.value
+        if insanity < 29:
+            say.insayne("Meeting room description")
+        else:
+            say.insayne("Spawn meeting table")
+            say.insayne("You are very insane")
 
 
 # class _AssortedOfficeRoom(_Room):
@@ -493,12 +480,14 @@ ok, TODOs
 - [X] on restart, wake up at desk
 - [X] make level consistent
 - [X] make "use computer" give a bit of insanity
-- [ ] make copy machine, it can give a bit of insanity
+- [X] make copy machine, it can give a bit of insanity if >= 20
+- [ ] add the meeting room
 - [ ] hook up other strings
 - [ ] try a playthrough
 ...
 - [ ] make "enter gary" action
 - [ ] make gary drink coffee on his own sometimes
+- [ ] make computer kill you if you use at highest insanity
 
 gary's jokes should turn to pleading
 as they get darker and darker he should get grosser - "Gary laughs uproariously, spittle flying all over you."
@@ -518,8 +507,10 @@ ok, so first gary gives insanity
 then computer
 then copy machine (could give a few)?
 what's a more surreal interaction? copy machine could do gross stuff
-yeah, copy machine could be broken
+then finally final bit happens in the meeting room? could give you a hint to how to finish
+could talk to the heap of bodies
 
+how can you add flavor to make it clear that this is like an occult energy-harvesting operation?
 """
 
 # can make tunnel when triggered
