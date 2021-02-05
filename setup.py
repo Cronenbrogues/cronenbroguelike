@@ -3,7 +3,7 @@ import setuptools
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-with open("requirements/requirements-main.txt") as fh:
+with open("requirements.txt") as fh:
     requirements = fh.read().splitlines()
 
 requirements = [f"{r.split('/')[-3]} @ {r}" for r in requirements]
