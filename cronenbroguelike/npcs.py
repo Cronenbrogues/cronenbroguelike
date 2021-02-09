@@ -371,3 +371,43 @@ def gary():
     npc.upon_death(librarian_death_throes)
     # npc.inventory.add(items.MeditationBook.create())
     return npc
+
+
+def writhing_office_mass():
+    npc = actor.create_actor(
+        1000,
+        10,
+        1000,
+        10,
+        10,
+        10,
+        100,
+        "writhing mass",
+        ai=ai.Chill(),
+    )
+
+    class _WrithingMassTalk(event.Event):
+
+        def execute(self):
+            say.insayne("hello there")
+
+    class _WrithingMassHit(event.Event):
+
+        def execute(self):
+            say.insayne("LOVE the chutzpah, bud! But it's futile. Believe us, we've tried! Over, and over, and over....")
+
+    npc.ai.add_event(_WrithingMassTalk(), "talk")
+    npc.ai.add_event(_WrithingMassHit(), "attack")
+
+    npc.idle_text = "The mass of bodies writhes expectantly."
+
+    def librarian_death_throes(librarian):
+        say.insayne(
+            "The librarian grins impossibly wide. A thin rivulet of blood "
+            "appears between his teeth. His eyes roll back and, with a giggle, "
+            "he falls backward onto the ground as though reclining on a divan."
+        )
+        say.insayne("The edge of a hidebound book peeks from his rags.")
+
+    npc.upon_death(librarian_death_throes)
+    return npc

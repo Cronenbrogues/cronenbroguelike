@@ -401,6 +401,7 @@ class _MeetingRoom(_Room):
         else:
             say.insayne("Spawn meeting table")
             say.insayne("You are very insane")
+            self.add_character(npcs.writhing_office_mass())
 
 
 # class _AssortedOfficeRoom(_Room):
@@ -481,9 +482,11 @@ ok, TODOs
 - [X] make level consistent
 - [X] make "use computer" give a bit of insanity
 - [X] make copy machine, it can give a bit of insanity if >= 20
-- [ ] add the meeting room
+- [X] add the meeting room
+- [X] make writhing mass and spawn in meeting room
 - [ ] hook up other strings
 - [ ] try a playthrough
+- [ ] probably increase insanity bumps so don't have to do as many things
 ...
 - [ ] make "enter gary" action
 - [ ] make gary drink coffee on his own sometimes
