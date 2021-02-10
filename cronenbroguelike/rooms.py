@@ -338,7 +338,6 @@ class _BreakRoom(_Room):
     _DESCRIPTION = ""
     _THEMES = ["office"]
 
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.add_character(npcs.coffee_machine())
@@ -347,13 +346,14 @@ class _BreakRoom(_Room):
     def on_enter(self):
         super().on_enter()
         insanity = G.player.insanity.value
-        self.description = extra_description.get_interval(insanity, extra_description.breakroom_descriptions)
+        self.description = extra_description.get_interval(
+            insanity, extra_description.breakroom_descriptions
+        )
 
 
 class _YourDesk(_Room):
     _DESCRIPTION = ""
     _THEMES = ["office"]
-
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -363,13 +363,14 @@ class _YourDesk(_Room):
     def on_enter(self):
         super().on_enter()
         insanity = G.player.insanity.value
-        self.description = extra_description.get_interval(insanity, extra_description.your_desk_descriptions)
+        self.description = extra_description.get_interval(
+            insanity, extra_description.your_desk_descriptions
+        )
 
 
 class _CopierRoom(_Room):
     _DESCRIPTION = ""
     _THEMES = ["office"]
-
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -378,13 +379,14 @@ class _CopierRoom(_Room):
     def on_enter(self):
         super().on_enter()
         insanity = G.player.insanity.value
-        self.description = extra_description.get_interval(insanity, extra_description.copier_room_descriptions)
+        self.description = extra_description.get_interval(
+            insanity, extra_description.copier_room_descriptions
+        )
 
 
 class _MeetingRoom(_Room):
     _DESCRIPTION = ""
     _THEMES = ["office"]
-
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -392,9 +394,12 @@ class _MeetingRoom(_Room):
     def on_enter(self):
         super().on_enter()
         insanity = G.player.insanity.value
-        self.description = extra_description.get_interval(insanity, extra_description.meeting_room_descriptions)
+        self.description = extra_description.get_interval(
+            insanity, extra_description.meeting_room_descriptions
+        )
         if insanity >= 29:
             self.add_character(npcs.writhing_office_mass())
+
 
 """ "office" theme ideas
 - perfectly normal to start with
@@ -451,9 +456,12 @@ ok, TODOs
 - [X] make copy machine, it can give a bit of insanity if >= 20
 - [X] add the meeting room
 - [X] make writhing mass and spawn in meeting room
-- [ ] hook up other strings
+- [X] hook up other strings
+- [X] do writhing mass text
 - [ ] try a playthrough
+- [ ] undo computer getting mad?
 - [ ] probably increase insanity bumps so don't have to do as many things
+- [ ] change death text to not be librarian's
 ...
 - [ ] make "enter gary" action
 - [ ] make gary drink coffee on his own sometimes

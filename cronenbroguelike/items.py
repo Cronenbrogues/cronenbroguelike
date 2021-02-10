@@ -196,10 +196,11 @@ class _CoffeeTick(_Event):
         self.coffee = coffee
 
     def execute(self):
-        print("coffee tick!")
+        # print("coffee tick!")
         insanity = _G.player.insanity.value
-        desc = extra_description.get_interval(insanity, extra_description.gary_descriptions)
-        self.coffee.description = "woof woof"
+        desc = extra_description.get_interval(insanity, extra_description.coffee_descriptions)
+        # print(desc)
+        self.coffee.description = self.coffee.idle_description = self.coffee.name = desc
 
 
 class Coffee(_Consumable):
@@ -207,21 +208,23 @@ class Coffee(_Consumable):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         _G.add_event(_CoffeeTick(self), "pre")
+        insanity = _G.player.insanity.value
+        desc = extra_description.get_interval(insanity, extra_description.coffee_descriptions)
+        self.description = self.idle_description = self.name = desc
 
     def consume(self, consumer):
         if consumer is _G.player:
             say.insayne(f"You drink the coffee.")
             consumer.insanity.modify(-5)  # TODO
         elif consumer.name is "gary":
-            _G.player.insanity.modify(30)
             insanity = _G.player.insanity.value
             if insanity >= 30:
                 # Trigger Office ending
-                # TODO: Cory-ify
                 say.insayne(
                     "With a horrific tearing sound and a wet pop, Gary vanishes from existence. "
                     "In his place is a perfectly Gary-shaped hole in space."
                 )
+                print("YOU MADE IT! TODO: teleport player somewhere.")
                 consumer.current_room.characters.remove(consumer)
             else:
                 say.insayne('Gary loudly slurps the coffee. "Well thanks, pal!"')

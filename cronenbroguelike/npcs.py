@@ -218,7 +218,7 @@ def office_computer():
         desc = extra_description.get_interval(insanity, extra_description.use_computer_descriptions)
         say.insayne(desc)
         if insanity >= 10 and insanity < 20:
-            _G.player.insanity.modify(1)
+            _G.player.insanity.modify(2)
 
 
     class _ComputerTick(event.Event):
@@ -271,7 +271,7 @@ def coffee_machine():
         # TODO: add text?
         _G.player.inventory.add(items.Coffee.create())
 
-    class _CoffeeMachinerTick(event.Event):
+    class _CoffeeMachineTick(event.Event):
 
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
@@ -310,24 +310,24 @@ def office_copier():
             say.insayne("The copier seems to be broken, as usual.")
         elif insanity < 29:
             bodyparts = ["finger", "toe", "arm", "leg", "nipple"]
-            say.insayne("The copier gurgles. You feel a numb prickling as an extra "
-                        f"{random.choice(bodyparts)} un-melts itself from your body.")
-            _G.player.insanity.modify(1)
+            say.insayne("The copier moans lasciviously. You feel its hot breath on your neck. It envelops you, and penetrates you.")
+            say.insayne("Abruptly, orgasmically, a new "
+                        f"{random.choice(bodyparts)} erupts from your skin.")
+            _G.player.insanity.modify(3)
         else:
-            say.insayne("The copier moans.")
+            say.insayne("The copier sighs.")
 
-   class _CopierTick(event.Event):
+    class _CopierTick(event.Event):
 
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
 
         def execute(self):
-            # insanity = _G.player.insanity.value
-            # desc = extra_description.get_interval(insanity, extra_description.gary_descriptions)
-            desc = "TODO"
+            insanity = _G.player.insanity.value
+            desc = extra_description.get_interval(insanity, extra_description.copier_descriptions)
             npc.idle_text = desc
 
-    # _G.add_event(_WrithingMassTick(), "pre")
+    _G.add_event(_CopierTick(), "pre")
     npc.upon_death(office_copier_death_throes)
     npc.consume = use_office_copier
 
@@ -358,9 +358,9 @@ def gary():
                 say.insayne("Gary sneers...")
             for line in random.choice(jokes).split("\n"):
                 say.insayne(line)
-            if insanity <= 10:
+            if insanity < 10:
                 say.insayne("You groan.")
-                _G.player.insanity.modify(1)
+                _G.player.insanity.modify(2)
             elif insanity <= 20:
                 say.insayne("You try not to make eye contact.")
 
@@ -408,26 +408,21 @@ def writhing_office_mass():
         10,
         100,
         "writhing mass",
+        "mass",
         ai=ai.Chill(),
     )
-
-   class _WrithingMassTick(event.Event):
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-
-        def execute(self):
-            # insanity = _G.player.insanity.value
-            # desc = extra_description.get_interval(insanity, extra_description.gary_descriptions)
-            desc = "TODO"
-            npc.idle_text = desc
-
-    _G.add_event(_WrithingMassTick(), "pre")
 
     class _WrithingMassTalk(event.Event):
 
         def execute(self):
-            say.insayne("hello there")
+            say.insayne('The writhing mass speaks, many voices as one:')
+            say.insayne('"Hey champ! How are those quarterly targets coming along? Working hard or hardly working?"')
+            say.insayne('The writhing mass cackles uproariously.')
+            say.insayne('"You should go see Gary! Now there\'s a team player. Maybe do him a favor! Lord knows he\'s done enough for you..."')
+            insanity = _G.player.insanity.value
+            if insanity == 29:
+                _G.player.insanity.modify(1)
+
 
     class _WrithingMassHit(event.Event):
 

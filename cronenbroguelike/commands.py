@@ -237,6 +237,9 @@ def talk(actor):
     elif action.event is not None:
         action.event.event.execute()
 
+    else:
+        say.insayne("Nothing happens.")
+
 
 @adventurelib.when("inspect ITEM")
 def inspect(item):
@@ -246,6 +249,8 @@ def inspect(item):
     if room_item is not None:
         say.insayne(room_item.description)
         return
+
+    # why not also do inventory?
 
     character = G.player.current_room.corpses.find(item_name)
     if character is not None:
