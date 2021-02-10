@@ -351,7 +351,7 @@ def gary():
                 _G.player.insanity.modify(2)
             elif insanity <= 20:
                 say.insayne("You try not to make eye contact.")
-                say.insayned("Gary laughs uproariously, spittle flying all over you.")
+                say.insayne("Gary laughs uproariously, spittle flying all over you.")
 
     class _GaryHit(event.Event):
 

@@ -17,7 +17,7 @@ from engine import say
 @adventurelib.when("eat ITEM", verb="eat")
 @adventurelib.when("smoke ITEM", verb="smoke")
 def consume(item, verb):
-    commands.use(item, verb)
+    commands.use(item, None, verb)
 
 
 @adventurelib.when("exit DIRECTION")
