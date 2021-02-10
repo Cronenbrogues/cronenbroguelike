@@ -1,12 +1,13 @@
-from bisect import bisect_left
+import bisect
 
 # way to put this stuff into a namespace? just do a class? then don't have to import tons of things
 
+# Find interval with key less than value.
 def get_interval(value, intervals):
     if not intervals:
         return None
     keys = sorted([key for (key, _) in intervals])
-    idx = min(bisect_left(keys, value), len(intervals)-1)
+    idx = min(bisect.bisect(keys, value), len(intervals)-1)
     return intervals[idx][1]
 
 # (sanity, description) pairs: should use description for player sanity <= description sanity (save for last one, which fills in the rest)
@@ -69,7 +70,7 @@ coffee_descriptions = [
 breakroom_descriptions = [
     (10, 'You are in the drab company breakroom. One of the fluorescent lights is flickering a bit.'),
     (20, 'You are in the break room. There\'s a strange, faint veining on the walls now...'),
-    (30, 'You seem to be in some kind of bio-mechanical womb. A dense convergence of fleshy, pulsing cables wrap the walls, terminating at where the coffee machine once was.'),
+    (30, 'You seem to be in some kind of bio-mechanical womb. A dense convergence of fleshy, pulsing cables wrap the walls, terminating where the coffee machine once was.'),
 ]
 
 your_desk_descriptions = [
@@ -79,15 +80,16 @@ your_desk_descriptions = [
 ]
 
 office_computer_descriptions = [
-    (9, 'Your computer hums gently in front of you.'),
-    (15, 'Your computer hums in front of you. It looks a bit... sharper than usual?'),
-    (20, 'Your computer hums gently in front of you. Well, not a hum, really - more of a gurgling growl.'),
+    (10, 'Your computer hums gently in front of you.'),
+    (15, 'Your computer hums gently in front of you. It looks a bit... sharper than usual?'),
+    (25, 'Your computer hums gently in front of you. Well, not a hum, really - more of a gurgling growl.'),
+    (29, 'Your computer growls menacingly.'),
     (30, 'A fleshy tentacle undulates gently where your computer once was. A wicked claw emerges at the level of your forehead.'),
 ]
 
 use_computer_descriptions = [
-    (9, 'You merrily clack away on the keyboard. Ah, blessed productivity!'),
-    (19, 'You press some buttons. Not much happens, but you feel drained.'),
+    (10, 'You merrily clack away on the keyboard. Ah, blessed productivity!'),
+    (20, 'You press some buttons. Not much happens, but you feel drained.'),
     (30, 'This is not the computer you once knew...'),
 ]
 
@@ -95,7 +97,7 @@ meeting_room_descriptions = [
     (10, 'You are in the meeting room. It smells like sweat and coffee.'),
     (20, 'You are in the meeting room. It smells like blood, sweat, and tears. Must be some weird motivational scent?'),
     (25, 'You are in the meeting room. It smells of shit and putrid flesh.'),
-    (29, 'You think this must have been the meeting room. There\'s a heap of twisted bodies, viscous with some kind of pale ooze, writhing orgiastically on the floor.'),
+    (30, 'You think this must have been the meeting room. There\'s a heap of twisted bodies, viscous with some kind of pale ooze, writhing orgiastically on the floor.'),
 ]
 
 copier_room_descriptions = [
@@ -106,6 +108,6 @@ copier_room_descriptions = [
 
 copier_descriptions = [
     (10, 'The office\'s byzantine copier looks to be broken again.'),
-    (19, 'The office\'s byzantine copier looks to be broken again. You smack it reproachfully.'),
+    (20, 'The office\'s byzantine copier looks to be broken again. You smack it reproachfully.'),
     (30, 'The copier yearns for your touch.'),
 ]

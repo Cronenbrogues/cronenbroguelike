@@ -182,9 +182,9 @@ def smokes_man():
 
 def office_computer():
     npc = actor.create_actor(
+        1000,
         10,
-        10,
-        1,  # strength
+        1000,  # strength
         10,
         10,
         10,
@@ -195,31 +195,14 @@ def office_computer():
         ai=ai.Chill(),
     )
 
-    class _ComputerGetsMad(event.Event):
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-
-        def execute(self):
-            insanity = _G.player.insanity.value
-            if insanity > 20:
-                print("setting ai to hate")
-                npc.ai = ai.HatesPlayer()
-
-    npc.ai.add_default_event(_ComputerGetsMad())
-
-    def computer_death_throes(librarian):
-        say.insayne("The computer falls to pieces.")
-
-    npc.upon_death(computer_death_throes)
-
     def use_computer(consumer):
         insanity = _G.player.insanity.value
         desc = extra_description.get_interval(insanity, extra_description.use_computer_descriptions)
         say.insayne(desc)
         if insanity >= 10 and insanity < 20:
             _G.player.insanity.modify(2)
-
+        elif insanity >= 25:
+            _G.player.health.heal_or_harm(-10)
 
     class _ComputerTick(event.Event):
 
@@ -231,7 +214,11 @@ def office_computer():
             desc = extra_description.get_interval(insanity, extra_description.office_computer_descriptions)
             npc.idle_text = desc
 
+    def computer_death_throes(actor):
+        say.insayne("The computer falls to pieces.")
+
     _G.add_event(_ComputerTick(), "pre")
+    npc.upon_death(computer_death_throes)
 
     npc.consume = use_computer
 
@@ -301,21 +288,19 @@ def office_copier():
         ai=ai.Chill(),
     )
 
-    def office_copier_death_throes(librarian):
-        pass
-
     def use_office_copier(consumer):
         insanity = _G.player.insanity.value
         if insanity < 20:
             say.insayne("The copier seems to be broken, as usual.")
         elif insanity < 29:
-            bodyparts = ["finger", "toe", "arm", "leg", "nipple"]
+            bodyparts = ["fingers", "tongues", "arms", "lips", "nipples"]
             say.insayne("The copier moans lasciviously. You feel its hot breath on your neck. It envelops you, and penetrates you.")
-            say.insayne("Abruptly, orgasmically, a new "
-                        f"{random.choice(bodyparts)} erupts from your skin.")
+            say.insayne("Abruptly, orgasmically, new "
+                        f"{random.choice(bodyparts)} erupt from your skin.")
             _G.player.insanity.modify(3)
         else:
             say.insayne("The copier sighs.")
+            say.insayne("You hear a meaty thumping coming from the direction of the meeting room.")
 
     class _CopierTick(event.Event):
 
@@ -326,6 +311,9 @@ def office_copier():
             insanity = _G.player.insanity.value
             desc = extra_description.get_interval(insanity, extra_description.copier_descriptions)
             npc.idle_text = desc
+
+    def office_copier_death_throes(actor):
+        pass
 
     _G.add_event(_CopierTick(), "pre")
     npc.upon_death(office_copier_death_throes)
@@ -367,9 +355,13 @@ def gary():
     class _GaryHit(event.Event):
 
         def execute(self):
-            say.insayne("Gary smiles.")
-            say.insayne('"I\'ve been waiting so long for this..."')
-            npc.ai = ai.HatesPlayer()
+            insanity = _G.player.insanity.value
+            if insanity >= 20:
+                say.insayne("Gary smiles.")
+                say.insayne('"I\'ve been waiting so long for this..."')
+                npc.ai = ai.HatesPlayer()
+            else:
+                say.insayne('"Ow!"')
 
     class _GaryTick(event.Event):
 
@@ -381,20 +373,14 @@ def gary():
             desc = extra_description.get_interval(insanity, extra_description.gary_descriptions)
             npc.idle_text = desc
 
+    def gary_death_throes(actor):
+        pass
+
     npc.ai.add_event(_GaryJoke(), "talk")
     npc.ai.add_event(_GaryHit(), "attack")
     _G.add_event(_GaryTick(), "pre")
+    npc.upon_death(gary_death_throes)
 
-    def librarian_death_throes(librarian):
-        say.insayne(
-            "The librarian grins impossibly wide. A thin rivulet of blood "
-            "appears between his teeth. His eyes roll back and, with a giggle, "
-            "he falls backward onto the ground as though reclining on a divan."
-        )
-        say.insayne("The edge of a hidebound book peeks from his rags.")
-
-    npc.upon_death(librarian_death_throes)
-    # npc.inventory.add(items.MeditationBook.create())
     return npc
 
 
@@ -423,24 +409,17 @@ def writhing_office_mass():
             if insanity == 29:
                 _G.player.insanity.modify(1)
 
-
     class _WrithingMassHit(event.Event):
 
         def execute(self):
-            say.insayne("LOVE the chutzpah, bud! But it's futile. Believe us, we've tried! Over, and over, and over....")
+            say.insayne('"LOVE the chutzpah, bud! But it\'s futile. Believe us, we\'ve tried! Over, and over, and over...."')
+
+    def writhing_mass_death_throes(actor):
+        pass
 
     npc.ai.add_event(_WrithingMassTalk(), "talk")
     npc.ai.add_event(_WrithingMassHit(), "attack")
-
+    npc.upon_death(writhing_mass_death_throes)
     npc.idle_text = "The mass of bodies writhes expectantly."
 
-    def librarian_death_throes(librarian):
-        say.insayne(
-            "The librarian grins impossibly wide. A thin rivulet of blood "
-            "appears between his teeth. His eyes roll back and, with a giggle, "
-            "he falls backward onto the ground as though reclining on a divan."
-        )
-        say.insayne("The edge of a hidebound book peeks from his rags.")
-
-    npc.upon_death(librarian_death_throes)
     return npc

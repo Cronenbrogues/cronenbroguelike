@@ -225,6 +225,7 @@ class Coffee(_Consumable):
                     "In his place is a perfectly Gary-shaped hole in space."
                 )
                 print("YOU MADE IT! TODO: teleport player somewhere.")
+                # TODO: make "enter gary" action or just teleport.
                 consumer.current_room.characters.remove(consumer)
             else:
                 say.insayne('Gary loudly slurps the coffee. "Well thanks, pal!"')

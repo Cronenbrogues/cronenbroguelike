@@ -400,7 +400,6 @@ class _MeetingRoom(_Room):
         if insanity >= 29:
             self.add_character(npcs.writhing_office_mass())
 
-
 """ "office" theme ideas
 - perfectly normal to start with
 - things change when you walk by them multiple times
@@ -458,14 +457,13 @@ ok, TODOs
 - [X] make writhing mass and spawn in meeting room
 - [X] hook up other strings
 - [X] do writhing mass text
-- [ ] try a playthrough
-- [ ] undo computer getting mad?
-- [ ] probably increase insanity bumps so don't have to do as many things
-- [ ] change death text to not be librarian's
-...
-- [ ] make "enter gary" action
+- [X] try a playthrough
+- [X] probably increase insanity bumps so don't have to do as many things
+- [X] undo computer getting mad?
+- [X] change death text to not be librarian's
+- [X] clean up events so all in once place
+- [X] make computer kill you if you use at highest insanity
 - [ ] make gary drink coffee on his own sometimes
-- [ ] make computer kill you if you use at highest insanity
 
 gary's jokes should turn to pleading
 as they get darker and darker he should get grosser - "Gary laughs uproariously, spittle flying all over you."
