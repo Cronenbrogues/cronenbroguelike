@@ -2,14 +2,13 @@ import io
 from unittest.mock import call
 from unittest.mock import patch
 
-import adventurelib
-
 from cronenbroguelike import ability
 
 # Importing this file registers the commands, although the import looks unused.
 from cronenbroguelike import commands  # pragma pylint: disable=unused-import
 from whimsylib import actor
 from whimsylib import directions
+from whimsylib import start
 from whimsylib.globals import G
 from whimsylib.item import Item
 from whimsylib.room import Room
@@ -28,7 +27,7 @@ class CommandsTest(common.EngineTest):
     def _run_commands(self, stdin, *commands):
         stdin.write("\n".join(commands))
         stdin.seek(0)
-        adventurelib.start()
+        start.start()
 
     def test_go_bad_direction(self, mock_say, mock_stdin):
         ornate = _OrnateRoom()

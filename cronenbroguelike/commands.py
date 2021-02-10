@@ -1,5 +1,3 @@
-import adventurelib
-
 from whimsylib.item import Book
 from whimsylib import ai
 from whimsylib import dice
@@ -30,10 +28,10 @@ def _look():
     say.insayne(f'Exits are {", ".join(G.player.current_room.display_exits)}.')
 
 
-@adventurelib.when("go DIRECTION")
-@adventurelib.when("north", direction="north")
-@adventurelib.when("south", direction="south")
-@adventurelib.when("east", direction="east")
+@when.when("go DIRECTION")
+@when.when("north", direction="north")
+@when.when("south", direction="south")
+@when.when("east", direction="east")
 @when.when("west", direction="west")
 def go(direction):
     direction = direction.lower()
@@ -64,7 +62,7 @@ def look():
                 action.event.event.execute()
 
 
-@adventurelib.when("stats")
+@when.when("stats")
 def stats():
     lines = []
     name_str = f"{G.player.name}"
@@ -87,7 +85,7 @@ def stats():
         say.insayne(line, add_newline=add_newline)
 
 
-@adventurelib.when("inventory")
+@when.when("inventory")
 def inventory():
     say.insayne("You possess the following:")
     if not G.player.inventory:
@@ -157,7 +155,7 @@ def suicide():
 @when.when("attack ACTOR")
 def attack(actor):
     """Attacks another character in the same room."""
-    actor_name = actor  # Variable names are constrained by adventurelib.
+    actor_name = actor
     # TODO: Consider turn order--some kind of agility stat?
     # TODO: Other actions should be considered "combat" actions. Implement some
     # notion of turns.
@@ -197,8 +195,8 @@ def attack(actor):
 
 @when.when("talk ACTOR")
 def talk(actor):
+    actor_name = actor
     # TODO: Collapse common functionality in attack.
-    actor_name = actor  # Variable names are constrained by adventurelib.
     interlocutor = _get_present_actor(actor_name)
     if interlocutor is None:
         if _find_available_item(actor_name) is not None:
@@ -238,10 +236,9 @@ def talk(actor):
         action.event.event.execute()
 
 
-@adventurelib.when("inspect ITEM")
+@when.when("inspect ITEM")
 def inspect(item):
-    item_name = item  # Variable names are constrained by adventurelib.
-
+    item_name = item
     room_item = G.player.current_room.items.find(item_name)
     if room_item is not None:
         say.insayne(room_item.description)
@@ -334,7 +331,7 @@ def use(item, verb):
         say.insayne(f"You can't {verb} the {item_name}.")
 
 
-@adventurelib.when("take ITEM")
+@when.when("take ITEM")
 def take(item):
     item_name = item
     location, item = _find_in_room(item_name)
@@ -351,7 +348,7 @@ def take(item):
         _move_item(location, G.player.inventory, item)
 
 
-@adventurelib.when("drop ITEM")
+@when.when("drop ITEM")
 def drop(item):
     item_name = item
     item = G.player.inventory.find(item_name)
@@ -366,7 +363,7 @@ def drop(item):
         )
 
 
-@adventurelib.when("loot CORPSE", item="everything")
+@when.when("loot CORPSE", item="everything")
 @when.when("loot ITEM from CORPSE")
 def loot(item, corpse):
     item_name = item

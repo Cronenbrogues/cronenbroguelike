@@ -33,7 +33,7 @@ def fish_man():
     # TODO: Why isn't .alive = False working?
     def fish_man_death_throes(fish_man):
         say.insayne(
-            f"{util.capitalized(fish_man.name)} flops breathlessly upon the "
+            f"{say.capitalized(fish_man.name)} flops breathlessly upon the "
             "ground, blood commingling with piscine slobber. Half-formed gills "
             "flutter helplessly, urgently, then fall slack."
         )
