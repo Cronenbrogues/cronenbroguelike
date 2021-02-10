@@ -199,8 +199,6 @@ def office_computer():
 
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
-            # self.owner = None
-            # self._timer = -1
 
         def execute(self):
             insanity = _G.player.insanity.value
@@ -217,13 +215,23 @@ def office_computer():
 
     def use_computer(consumer):
         insanity = _G.player.insanity.value
-        if insanity < 10:
-            say.insayne("You merrily clack away on the keyboard. Ah, blessed productivity!")
-        elif insanity < 20:
-            say.insayne("You press some buttons. Not much happens, but you feel drained.")
+        desc = extra_description.get_interval(insanity, extra_description.use_computer_descriptions)
+        say.insayne(desc)
+        if insanity >= 10 and insanity < 20:
             _G.player.insanity.modify(1)
-        else:
-            say.insayne("This is not the computer you once knew...")
+
+
+    class _ComputerTick(event.Event):
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+        def execute(self):
+            insanity = _G.player.insanity.value
+            desc = extra_description.get_interval(insanity, extra_description.office_computer_descriptions)
+            npc.idle_text = desc
+
+    _G.add_event(_ComputerTick(), "pre")
 
     npc.consume = use_computer
 
@@ -263,6 +271,17 @@ def coffee_machine():
         # TODO: add text?
         _G.player.inventory.add(items.Coffee.create())
 
+    class _CoffeeMachinerTick(event.Event):
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+        def execute(self):
+            insanity = _G.player.insanity.value
+            desc = extra_description.get_interval(insanity, extra_description.coffee_machine_descriptions)
+            npc.idle_text = desc
+
+    _G.add_event(_CoffeeMachineTick(), "pre")
     npc.consume = use_coffee_machine
 
     return npc
@@ -270,7 +289,7 @@ def coffee_machine():
 
 def office_copier():
     npc = actor.create_actor(
-        10,
+        1000,
         10,
         10,  # strength
         10,
@@ -283,14 +302,7 @@ def office_copier():
     )
 
     def office_copier_death_throes(librarian):
-        say.insayne(
-            "The librarian grins impossibly wide. A thin rivulet of blood "
-            "appears between his teeth. His eyes roll back and, with a giggle, "
-            "he falls backward onto the ground as though reclining on a divan."
-        )
-        say.insayne("The edge of a hidebound book peeks from his rags.")
-
-    npc.upon_death(office_copier_death_throes)
+        pass
 
     def use_office_copier(consumer):
         insanity = _G.player.insanity.value
@@ -304,6 +316,19 @@ def office_copier():
         else:
             say.insayne("The copier moans.")
 
+   class _CopierTick(event.Event):
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+        def execute(self):
+            # insanity = _G.player.insanity.value
+            # desc = extra_description.get_interval(insanity, extra_description.gary_descriptions)
+            desc = "TODO"
+            npc.idle_text = desc
+
+    # _G.add_event(_WrithingMassTick(), "pre")
+    npc.upon_death(office_copier_death_throes)
     npc.consume = use_office_copier
 
     return npc
@@ -337,7 +362,7 @@ def gary():
                 say.insayne("You groan.")
                 _G.player.insanity.modify(1)
             elif insanity <= 20:
-                say.insayne("You cringe.")
+                say.insayne("You try not to make eye contact.")
 
     class _GaryHit(event.Event):
 
@@ -385,6 +410,19 @@ def writhing_office_mass():
         "writhing mass",
         ai=ai.Chill(),
     )
+
+   class _WrithingMassTick(event.Event):
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+        def execute(self):
+            # insanity = _G.player.insanity.value
+            # desc = extra_description.get_interval(insanity, extra_description.gary_descriptions)
+            desc = "TODO"
+            npc.idle_text = desc
+
+    _G.add_event(_WrithingMassTick(), "pre")
 
     class _WrithingMassTalk(event.Event):
 

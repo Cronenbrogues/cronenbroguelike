@@ -2,13 +2,14 @@ import adventurelib
 import logging
 import random
 
-from . import npcs
 from engine import dice
 from engine.event import Event as _Event
 from engine.globals import G
 from engine.room import Room as _Room
 from engine import say
 
+from . import extra_description
+from . import npcs
 
 # TODO: Devise a way to load rooms (and maybe events?) from a config file.
 # TODO: Create "locations" within each room to find items in, for enemies to
@@ -333,13 +334,6 @@ class _IntestineRoom(_Room):
             self._entered = True
 
 
-# intestine_room = _IntestineRoom.create("", theme="behemoth")
-# rib_room = _Room.create(
-#     "You are standing on a slick, wet floor. The walls are a ribcage palisade. "
-#     "The room expands and contracts rhythmically.",
-#     theme="behemoth",
-# )
-
 class _BreakRoom(_Room):
     _DESCRIPTION = ""
     _THEMES = ["office"]
@@ -352,6 +346,8 @@ class _BreakRoom(_Room):
 
     def on_enter(self):
         super().on_enter()
+        insanity = G.player.insanity.value
+        self.description = extra_description.get_interval(insanity, extra_description.breakroom_descriptions)
 
 
 class _YourDesk(_Room):
@@ -366,9 +362,8 @@ class _YourDesk(_Room):
 
     def on_enter(self):
         super().on_enter()
-        # G.player.insanity.modify(10)
-
-# your_desk = _YourDesk.create("", themes=["office"])
+        insanity = G.player.insanity.value
+        self.description = extra_description.get_interval(insanity, extra_description.your_desk_descriptions)
 
 
 class _CopierRoom(_Room):
@@ -382,6 +377,8 @@ class _CopierRoom(_Room):
 
     def on_enter(self):
         super().on_enter()
+        insanity = G.player.insanity.value
+        self.description = extra_description.get_interval(insanity, extra_description.copier_room_descriptions)
 
 
 class _MeetingRoom(_Room):
@@ -391,43 +388,13 @@ class _MeetingRoom(_Room):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # self.add_character(npcs.office_copier())
 
     def on_enter(self):
         super().on_enter()
         insanity = G.player.insanity.value
-        if insanity < 29:
-            say.insayne("Meeting room description")
-        else:
-            say.insayne("Spawn meeting table")
-            say.insayne("You are very insane")
+        self.description = extra_description.get_interval(insanity, extra_description.meeting_room_descriptions)
+        if insanity >= 29:
             self.add_character(npcs.writhing_office_mass())
-
-
-# class _AssortedOfficeRoom(_Room):
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-
-#     def on_enter(self):
-#         super().on_enter()
-#         G.player.insanity.modify(10)
-#         insanity = G.player.insanity.value
-#         if insanity == 100:
-#             say.insayne("You are totally insane")
-#         elif insanity > 75:
-#             say.insayne("You are very insane")
-#         elif insanity > 50:
-#             say.insayne("You are quite insane")
-#         elif insanity > 25:
-#             say.insayne("You are a bit insane")
-#         elif insanity > 10:
-#             say.insayne("You are a bit eccentric")
-#         # say.insayne(f"insanity is currently {G.player.insanity.value}")
-#         # if not self._entered:
-#         #     G.add_event(_IntestineRoomEvent(), "post")
-#         #     self._entered = True
-
-# intestine_room = _OfficeRoom.create("", theme="office")
 
 """ "office" theme ideas
 - perfectly normal to start with
