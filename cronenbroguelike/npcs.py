@@ -351,6 +351,7 @@ def gary():
                 _G.player.insanity.modify(2)
             elif insanity <= 20:
                 say.insayne("You try not to make eye contact.")
+                say.insayned("Gary laughs uproariously, spittle flying all over you.")
 
     class _GaryHit(event.Event):
 
@@ -401,9 +402,9 @@ def writhing_office_mass():
     class _WrithingMassTalk(event.Event):
 
         def execute(self):
-            say.insayne('The writhing mass speaks, many voices as one:')
+            say.insayne('The writhing mass speaks, many voices merging into one:')
             say.insayne('"Hey champ! How are those quarterly targets coming along? Working hard or hardly working?"')
-            say.insayne('The writhing mass cackles uproariously.')
+            say.insayne('The writhing mass cackles.')
             say.insayne('"You should go see Gary! Now there\'s a team player. Maybe do him a favor! Lord knows he\'s done enough for you..."')
             insanity = _G.player.insanity.value
             if insanity == 29:

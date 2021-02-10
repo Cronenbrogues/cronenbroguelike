@@ -38,34 +38,6 @@ _CathedralOffice = _Room.create_room_type(
     "A desk is strewn with sheaves of paper. Little of sense is written there.",
     themes=["cathedral"],
 )
-# also have probabilities!
-# and probabilities of nodes spawning too?
-# cathedral_office.add_allowed_successor(cathedral_library, probability=0.25)
-# cathedral_office.add_disallowed_successor(cathedral_catacombs)
-
-# by default, a Room will connect with every other room of the same theme with equal probability
-# maybe worth adding max_exits and min_exits params?
-
-# how exactly do these probabilities work? if have 10 edges coming out, each with .25 chance of being created...
-# do you not want them? or normalize?
-# lets say each edge defaults to having a value of "1"
-# then when choosing a new edge you sum up and choose
-# also want a "no edge" thing? just None?
-
-# so two rounds
-# first, generate a set of nodes (Rooms) according to their probabilities and max/min values
-# then, link rooms together according to their probabilties and min/max values
-# but how to describe the edges?
-# defaults:
-# actually a bit complicated - want to be able to go "north, south, east, or west" to anything within the same theme
-# and if have an edge going "north" somewhere, only want "south" coming back
-
-# ok you're kind of making a graph with probabilistic edges, which then gets turned into a real graph?
-
-# does this gain you much?
-# maybe simpler to just allow rooms to add extra edges *on top* of the grid thing?
-# like add_special_edge(room, probability, bidirectional)
-
 
 class _BoilerHeatEvent(_Event):
     def __init__(self, *args, **kwargs):
@@ -401,98 +373,11 @@ class _MeetingRoom(_Room):
             self.add_character(npcs.writhing_office_mass())
 
 """ "office" theme ideas
-- perfectly normal to start with
-- things change when you walk by them multiple times
-- after a while they start to increase insanity
-- once insanity is high enough then you start seeing exits
-- entities
-  computer
-  fax machine
-  Gary
-- items
-  stapler
-what if the entities (especially Gary) became exits themselves?
-and then it becomes clear that you were inside some strange creature?
-
-ok, maybe decrease will and increase insanity
-think should go to 30 insanity max
-that could mean three different "stages" - 0, 15, 30
-or 4
-4 seems good?
-can you just add an exit when you want? think so
-
-Gary could tell increasingly surreal dad jokes
-should there be more Garys over time?
-
-what if you added a "laugh" action that's only available in the office
-and at first it just makes Gary tell you another joke
-eventually Gary becomes some pitiful creature and you have to laugh at it to destroy it
-
-rooms
-- your desk
-- copy room
-- break room
-- meeting room
-- reception area
-
-computer should become aggressive once insane enough
-maybe if attack computer early on things get really weird?
-
-ok, TODOs
-- [X] add a few options of each thing! don't get too fancy yet, can flesh out later
-- [X] add "your desk"
-- [X] add "break room"
-- [X] make "computer" actor and spawn it at your desk
-- [X] add "use" action for computer
-- [X] make "gary" actor
-- [X] make gary tell bad jokes
-- [X] use coffee machine -> get coffee
-- [X] use coffee on gary -> he drinks it
-- [X] use coffee on gary -> get ending if at 30 insanity
-- [X] on restart, wake up at desk
-- [X] make level consistent
-- [X] make "use computer" give a bit of insanity
-- [X] make copy machine, it can give a bit of insanity if >= 20
-- [X] add the meeting room
-- [X] make writhing mass and spawn in meeting room
-- [X] hook up other strings
-- [X] do writhing mass text
-- [X] try a playthrough
-- [X] probably increase insanity bumps so don't have to do as many things
-- [X] undo computer getting mad?
-- [X] change death text to not be librarian's
-- [X] clean up events so all in once place
-- [X] make computer kill you if you use at highest insanity
-- [ ] make gary drink coffee on his own sometimes
-
-gary's jokes should turn to pleading
-as they get darker and darker he should get grosser - "Gary laughs uproariously, spittle flying all over you."
-change gary to larry?
-
-what's the ending?
-have to get ichor from coffee machine, use it in room with gary to "melt" him into a portal to the next floor?
-if you use it on yourself it kills you
-and you "jerk awake" at your desk
-or maybe you have to use it on the computer?
-or if you do something bad happens?
-
-want copy machine?
-
-
-ok, so first gary gives insanity
-then computer
-then copy machine (could give a few)?
-what's a more surreal interaction? copy machine could do gross stuff
-then finally final bit happens in the meeting room? could give you a hint to how to finish
-could talk to the heap of bodies
-
-how can you add flavor to make it clear that this is like an occult energy-harvesting operation?
+TODO:
+- [ ] if you drink ichor you die
+- [ ] make ichor naming less confusing
+- [ ] spawn more Garys over time?
 """
-
-# can make tunnel when triggered
-
-# could "wake up" in the office when transitioning there
-
 
 def _rooms_for_theme(theme=None):
     if theme is None:
