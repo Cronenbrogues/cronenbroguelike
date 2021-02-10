@@ -2,11 +2,10 @@ import logging
 import random
 import re
 
-import adventurelib
-
 from cronenbroguelike import commands
 from whimsylib.globals import G
 from whimsylib import say
+from whimsylib import when
 
 
 ###
@@ -14,24 +13,24 @@ from whimsylib import say
 ###
 
 
-@adventurelib.when("consume ITEM", verb="consume")
-@adventurelib.when("eat ITEM", verb="eat")
-@adventurelib.when("smoke ITEM", verb="smoke")
+@when.when("consume ITEM", verb="consume")
+@when.when("eat ITEM", verb="eat")
+@when.when("smoke ITEM", verb="smoke")
 def consume(item, verb):
     commands.use(item, verb)
 
 
-@adventurelib.when("exit DIRECTION")
-@adventurelib.when("proceed DIRECTION")
+@when.when("exit DIRECTION")
+@when.when("proceed DIRECTION")
 def proceed(direction):
     commands.go(direction)
 
 
-@adventurelib.when("sit there and starve")
-@adventurelib.when("commit suicide")
-@adventurelib.when("die")
-@adventurelib.when("just die")
-@adventurelib.when("hold breath forever")
+@when.when("sit there and starve")
+@when.when("commit suicide")
+@when.when("die")
+@when.when("just die")
+@when.when("hold breath forever")
 def die():
     commands.suicide()
 
@@ -97,7 +96,7 @@ def _cheat_ability(ability_name):
         G.player.add_ability(to_add())
 
 
-@adventurelib.when("cheat CODE")
+@when.when("cheat CODE")
 def cheat(code):
     # TODO: Make healing more general.
     matches = []
@@ -134,12 +133,24 @@ def cheat(code):
 ###
 
 
-@adventurelib.when("random")
+@when.when("random")
 def random_action():
-    skip = ["?", "help", "quit", "random", "suicide", "north", "south", "east", "west"]
-    filtered_commands = [
-        c for c in adventurelib.commands if " ".join(c[0].prefix) not in skip
+    skip = [
+        "?",
+        "help",
+        "quit",
+        "random",
+        "suicide",
+        "north",
+        "south",
+        "east",
+        "west",
+        None,
     ]
+    filtered_commands = [
+        c for c in when.CommandHandler.COMMANDS if c[0].prefix not in skip
+    ]
+
     random_command = random.choice(filtered_commands)
     command_pattern = random_command[0]
 
@@ -151,10 +162,10 @@ def random_action():
         + list(G.player.current_room._exits)
     )
 
-    args = [random.choice(entity_names) for i in range(len(command_pattern.argnames))]
+    args = [random.choice(entity_names) for i in range(len(command_pattern.arguments))]
     final_command = f"{' '.join(command_pattern.prefix)} {' '.join(args)}"
     say.insayne(f"random command: {final_command}", insanity=0)
 
     # Pass through adventurelib rather than calling directly to avoid some
     # complexity with multiple-argument commands, like loot.
-    adventurelib._handle_command(final_command)
+    when.handle(final_command)

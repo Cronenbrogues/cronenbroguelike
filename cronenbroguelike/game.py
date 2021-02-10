@@ -1,20 +1,18 @@
 import random
-import adventurelib
+
+from whimsylib import actor
+from whimsylib import say
+from whimsylib import start
+from whimsylib import tartarus
+from whimsylib import when
+from whimsylib.event import Event as _Event
+from whimsylib.globals import G as _G
+from whimsylib.globals import poll_events as _poll_events
 
 from . import commands
 from . import floor
 from . import npcs
-from . import rooms
 from . import util
-from whimsylib import actor
-from whimsylib import ai
-from whimsylib import directions
-from whimsylib.event import Event as _Event
-from whimsylib.globals import G as _G
-from whimsylib.globals import poll_events as _poll_events
-from whimsylib import say
-from whimsylib import tartarus
-from whimsylib import when
 
 
 def _get_random_start():
@@ -86,16 +84,16 @@ def _run_game(config):
     while True:
         try:
             _restart(config)
-            adventurelib.say("")  # Necessary for space before first prompt.
+            say.output("")
             if config.get("random_run"):
                 while num_random_actions < config.get("random_run"):
-                    adventurelib._handle_command("random")
+                    when.handle("random")
                     num_random_actions += 1
                 if num_random_actions >= config.get("random_run"):
                     break
-            adventurelib.start()
+            start.start()
         except KeyboardInterrupt:
-            adventurelib.say("☠ Farewell☠")
+            say.output("☠ Farewell☠")
             return
         except tartarus.RaptureException:
             pass
