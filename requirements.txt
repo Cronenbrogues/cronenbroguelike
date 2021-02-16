@@ -1,2 +1,1 @@
-https://github.com/Cronenbrogues/adventurelib/tarball/1.3.0
 https://github.com/Cronenbrogues/whimsylib/tarball/0.1.0
