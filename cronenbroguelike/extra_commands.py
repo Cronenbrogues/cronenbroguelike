@@ -166,6 +166,4 @@ def random_action():
     final_command = f"{' '.join(command_pattern.prefix)} {' '.join(args)}"
     say.insayne(f"random command: {final_command}", insanity=0)
 
-    # Pass through adventurelib rather than calling directly to avoid some
-    # complexity with multiple-argument commands, like loot.
     when.handle(final_command)
