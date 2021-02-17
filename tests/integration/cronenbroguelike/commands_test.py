@@ -1,5 +1,6 @@
 import io
 from unittest.mock import call
+from unittest.mock import Mock
 from unittest.mock import patch
 
 from cronenbroguelike import ability
@@ -21,15 +22,21 @@ _OrnateRoom = Room.create_room_type("_OrnateRoom", "This room is very opulent, d
 _SqualidRoom = Room.create_room_type("_SqualidRoom", "Poop is here.")
 
 
-@patch("sys.stdin", new_callable=io.StringIO)
-@patch("whimsylib.say.insayne")
 class CommandsTest(common.EngineTest):
+    def setUp(self):
+        super().setUp()
+        self._parent = Mock()
+        self._parent.pre = Mock()
+        G.add_event(self._parent.pre, "pre")
+        self._parent.post = Mock()
+        G.add_event(self._parent.post, "post")
+
     def _run_commands(self, stdin, *commands):
         stdin.write("\n".join(commands))
         stdin.seek(0)
         start.start()
 
-    def test_go_bad_direction(self, mock_say, mock_stdin):
+    def test_go_bad_direction(self):
         ornate = _OrnateRoom()
         ornate.add_character(G.player)
         self.assertIs(ornate, G.player.current_room)  # Precondition
@@ -39,14 +46,19 @@ class CommandsTest(common.EngineTest):
         next_room, _ = ornate.exit(description)
         self.assertIs(None, next_room)  # Precondition
 
-        self._run_commands(mock_stdin, f"go {description}")
-        mock_say.assert_called_once_with(
-            f"It is not possible to proceed {description}."
-        )
+        with patch("sys.stdin", new_callable=io.StringIO) as fake_stdin, patch(
+            "whimsylib.say.insayne", self._parent.say
+        ):
+            self._run_commands(fake_stdin, f"go {description}")
+            self._parent.assert_has_calls(
+                [
+                    call.pre.execute(),
+                    call.say(f"It is not possible to proceed {description}."),
+                    call.post.execute(),
+                ]
+            )
 
-    @patch("whimsylib.room.Room.on_exit")
-    @patch("whimsylib.globals.G.player.psyche.heal_or_harm")
-    def test_go_right_track(self, mock_heal, mock_exit, mock_say, mock_stdin):
+    def test_go_right_track(self):
         ornate, squalid = _OrnateRoom(), _SqualidRoom()
         ornate.add_character(G.player)
         self.assertIs(ornate, G.player.current_room)  # Precondition
@@ -57,20 +69,28 @@ class CommandsTest(common.EngineTest):
         next_room, _ = ornate.exit(description)
         self.assertIs(squalid, next_room)  # Precondition
 
-        self._run_commands(mock_stdin, f"go {description}")
+        with patch("sys.stdin", new_callable=io.StringIO) as fake_stdin, patch(
+            "whimsylib.say.insayne", self._parent.say
+        ), patch("whimsylib.room.Room.on_exit", self._parent.exit), patch(
+            "whimsylib.globals.G.player.psyche.heal_or_harm", self._parent.heal
+        ):
 
-        mock_exit.assert_called_once()
+            self._run_commands(fake_stdin, f"go {description}")
+            # This implies that squalid.on_enter() was called.
+            self.assertIs(squalid, G.player.current_room)
+            self._parent.assert_has_calls(
+                [
+                    call.pre.execute(),
+                    call.say(f"You proceed {description}."),
+                    call.exit(),
+                    call.heal(1, do_log=False),
+                    call.say(squalid.description),
+                    call.say(f"Exits are {direction.opposite.display_description}."),
+                    call.post.execute(),
+                ]
+            )
 
-        # Psyche is healed by 1 every time player enters a new room.
-        mock_heal.assert_called_with(1, do_log=False)
-
-        # This implies that squalid.on_enter() was called.
-        self.assertIs(squalid, G.player.current_room)
-        mock_say.assert_has_calls(
-            [call(f"You proceed {description}."), call(squalid.description)]
-        )
-
-    def test_look(self, mock_say, mock_stdin):
+    def test_look(self):
         ornate, squalid = _OrnateRoom(), _SqualidRoom()
         ornate.add_character(G.player)
         self.assertIs(ornate, G.player.current_room)  # Precondition
@@ -83,18 +103,26 @@ class CommandsTest(common.EngineTest):
         next_room, _ = ornate.exit(description)
         self.assertIs(squalid, next_room)  # Precondition
 
-        self._run_commands(mock_stdin, "look")
+        with patch("sys.stdin", new_callable=io.StringIO) as fake_stdin, patch(
+            "whimsylib.say.insayne", self._parent.say
+        ):
+            self._run_commands(fake_stdin, "look")
+            self._parent.assert_has_calls(
+                [
+                    call.pre.execute(),
+                    call.say("This room is very opulent, dang."),
+                    call.say(
+                        "There is a fruit bag, you know, of fruit lying on the ground."
+                    ),
+                    call.say("Exits are through a murky tunnel."),
+                    call.post.execute(),
+                ]
+            )
 
-        mock_say.assert_has_calls(
-            [
-                call("This room is very opulent, dang."),
-                call("There is a fruit bag, you know, of fruit lying on the ground."),
-                call("Exits are through a murky tunnel."),
-            ]
-        )
-
-    def test_stats(self, mock_say, mock_stdin):
-        self._run_commands(mock_stdin, "stats")
+    @patch("sys.stdin", new_callable=io.StringIO)
+    @patch("whimsylib.say.insayne")
+    def test_stats(self, mock_say, fake_stdin):
+        self._run_commands(fake_stdin, "stats")
         mock_say.assert_has_calls(
             [
                 call("player", add_newline=True),
@@ -109,12 +137,14 @@ class CommandsTest(common.EngineTest):
             ]
         )
 
-    def test_different_stats(self, mock_say, mock_stdin):
+    @patch("sys.stdin", new_callable=io.StringIO)
+    @patch("whimsylib.say.insayne")
+    def test_different_stats(self, mock_say, fake_stdin):
         G.player = actor.create_actor(20, 20, 20, 20, "the flippin devil")
         G.player.health.heal_or_harm(-9)
         G.player.add_ability(ability.meditation())
 
-        self._run_commands(mock_stdin, "stats")
+        self._run_commands(fake_stdin, "stats")
         mock_say.assert_has_calls(
             [
                 call("the flippin devil", add_newline=True),
