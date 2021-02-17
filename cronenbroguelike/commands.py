@@ -33,6 +33,7 @@ def _look():
 @when.when("south", direction="south")
 @when.when("east", direction="east")
 @when.when("west", direction="west")
+@when.poll()
 def go(direction):
     direction = direction.lower()
     next_room, the_direction = G.player.current_room.exit(direction)
@@ -45,6 +46,7 @@ def go(direction):
 
 
 @when.when("look")
+@when.poll()
 def look():
     # _look() before processing npc actions;
     # see https://github.com/flosincapite/cronenbroguelike/issues/69 (nice)
@@ -135,6 +137,7 @@ def _get_present_actor(actor_name):
 
 
 @when.when("ability ABILITY")
+@when.poll()
 def ability(ability):
     ability_name = ability
     the_ability = G.player.abilities.get(ability_name)
@@ -145,6 +148,7 @@ def ability(ability):
 
 
 @when.when("suicide")
+@when.poll()
 def suicide():
     say.insayne(
         "Realizing the futility of continuing, you resign yourself to death. You lie on the floor and await oblivion."
@@ -153,6 +157,7 @@ def suicide():
 
 
 @when.when("attack ACTOR")
+@when.poll()
 def attack(actor):
     """Attacks another character in the same room."""
     actor_name = actor
@@ -194,6 +199,7 @@ def attack(actor):
 
 
 @when.when("talk ACTOR")
+@when.poll()
 def talk(actor):
     actor_name = actor
     # TODO: Collapse common functionality in attack.
@@ -290,6 +296,7 @@ def _find_available_item(item_name):
 
 
 @when.when("read BOOK")
+@when.poll()
 def read(book):
     book_name = book
     _, book = _find_available_item(book_name)
@@ -319,6 +326,7 @@ def _move_item(
 # themselves that automatically registers a command.
 # TODO: Refactor items; let items have "verb" objects which map to events.
 @when.when("use ITEM", verb="use")
+@when.poll()
 def use(item, verb):
     item_name = item
     item = G.player.inventory.find(item_name)
@@ -365,6 +373,7 @@ def drop(item):
 
 @when.when("loot CORPSE", item="everything")
 @when.when("loot ITEM from CORPSE")
+@when.poll()
 def loot(item, corpse):
     item_name = item
     corpse_name = corpse
