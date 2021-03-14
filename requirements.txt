@@ -1,1 +1,1 @@
-https://github.com/Cronenbrogues/whimsylib/tarball/0.1.1
+whimsylib>=1.0.0
