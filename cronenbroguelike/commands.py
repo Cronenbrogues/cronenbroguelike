@@ -205,7 +205,8 @@ def talk(actor):
     # TODO: Collapse common functionality in attack.
     interlocutor = _get_present_actor(actor_name)
     if interlocutor is None:
-        if _find_available_item(actor_name) is not None:
+        _, item = _find_available_item(actor_name)
+        if item is not None:
             if G.player.insanity.value > 30:
                 say.insayne(
                     f"You talk to {actor_name} at length. In response, "
@@ -280,21 +281,21 @@ def inspect(item):
 def _find_in_room(item_name):
     room_item = G.player.current_room.items.find(item_name)
     if room_item is not None:
-        return room_item
+        return G.player.current_room.items, room_item
 
     for corpse in G.player.current_room.corpses:
         corpse_item = corpse.inventory.find(item_name)
         if corpse_item is not None:
-            return corpse_item
+            return corpse.inventory, corpse_item
 
-    return None
+    return None, None
 
 
 def _find_available_item(item_name):
     # TODO: Store item <-> inventory relationship as two-way?
     inventory_item = G.player.inventory.find(item_name)
     if inventory_item is not None:
-        return inventory_item
+        return G.player.inventory, inventory_item
     return _find_in_room(item_name)
 
 
@@ -302,7 +303,7 @@ def _find_available_item(item_name):
 @when.poll()
 def read(book):
     book_name = book
-    book = _find_available_item(book_name)
+    _, book = _find_available_item(book_name)
     if book is None:
         say.insayne(f"There is no {book_name} here to read.")
     elif not isinstance(book, Book):
