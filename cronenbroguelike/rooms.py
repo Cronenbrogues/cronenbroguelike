@@ -9,7 +9,6 @@ from whimsylib.room import Room as _Room
 from whimsylib import say
 
 from . import extra_description
-from . import floor
 from . import npcs
 
 
@@ -179,12 +178,11 @@ class _AltarEvent(_Event):
                 "cavernous, the red gold of its eyes showing contentment."
             )
             self.room.items.remove(smoke)
-            office = floor.Floor.generate("office")
-
+            # Open the portal
             through_mouth = directions.Direction.make_oneway(
                 ["through the mouth", "through the maw", "through mouth", "through maw"]
             )
-            self.room.add_exit(through_mouth, office.room_by_name("DESK"))
+            self.room.add_exit(through_mouth, G.floor["office"].room_by_name("DESK"))
             self.kill()
 
 

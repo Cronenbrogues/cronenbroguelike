@@ -46,10 +46,6 @@ def _restart(config):
     # Resets all global state (clears event queues, etc.).
     _G.reset()
 
-    theme = "cathedral"
-
-    npcs_by_theme = {"cathedral": [npcs.fish_man, npcs.mad_librarian, npcs.smokes_man]}
-
     # Creates the player character and ensures game will restart upon death.
     _G.player = actor.create_actor(
         health=10,
@@ -63,14 +59,18 @@ def _restart(config):
     # Resets just_died flag.
     _G.add_event(_ResetDiedFlag(), "pre")
 
-    # Creates a small dungeon.
-    level = floor.Floor.generate(theme, number_rooms=config["num_rooms"])
+    # Generate all available floors, and populate them with NPCs.
+    _G.floors = {
+        theme: floor.Floor.generate(theme, number_rooms=config["num_rooms"])
+        for theme in ["cathedral", "office"]
+    }
+    npcs_by_theme = {"cathedral": [npcs.fish_man, npcs.mad_librarian, npcs.smokes_man]}
+    for theme, level in _G.floors.items():
+        for npc in npcs_by_theme.get(theme, []):
+            level.random_room().add_character(npc())
 
-    for npc in npcs_by_theme.get(theme, []):
-        level.random_room().add_character(npc())
-
-    # Places the player.
-    level.random_room().add_character(_G.player)
+    # Places the player on the starting floor.
+    _G.floors["cathedral"].random_room().add_character(_G.player)
 
     # Starts it up.
     _get_random_start(theme)

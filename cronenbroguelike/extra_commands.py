@@ -2,10 +2,11 @@ import logging
 import random
 import re
 
-from cronenbroguelike import commands
 from whimsylib.globals import G
 from whimsylib import say
 from whimsylib import when
+
+from . import commands
 
 
 ###
@@ -112,8 +113,8 @@ def cheat(code):
             break
 
     for function, match in matches:
-        logging.debug(f"function is {function}")
-        logging.debug(f"match.groups is {match.groups()}")
+        logging.debug("function is %s" % function)
+        logging.debug("match.groups is %s" % match.groups())
         try:
             function(*match.groups())
             break

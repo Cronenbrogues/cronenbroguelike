@@ -424,8 +424,6 @@ def loot(item, corpse):
             action = character.ai.choose_action(G.player.current_room)
             if action.attack is not None:
                 _resolve_attack(character, action.attack)
-        return
-
     else:
         if item_name in {"all", "everything"}:
             items = character.inventory.items_by_name()
