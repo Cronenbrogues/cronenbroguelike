@@ -212,9 +212,9 @@ class Coffee(_Consumable):
 
     def consume(self, consumer):
         if consumer is _G.player:
-            say.insayne(f"You drink the coffee.")
-            consumer.insanity.modify(-5)  # TODO
-        elif consumer.name is "gary":
+            say.insayne("You drink the coffee.")
+            consumer.insanity.modify(-5)
+        elif consumer.name == "gary":
             insanity = _G.player.insanity.value
             if insanity >= 30:
                 # Trigger Office ending
@@ -222,7 +222,7 @@ class Coffee(_Consumable):
                     "With a horrific tearing sound and a wet pop, Gary vanishes from existence. "
                     "In his place is a perfectly Gary-shaped hole in space."
                 )
-                print("YOU MADE IT! TODO: teleport player somewhere.")
+                say.insayne("YOU MADE IT!")
                 # TODO: make "enter gary" action or just teleport.
                 consumer.current_room.characters.remove(consumer)
             else:
