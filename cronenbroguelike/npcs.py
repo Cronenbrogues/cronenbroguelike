@@ -234,9 +234,6 @@ def coffee_machine():
         ai=ai.Chill(),
     )
 
-    # npc.ai.add_event(_SmokesManEvent(), "talk")
-    # npc.ai.add_default_event(_ComputerGetsMad())
-
     def coffee_machine_death_throes(librarian):
         say.insayne(
             "The librarian grins impossibly wide. A thin rivulet of blood "
@@ -246,10 +243,8 @@ def coffee_machine():
         say.insayne("The edge of a hidebound book peeks from his rags.")
 
     npc.upon_death(coffee_machine_death_throes)
-    # npc.inventory.add(items.MeditationBook.create())
 
     def use_coffee_machine(consumer):
-        # say.insayne("using coffee machine")
         # TODO: add text?
         _G.player.inventory.add(items.Coffee.create())
 
