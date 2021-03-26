@@ -280,21 +280,21 @@ def inspect(item):
 def _find_in_room(item_name):
     room_item = G.player.current_room.items.find(item_name)
     if room_item is not None:
-        return G.player.current_room.items, room_item
+        return room_item
 
     for corpse in G.player.current_room.corpses:
         corpse_item = corpse.inventory.find(item_name)
         if corpse_item is not None:
-            return corpse.inventory, corpse_item
+            return corpse_item
 
-    return None, None
+    return None
 
 
 def _find_available_item(item_name):
     # TODO: Store item <-> inventory relationship as two-way?
     inventory_item = G.player.inventory.find(item_name)
     if inventory_item is not None:
-        return G.player.inventory, inventory_item
+        return inventory_item
     return _find_in_room(item_name)
 
 
@@ -302,7 +302,7 @@ def _find_available_item(item_name):
 @when.poll()
 def read(book):
     book_name = book
-    _, book = _find_available_item(book_name)
+    book = _find_available_item(book_name)
     if book is None:
         say.insayne(f"There is no {book_name} here to read.")
     elif not isinstance(book, Book):
