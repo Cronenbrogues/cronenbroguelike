@@ -253,8 +253,6 @@ def inspect(item):
         say.insayne(room_item.description)
         return
 
-    # why not also do inventory?
-
     character = G.player.current_room.corpses.find(item_name)
     if character is not None:
         # TODO: How to deal with definite articles when actor's name is a

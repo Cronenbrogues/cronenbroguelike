@@ -377,18 +377,10 @@ class _MeetingRoom(_Room):
             self.add_character(npcs.writhing_office_mass())
 
 
-""" "office" theme ideas
-TODO:
-- [ ] if you drink ichor you die
-- [ ] make ichor naming less confusing
-- [ ] spawn more Garys over time?
-"""
-
-
 def _rooms_for_theme(theme=None):
     if theme is None:
         return _Room.ALL_ROOMS
-    return _Room.THEME_TO_ROOMS[theme]  # + _Room.THEME_TO_ROOMS[_Room.DEFAULT_THEME]
+    return _Room.THEME_TO_ROOMS[theme]
 
 
 def get_rooms(number=None, theme=None):
