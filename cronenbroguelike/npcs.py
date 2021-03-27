@@ -7,6 +7,8 @@ from whimsylib import event
 from whimsylib.globals import G as _G
 from whimsylib import say
 
+from . import extra_description
+
 from cronenbroguelike import items
 from cronenbroguelike import util
 
@@ -165,11 +167,254 @@ def smokes_man():
 
     npc.upon_death(smoker_death_throes)
     number_butts = random.choice(range(4, 7))
-    for _ in range(number_butts):
+    for _ in range(number_butts):  # add myriad butts
         npc.inventory.add(items.CigaretteButt.create())
     npc.inventory.add(items.CigaretteStub.create())
     npc.inventory.add(items.CigaretteStub.create())
     npc.inventory.add(items.Cigarette.create())
     npc.inventory.add(items.Lighter.create())
+
+    return npc
+
+
+def office_computer():
+    npc = actor.create_actor(
+        1000,
+        10,
+        1000,
+        10,
+        "your computer",
+        "computer",
+        "pc",
+        idle_text="Your computer hums gently beneath your desk.",
+        ai=ai.Chill(),
+    )
+
+    def use_computer(consumer):
+        insanity = _G.player.insanity.value
+        desc = extra_description.get_interval(
+            insanity, extra_description.use_computer_descriptions
+        )
+        say.insayne(desc)
+        if insanity >= 10 and insanity < 20:
+            _G.player.insanity.modify(2)
+        elif insanity >= 25:
+            _G.player.health.heal_or_harm(-10)
+
+    class _ComputerTick(event.Event):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+        def execute(self):
+            insanity = _G.player.insanity.value
+            desc = extra_description.get_interval(
+                insanity, extra_description.office_computer_descriptions
+            )
+            npc.idle_text = desc
+
+    def computer_death_throes(actor):
+        say.insayne("The computer falls to pieces.")
+
+    _G.add_event(_ComputerTick(), "pre")
+    npc.upon_death(computer_death_throes)
+
+    npc.consume = use_computer
+
+    return npc
+
+
+def coffee_machine():
+    npc = actor.create_actor(
+        10,
+        10,
+        10,
+        10,
+        "coffee machine",
+        idle_text="A coffee machine gurgles pleasantly on the counter.",
+        ai=ai.Chill(),
+    )
+
+    def coffee_machine_death_throes(librarian):
+        say.insayne(
+            "The librarian grins impossibly wide. A thin rivulet of blood "
+            "appears between his teeth. His eyes roll back and, with a giggle, "
+            "he falls backward onto the ground as though reclining on a divan."
+        )
+        say.insayne("The edge of a hidebound book peeks from his rags.")
+
+    npc.upon_death(coffee_machine_death_throes)
+
+    def use_coffee_machine(consumer):
+        # TODO: add text?
+        _G.player.inventory.add(items.Coffee.create())
+
+    class _CoffeeMachineTick(event.Event):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+        def execute(self):
+            insanity = _G.player.insanity.value
+            desc = extra_description.get_interval(
+                insanity, extra_description.coffee_machine_descriptions
+            )
+            npc.idle_text = desc
+
+    _G.add_event(_CoffeeMachineTick(), "pre")
+    npc.consume = use_coffee_machine
+
+    return npc
+
+
+def office_copier():
+    npc = actor.create_actor(
+        1000,
+        10,
+        10,
+        10,
+        "copier",
+        idle_text="The office's byzantine copier looks to be broken again.",
+        ai=ai.Chill(),
+    )
+
+    def use_office_copier(consumer):
+        insanity = _G.player.insanity.value
+        if insanity < 20:
+            say.insayne("The copier seems to be broken, as usual.")
+        elif insanity < 29:
+            bodyparts = ["fingers", "tongues", "arms", "lips", "nipples"]
+            say.insayne(
+                "The copier moans lasciviously. You feel its hot breath on your neck. It envelops you, and penetrates you."
+            )
+            say.insayne(
+                "Abruptly, orgasmically, new "
+                f"{random.choice(bodyparts)} erupt from your skin."
+            )
+            _G.player.insanity.modify(3)
+        else:
+            say.insayne("The copier sighs.")
+            say.insayne(
+                "You hear a meaty thumping coming from the direction of the meeting room."
+            )
+
+    class _CopierTick(event.Event):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+        def execute(self):
+            insanity = _G.player.insanity.value
+            desc = extra_description.get_interval(
+                insanity, extra_description.copier_descriptions
+            )
+            npc.idle_text = desc
+
+    def office_copier_death_throes(actor):
+        pass
+
+    _G.add_event(_CopierTick(), "pre")
+    npc.upon_death(office_copier_death_throes)
+    npc.consume = use_office_copier
+
+    return npc
+
+
+def gary():
+    npc = actor.create_actor(
+        1000,
+        10,
+        1000,
+        10,
+        "gary",
+        ai=ai.Chill(),
+    )
+
+    class _GaryJoke(event.Event):
+        def execute(self):
+            insanity = _G.player.insanity.value
+            jokes = extra_description.get_interval(
+                insanity, extra_description.gary_jokes
+            )
+            if insanity <= 10:
+                say.insayne("Gary starts to tell a joke...")
+            elif insanity <= 20:
+                say.insayne("Gary sneers...")
+            for line in random.choice(jokes).split("\n"):
+                say.insayne(line)
+            if insanity < 10:
+                say.insayne("You groan.")
+                _G.player.insanity.modify(2)
+            elif insanity <= 20:
+                say.insayne("You try not to make eye contact.")
+                say.insayne("Gary laughs uproariously, spittle flying all over you.")
+
+    class _GaryHit(event.Event):
+        def execute(self):
+            insanity = _G.player.insanity.value
+            if insanity >= 20:
+                say.insayne("Gary smiles.")
+                say.insayne('"I\'ve been waiting so long for this..."')
+                npc.ai = ai.HatesPlayer()
+            else:
+                say.insayne('"Ow!"')
+
+    class _GaryTick(event.Event):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+        def execute(self):
+            insanity = _G.player.insanity.value
+            desc = extra_description.get_interval(
+                insanity, extra_description.gary_descriptions
+            )
+            npc.idle_text = desc
+
+    def gary_death_throes(actor):
+        pass
+
+    npc.ai.add_event(_GaryJoke(), "talk")
+    npc.ai.add_event(_GaryHit(), "attack")
+    _G.add_event(_GaryTick(), "pre")
+    npc.upon_death(gary_death_throes)
+
+    return npc
+
+
+def writhing_office_mass():
+    npc = actor.create_actor(
+        1000,
+        10,
+        10,
+        100,
+        "writhing mass",
+        "mass",
+        ai=ai.Chill(),
+    )
+
+    class _WrithingMassTalk(event.Event):
+        def execute(self):
+            say.insayne("The writhing mass speaks, many voices merging into one:")
+            say.insayne(
+                '"Hey champ! How are those quarterly targets coming along? Working hard or hardly working?"'
+            )
+            say.insayne("The writhing mass cackles.")
+            say.insayne(
+                "\"You should go see Gary! Now there's a team player. Maybe do him a favor! Lord knows he's done enough for you...\""
+            )
+            insanity = _G.player.insanity.value
+            if insanity == 29:
+                _G.player.insanity.modify(1)
+
+    class _WrithingMassHit(event.Event):
+        def execute(self):
+            say.insayne(
+                "\"LOVE the chutzpah, bud! But it's futile. Believe us, we've tried! Over, and over, and over....\""
+            )
+
+    def writhing_mass_death_throes(actor):
+        pass
+
+    npc.ai.add_event(_WrithingMassTalk(), "talk")
+    npc.ai.add_event(_WrithingMassHit(), "attack")
+    npc.upon_death(writhing_mass_death_throes)
+    npc.idle_text = "The mass of bodies writhes expectantly."
 
     return npc

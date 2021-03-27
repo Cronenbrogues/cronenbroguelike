@@ -2,10 +2,11 @@ import logging
 import random
 import re
 
-from cronenbroguelike import commands
 from whimsylib.globals import G
 from whimsylib import say
 from whimsylib import when
+
+from . import commands
 
 
 ###
@@ -17,7 +18,7 @@ from whimsylib import when
 @when.when("eat ITEM", verb="eat")
 @when.when("smoke ITEM", verb="smoke")
 def consume(item, verb):
-    commands.use(item, verb)
+    commands.use(item, None, verb)
 
 
 @when.when("exit DIRECTION")
@@ -112,8 +113,8 @@ def cheat(code):
             break
 
     for function, match in matches:
-        logging.debug(f"function is {function}")
-        logging.debug(f"match.groups is {match.groups()}")
+        logging.debug("function is %s" % function)
+        logging.debug("match.groups is %s" % match.groups())
         try:
             function(*match.groups())
             break
@@ -163,7 +164,7 @@ def random_action():
     )
 
     args = [random.choice(entity_names) for i in range(len(command_pattern.arguments))]
-    final_command = f"{' '.join(command_pattern.prefix)} {' '.join(args)}"
+    final_command = f"{''.join(command_pattern.prefix)} {' '.join(args)}"
     say.insayne(f"random command: {final_command}", insanity=0)
 
     when.handle(final_command)

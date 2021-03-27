@@ -205,7 +205,8 @@ def talk(actor):
     # TODO: Collapse common functionality in attack.
     interlocutor = _get_present_actor(actor_name)
     if interlocutor is None:
-        if _find_available_item(actor_name) is not None:
+        _, item = _find_available_item(actor_name)
+        if item is not None:
             if G.player.insanity.value > 30:
                 say.insayne(
                     f"You talk to {actor_name} at length. In response, "
@@ -240,6 +241,9 @@ def talk(actor):
 
     elif action.event is not None:
         action.event.event.execute()
+
+    else:
+        say.insayne("Nothing happens.")
 
 
 @when.when("inspect ITEM")
@@ -325,18 +329,41 @@ def _move_item(
 # TODO: Could create a @when decorator in the item subclasses
 # themselves that automatically registers a command.
 # TODO: Refactor items; let items have "verb" objects which map to events.
-@when.when("use ITEM", verb="use")
+@when.when("use ITEM", actor=None, verb="use")
+@when.when("use ITEM on ACTOR", verb="use")
+@when.when("give ITEM to ACTOR", verb="use")
 @when.poll()
-def use(item, verb):
+def use(item, actor, verb):
     item_name = item
+    actor_name = actor
+
+    # Inventory item case
     item = G.player.inventory.find(item_name)
-    if item is None:
-        say.insayne(f"You don't have {say.a(item_name)}.")
+    if item:
+        if actor_name:
+            actor = _get_present_actor(actor_name)
+            if actor:
+                try:
+                    item.consume(actor)
+                except AttributeError:
+                    say.insayne(f"You can't {verb} the {item_name} on {actor_name}.")
+        else:
+            try:
+                item.consume(G.player)
+            except AttributeError:
+                say.insayne(f"You can't {verb} the {item_name}.")
         return
-    try:
-        item.consume(G.player)
-    except AttributeError:
-        say.insayne(f"You can't {verb} the {item_name}.")
+
+    # NPC case
+    item = G.player.current_room.npcs.find(item_name)
+    if item:
+        try:
+            item.consume(G.player)
+        except AttributeError:
+            say.insayne(f"You can't {verb} the {item_name}.")
+        return
+
+    say.insayne(f"You don't have {say.a(item_name)}.")
 
 
 @when.when("take ITEM")
@@ -398,8 +425,6 @@ def loot(item, corpse):
             action = character.ai.choose_action(G.player.current_room)
             if action.attack is not None:
                 _resolve_attack(character, action.attack)
-        return
-
     else:
         if item_name in {"all", "everything"}:
             items = character.inventory.items_by_name()

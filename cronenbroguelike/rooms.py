@@ -2,10 +2,14 @@ import logging
 import random
 
 from whimsylib import dice
+from whimsylib import directions
 from whimsylib.event import Event as _Event
 from whimsylib.globals import G
 from whimsylib.room import Room as _Room
 from whimsylib import say
+
+from . import extra_description
+from . import npcs
 
 
 # TODO: Devise a way to load rooms (and maybe events?) from a config file.
@@ -159,10 +163,10 @@ class _AltarEvent(_Event):
             say.insayne("These things will come to pass in their own time.", False)
             say.insayne("They may not now. The stars are not aligned.'", False)
             say.insayne(
-                "Soon, this idol will lead you to horrors and blasphemies. "
-                "For now, you must roam without succor and without end in this "
-                "cathedral. Perhaps enjoy a cigarette with the enviably cool "
-                "gentleman."
+                "If you continue to roam this cathedral, you will do so "
+                "without succor and without end. Perhaps you can enjoy a "
+                "cigarette with the enviably cool gentleman. Or you may pass "
+                "through this maw and try the fates."
             )
             self.room.description = (
                 "An idol with ruby eyes and a soot-stained maw yawns at you. "
@@ -174,6 +178,11 @@ class _AltarEvent(_Event):
                 "cavernous, the red gold of its eyes showing contentment."
             )
             self.room.items.remove(smoke)
+            # Open the portal
+            through_mouth = directions.Direction.make_oneway(
+                ["through the mouth", "through the maw", "through mouth", "through maw"]
+            )
+            self.room.add_exit(through_mouth, G.floors["office"].room_by_name("DESK"))
             self.kill()
 
 
@@ -300,10 +309,76 @@ class _IntestineRoom(_Room):
             self._entered = True
 
 
+class _BreakRoom(_Room):
+    _DESCRIPTION = ""
+    _THEMES = ["office"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.add_character(npcs.coffee_machine())
+        self.add_character(npcs.gary())
+
+    def on_enter(self):
+        super().on_enter()
+        insanity = G.player.insanity.value
+        self.description = extra_description.get_interval(
+            insanity, extra_description.breakroom_descriptions
+        )
+
+
+class _YourDesk(_Room):
+    _DESCRIPTION = ""
+    _THEMES = ["office"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.add_character(npcs.office_computer())
+
+    def on_enter(self):
+        super().on_enter()
+        insanity = G.player.insanity.value
+        self.description = extra_description.get_interval(
+            insanity, extra_description.your_desk_descriptions
+        )
+
+
+class _CopierRoom(_Room):
+    _DESCRIPTION = ""
+    _THEMES = ["office"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.add_character(npcs.office_copier())
+
+    def on_enter(self):
+        super().on_enter()
+        insanity = G.player.insanity.value
+        self.description = extra_description.get_interval(
+            insanity, extra_description.copier_room_descriptions
+        )
+
+
+class _MeetingRoom(_Room):
+    _DESCRIPTION = ""
+    _THEMES = ["office"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def on_enter(self):
+        super().on_enter()
+        insanity = G.player.insanity.value
+        self.description = extra_description.get_interval(
+            insanity, extra_description.meeting_room_descriptions
+        )
+        if insanity >= 29:
+            self.add_character(npcs.writhing_office_mass())
+
+
 def _rooms_for_theme(theme=None):
     if theme is None:
         return _Room.ALL_ROOMS
-    return _Room.THEME_TO_ROOMS[theme] + _Room.THEME_TO_ROOMS[_Room.DEFAULT_THEME]
+    return _Room.THEME_TO_ROOMS[theme]
 
 
 def get_rooms(number=None, theme=None):

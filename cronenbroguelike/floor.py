@@ -37,17 +37,26 @@ def _add_exit(room, next_room, direction_hint):
 
 
 class Floor:
-    def __init__(self, room_dict):
+    def __init__(self, room_dict, name_to_room=None):
         self._rooms = room_dict
+        if name_to_room is None:
+            name_to_room = {}
+        self._names = name_to_room
 
     def __getitem__(self, coordinate):
         return self._rooms[coordinate]
+
+    def room_by_name(self, name):
+        return self._names.get(name, None)
 
     def random_room(self):
         return random.choice(list(self._rooms.values()))
 
     @classmethod
-    def generate(cls, theme, number_rooms):
+    def generate(cls, theme, number_rooms=None):
+        if theme == "office":
+            return _generate_office()
+
         room_dict = {}
         room_list = rooms.get_rooms(number=number_rooms, theme=theme)
         start_coordinate = _Coordinate(10, 10)
@@ -109,3 +118,33 @@ class Floor:
                         traversal_queue.append(destination_number)
 
         return Floor(room_dict)
+
+
+# Manually generate the office so it is, tediously, always the same (and we also
+# avoid the inappropriately exciting weird transitions).
+# TODO: This is not in the spirit of roguelikes.
+def _generate_office():
+    desk = rooms._YourDesk()
+    desk_coord = _Coordinate(10, 10)
+
+    breakroom = rooms._BreakRoom()
+    breakroom_coord = getattr(desk_coord, "east")
+    _add_exit(desk, breakroom, "east")
+
+    copier_room = rooms._CopierRoom()
+    copier_room_coord = getattr(breakroom_coord, "north")
+    _add_exit(breakroom, copier_room, "north")
+
+    meeting_room = rooms._MeetingRoom()
+    meeting_room_coord = getattr(desk_coord, "west")
+    _add_exit(desk, meeting_room, "west")
+
+    return Floor(
+        {
+            desk_coord: desk,
+            breakroom_coord: breakroom,
+            copier_room_coord: copier_room,
+            meeting_room_coord: meeting_room,
+        },
+        {"DESK": desk},
+    )

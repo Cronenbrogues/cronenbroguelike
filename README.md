@@ -22,5 +22,7 @@ See [DEVELOPERS.md](DEVELOPERS.md) for more details.
 Simply push a new annotated tag, and the configured Github Actions will trigger a new build + package + release cycle.
 
 ```
-git tag -a v2 -m "Awesome new feature!"
+git tag -a 2.0.0 -m "Added the office floor"
 ```
+
+This project does NOT conform to [SemVer](https://semver.org/); we only push a new major version when a new floor is added.

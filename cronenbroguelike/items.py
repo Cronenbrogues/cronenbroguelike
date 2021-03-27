@@ -9,6 +9,8 @@ from whimsylib.item import Item as _Item
 from whimsylib import dice
 from whimsylib import say
 
+from . import extra_description
+
 from cronenbroguelike import ability
 
 
@@ -181,3 +183,56 @@ class FadingSmoke(_Item):
             description="plumes of smoke",
             idle_description="A thin haze of smoke remains here.",
         )
+
+
+class _CoffeeTick(_Event):
+    def __init__(self, coffee, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.coffee = coffee
+
+    def execute(self):
+        # print("coffee tick!")
+        insanity = _G.player.insanity.value
+        desc = extra_description.get_interval(
+            insanity, extra_description.coffee_descriptions
+        )
+        # print(desc)
+        self.coffee.description = self.coffee.idle_description = self.coffee.name = desc
+
+
+class Coffee(_Consumable):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        _G.add_event(_CoffeeTick(self), "pre")
+        insanity = _G.player.insanity.value
+        desc = extra_description.get_interval(
+            insanity, extra_description.coffee_descriptions
+        )
+        self.description = self.idle_description = self.name = desc
+
+    def consume(self, consumer):
+        if consumer is _G.player:
+            say.insayne("You drink the coffee.")
+            consumer.insanity.modify(-5)
+        elif consumer.name == "gary":
+            insanity = _G.player.insanity.value
+            if insanity >= 30:
+                # Trigger Office ending
+                say.insayne(
+                    "With a horrific tearing sound and a wet pop, Gary vanishes from existence. "
+                    "In his place is a perfectly Gary-shaped hole in space."
+                )
+                say.insayne("YOU MADE IT!")
+                # TODO: make "enter gary" action or just teleport.
+                consumer.current_room.characters.remove(consumer)
+            else:
+                say.insayne('Gary loudly slurps the coffee. "Well thanks, pal!"')
+        else:
+            say.insayne("Nothing happens.")
+
+        _G.player.inventory.remove(self)
+        # TODO: allow gary to have his own coffee
+
+    @classmethod
+    def create(cls):
+        return cls("coffee")
