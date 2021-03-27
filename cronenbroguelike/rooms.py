@@ -182,7 +182,7 @@ class _AltarEvent(_Event):
             through_mouth = directions.Direction.make_oneway(
                 ["through the mouth", "through the maw", "through mouth", "through maw"]
             )
-            self.room.add_exit(through_mouth, G.floor["office"].room_by_name("DESK"))
+            self.room.add_exit(through_mouth, G.floors["office"].room_by_name("DESK"))
             self.kill()
 
 

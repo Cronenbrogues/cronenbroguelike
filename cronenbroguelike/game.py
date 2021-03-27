@@ -73,7 +73,7 @@ def _restart(config):
     _G.floors["cathedral"].random_room().add_character(_G.player)
 
     # Starts it up.
-    _get_random_start(theme)
+    _get_random_start("cathedral")
     with _poll_events(poll_before=True, poll_after=True):
         commands.enter_room(_G.player.current_room)
 
