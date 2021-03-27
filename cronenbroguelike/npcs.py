@@ -382,9 +382,6 @@ def writhing_office_mass():
     npc = actor.create_actor(
         1000,
         10,
-        1000,
-        10,
-        10,
         10,
         100,
         "writhing mass",
