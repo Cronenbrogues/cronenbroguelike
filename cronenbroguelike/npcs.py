@@ -270,7 +270,7 @@ def office_copier():
         1000,
         10,
         10,
-        100,
+        10,
         "copier",
         idle_text="The office's byzantine copier looks to be broken again.",
         ai=ai.Chill(),
