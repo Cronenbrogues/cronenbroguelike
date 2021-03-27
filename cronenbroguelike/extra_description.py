@@ -1,7 +1,5 @@
 import bisect
 
-# way to put this stuff into a namespace? just do a class? then don't have to import tons of things
-
 # Find interval with key less than value.
 def get_interval(value, intervals):
     if not intervals:
@@ -50,11 +48,11 @@ gary_jokes = [
     (
         29,
         [
-            "Gary is silent, his eyes pleading, his mouth fixed in a gruesome rictus.",
+            "Gary is silent, his eyes pleading, his mouth fixed in a gruesome visage.",
             "Black foam drips slowly from Gary's mouth.",
         ],
     ),
-    (30, ["YOU MUST END IT!", "FLENSE MY CURSED FLESH, TRAVELER", "CONSUME ME"]),
+    (30, ["YOU MUST END IT!", "FLAY MY CURSED FLESH, TRAVELER", "CONSUME ME"]),
 ]
 
 gary_descriptions = [
@@ -85,10 +83,6 @@ coffee_machine_descriptions = [
         "A wicked machine leers hungrily from its perch on the fresh corpse of a co-worker. You have interrupted its feeding. From its fangs drips a putrid, steaming ichor.",
     ),
 ]
-
-# coffee_machine_use = [
-#     (10, ''),
-# ]
 
 coffee_descriptions = [
     (10, "a nice, warm cup of shitty black coffee"),
