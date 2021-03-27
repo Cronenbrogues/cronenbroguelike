@@ -164,7 +164,7 @@ def random_action():
     )
 
     args = [random.choice(entity_names) for i in range(len(command_pattern.arguments))]
-    final_command = f"{' '.join(command_pattern.prefix)} {' '.join(args)}"
+    final_command = f"{''.join(command_pattern.prefix)} {' '.join(args)}"
     say.insayne(f"random command: {final_command}", insanity=0)
 
     when.handle(final_command)
