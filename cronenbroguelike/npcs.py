@@ -321,7 +321,7 @@ def gary():
     npc = actor.create_actor(
         1000,
         10,
-        10,
+        1000,
         100,
         "gary",
         ai=ai.Chill(),
