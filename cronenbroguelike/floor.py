@@ -59,24 +59,26 @@ class Floor:
                 break
             if len(room_dict) >= number_rooms:
                 break
-            coordinate = coordinate_queue.popleft()
-            if room_dict.get(coordinate) is not None:
-                continue
+
+            # Finds an unoccupied coordinate.
+            while True:
+                coordinate = coordinate_queue.popleft()
+                if room_dict.get(coordinate) is None:
+                    break
 
             # Creates a new room in that location.
             room_dict[coordinate] = room
 
             for direction in ["north", "south", "east", "west"]:
-                # Adds some exits.
                 new_coordinate = getattr(coordinate, direction)
                 next_room = room_dict.get(new_coordinate)
-                if next_room is not None:
+                if next_room is None:
+                    coordinate_queue.append(new_coordinate)
+
+                else:
+                    # Adds some exits.
                     if dice.roll("1d100") > 50:
                         _add_exit(room, next_room, direction)
-
-                # Randomly decides where else to add rooms.
-                if dice.roll("1d100") > 25:
-                    coordinate_queue.append(new_coordinate)
 
         # Traverse room graph. If any rooms are not connected, use a
         # non-Euclidean entrance to address that.
