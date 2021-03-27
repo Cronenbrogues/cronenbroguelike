@@ -228,7 +228,7 @@ def coffee_machine():
         10,
         10,
         10,
-        100,
+        10,
         "coffee machine",
         idle_text="A coffee machine gurgles pleasantly on the counter.",
         ai=ai.Chill(),
