@@ -8,7 +8,7 @@ with open("requirements.txt") as fh:
 
 setuptools.setup(
     name="cronenbroguelike",
-    version="2.0.0",
+    version="2.1.0",
     author="The Arch Cronenbrogues",
     author_email="cronenbrogues@googlegroups.com",
     description="Â̳ tͥ͞e̅̊x̂ͅtͤ͟-b̝͒à͉s͌͜e̮̓d͚̦-b̨͞o̟ͣdͣyͧ͘-h̛͞o̵ͅr̷͍r̺͡ơ̎r̡̞-r͉̉o͇g̦̏u̦̞e͌͘-l͖̃i̇̈́ḱͅe͢͡ gͧ͜a̜̽mͭ͛e̷͍.",
@@ -16,6 +16,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     install_requires=requirements,
     url="https://github.com/Cronenbrogues/cronenbroguelike",
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages() + ['config'],
+    include_package_data=True,
     python_requires=">=3.8",
 )
