@@ -1,7 +1,7 @@
 """Creates a standalone binary of the game.
 
 # To create the binary:
-> pyoxidizer.run
+> pyoxidizer build
 
 # To generate the .tar.gz zip archive:
 > tar -cvpf cronenbroguelike.tar <here>/build/x86_64-unknown-linux-gnu/debug/install/cronenbroguelike
@@ -13,7 +13,6 @@ def make_dist():
 
 def make_exe(dist):
     policy = dist.make_python_packaging_policy()
-    policy.include_distribution_resources = True
 
     python_config = dist.make_python_interpreter_config()
     python_config.run_module = "cronenbroguelike"
@@ -24,7 +23,7 @@ def make_exe(dist):
         config=python_config,
     )
 
-    exe.add_python_resources(exe.pip_install(["-r", "requirements.txt"]))
+    exe.add_python_resources(exe.setup_py_install(package_path=CWD))
     exe.add_python_resources(exe.pip_install([CWD]))
 
     return exe

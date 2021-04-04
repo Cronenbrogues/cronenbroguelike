@@ -9,9 +9,8 @@ from whimsylib.item import Item as _Item
 from whimsylib import dice
 from whimsylib import say
 
+from . import ability
 from . import extra_description
-
-from cronenbroguelike import ability
 
 
 # TODO: Make this equippable.

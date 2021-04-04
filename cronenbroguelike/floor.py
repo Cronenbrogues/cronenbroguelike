@@ -2,9 +2,10 @@ import collections
 import logging
 import random
 
-from cronenbroguelike import rooms
 from whimsylib import dice
 from whimsylib import directions
+
+from . import rooms
 
 
 # TODO: Make these a coordinate attribute?
