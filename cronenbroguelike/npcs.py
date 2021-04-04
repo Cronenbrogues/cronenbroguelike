@@ -7,10 +7,9 @@ from whimsylib import event
 from whimsylib.globals import G as _G
 from whimsylib import say
 
+from . import items
 from . import extra_description
-
-from cronenbroguelike import items
-from cronenbroguelike import util
+from . import util
 
 
 # TODO: I don't like doing this functionally. Use classes instead.

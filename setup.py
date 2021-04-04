@@ -16,7 +16,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     install_requires=requirements,
     url="https://github.com/Cronenbrogues/cronenbroguelike",
-    packages=setuptools.find_packages() + ["config"],
+    packages=setuptools.find_packages(exclude=("tests")),
     include_package_data=True,
     python_requires=">=3.8",
 )

@@ -1,6 +1,6 @@
 import logging
 
-from cronenbroguelike import util
+from . import util
 
 
 logging_config = util.read_overridable_config("logging_config.default.json")

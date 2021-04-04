@@ -87,7 +87,7 @@ _ABILITY_PATTERN = re.compile(r"^\s*add\s+ability\s+(\w+)\s*$", re.IGNORECASE)
 
 
 def _cheat_ability(ability_name):
-    from cronenbroguelike import ability
+    from . import ability
 
     try:
         to_add = getattr(ability, ability_name)
