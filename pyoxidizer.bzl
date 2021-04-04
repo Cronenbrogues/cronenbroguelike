@@ -13,6 +13,7 @@ def make_dist():
 
 def make_exe(dist):
     policy = dist.make_python_packaging_policy()
+    policy.include_distribution_resources = True
 
     python_config = dist.make_python_interpreter_config()
     python_config.run_module = "cronenbroguelike"
