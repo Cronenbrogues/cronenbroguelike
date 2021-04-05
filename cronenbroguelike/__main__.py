@@ -1,9 +1,10 @@
 import logging
+import os
 
 from cronenbroguelike import util
 
 
-logging_config = util.read_overridable_config("logging_config.default.json")
+logging_config = util.read_overridable_config(util.ConfigType.LOGGING)
 logging.basicConfig(level=getattr(logging, logging_config["log_level"].upper()))
 
 
