@@ -1,7 +1,3 @@
-# Configuration files which should change at HEAD rarely (but often in development).
-config/game_config.json
-config/logging_config.json
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

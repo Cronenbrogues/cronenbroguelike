@@ -101,5 +101,5 @@ def _run_game(config):
 
 
 def main():
-    game_config = util.read_overridable_config(util.ConfigType.GAME)
+    game_config = util.read_config(util.ConfigType.GAME)
     _run_game(game_config)
