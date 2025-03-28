@@ -1,1 +1,1 @@
-whimsylib>=1.4.0
+whimsylib>=1.4.2
